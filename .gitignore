@@ -61,7 +61,6 @@
 *.pad
 *.par
 *.pcf
-*.pdf
 *.pin
 *.ppr
 *.prj
