@@ -17,13 +17,13 @@ package axi_types is
 		tkeep					: std_logic_vector(7 downto 0);		-- which of last is valid (bit 0 == 0..7)
 	end record;
 	
-	function empty_axi4_dvlk64_t return axi4_dvlk64_t;
+	function empty_axi4_dvlk64 return axi4_dvlk64_t;
 
 end axi_types;
 
 package body axi_types is
 
-function empty_axi4_dvlk64_t return axi4_dvlk64_t is
+function empty_axi4_dvlk64 return axi4_dvlk64_t is
 	variable axi : axi4_dvlk64_t;
 begin
 	axi.tdata := (others => '0');
@@ -31,7 +31,7 @@ begin
 	axi.tlast := '0';
 	axi.tkeep := (others => '0');
 	return axi;
-end empty_axi4_dvlk64_t;
+end empty_axi4_dvlk64;
 
 
 end axi_types;
