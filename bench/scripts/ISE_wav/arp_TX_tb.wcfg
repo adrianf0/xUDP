@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/pjf/Documents/projects/fpga/NWK/xUDP/xUDP/arp_TX_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="arp_tx_tb" />
+            <top_module name="arp_types" />
+            <top_module name="axi_types" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="19" />
+   <wave_markers>
+      <marker time="393600000" label="" />
+   </wave_markers>
+   <wvobject fp_name="/arp_tx_tb/reset" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">reset</obj_property>
+      <obj_property name="ObjectShortName">reset</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/send_i_have" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">send_i_have</obj_property>
+      <obj_property name="ObjectShortName">send_i_have</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/send_who_has" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">send_who_has</obj_property>
+      <obj_property name="ObjectShortName">send_who_has</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/arp_entry" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_entry</obj_property>
+      <obj_property name="ObjectShortName">arp_entry</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/ip_entry" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ip_entry[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ip_entry[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/mac_tx_granted" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mac_tx_granted</obj_property>
+      <obj_property name="ObjectShortName">mac_tx_granted</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/data_out_ready" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out_ready</obj_property>
+      <obj_property name="ObjectShortName">data_out_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#00ff00</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/test" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">test</obj_property>
+      <obj_property name="ObjectShortName">test</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/tx_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_state</obj_property>
+      <obj_property name="ObjectShortName">tx_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/mac_tx_req" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mac_tx_req</obj_property>
+      <obj_property name="ObjectShortName">mac_tx_req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/tx_count_mode" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_count_mode</obj_property>
+      <obj_property name="ObjectShortName">tx_count_mode</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/tx_count" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_count[2:0]</obj_property>
+      <obj_property name="ObjectShortName">tx_count[2:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/kill_data_out_valid" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_data_out_valid</obj_property>
+      <obj_property name="ObjectShortName">kill_data_out_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/mac_tx_req" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mac_tx_req</obj_property>
+      <obj_property name="ObjectShortName">mac_tx_req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/kill_data_out_valid" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">kill_data_out_valid</obj_property>
+      <obj_property name="ObjectShortName">kill_data_out_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/data_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out</obj_property>
+      <obj_property name="ObjectShortName">data_out</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tx_tb/data_out.tdata" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tdata</obj_property>
+         <obj_property name="ObjectShortName">data_out.tdata</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tx_tb/data_out.tvalid" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tvalid</obj_property>
+         <obj_property name="ObjectShortName">data_out.tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tx_tb/data_out.tlast" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tlast</obj_property>
+         <obj_property name="ObjectShortName">data_out.tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tx_tb/data_out.tkeep" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tkeep</obj_property>
+         <obj_property name="ObjectShortName">data_out.tkeep</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/our_mac_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">our_mac_address[47:0]</obj_property>
+      <obj_property name="ObjectShortName">our_mac_address[47:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/our_ip_address" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">our_ip_address[31:0]</obj_property>
+      <obj_property name="ObjectShortName">our_ip_address[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+</wave_config>
