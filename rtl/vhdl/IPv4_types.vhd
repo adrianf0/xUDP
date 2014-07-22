@@ -6,7 +6,7 @@
 -- Author     : Adrian Fiergolski  <A.Fiergolski@gmail.com>
 -- Company    : 
 -- Created    : 2014-07-21
--- Last update: 2014-07-21
+-- Last update: 2014-07-22
 -- Platform   : 
 -- Standard   : VHDL'2008
 -------------------------------------------------------------------------------
@@ -95,7 +95,6 @@ package IPv4_types is
   -- IPv4 Control --
   ------------------
   type IPV4_CONTROL_T is record
-    arp_controls : arp_control_type;  -- control of ARP submodule
   end record;
 
 end IPv4_types;
