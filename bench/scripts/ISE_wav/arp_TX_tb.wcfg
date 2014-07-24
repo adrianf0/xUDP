@@ -10,10 +10,11 @@
             <top_module name="axi_types" />
             <top_module name="numeric_std" />
             <top_module name="std_logic_1164" />
+            <top_module name="xudp_common_pkg" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="19" />
+   <WVObjectSize size="18" />
    <wave_markers>
       <marker time="393600000" label="" />
    </wave_markers>
@@ -108,14 +109,19 @@
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject fp_name="/arp_tx_tb/our_mac_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">our_mac_address[47:0]</obj_property>
-      <obj_property name="ObjectShortName">our_mac_address[47:0]</obj_property>
+   <wvobject fp_name="/arp_tx_tb/cfg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">cfg</obj_property>
+      <obj_property name="ObjectShortName">cfg</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/arp_tx_tb/our_ip_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">our_ip_address[31:0]</obj_property>
-      <obj_property name="ObjectShortName">our_ip_address[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tx_tb/cfg.ip_address" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip_address</obj_property>
+         <obj_property name="ObjectShortName">cfg.ip_address</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tx_tb/cfg.mac_address" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.mac_address</obj_property>
+         <obj_property name="ObjectShortName">cfg.mac_address</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
    </wvobject>
 </wave_config>

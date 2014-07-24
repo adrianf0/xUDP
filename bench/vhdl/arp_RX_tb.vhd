@@ -30,7 +30,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use work.axi_types.all;
 use work.arp_types.all;
- 
+use work.xUDP_Common_pkg.all;
+
 ENTITY arp_RX_tb IS
 END arp_RX_tb;
  
@@ -50,7 +51,7 @@ COMPONENT arp_RX
 		-- control and status signals
 		req_count					: out std_logic_vector(7 downto 0);   -- count of arp pkts received
 		-- system signals
-		our_ip_address				: in  std_logic_vector (31 downto 0);
+		cfg				   		: in xUDP_CONIGURATION_T;	-- system config
 		clk							: in  std_logic;
 		reset							: in  std_logic
     );
@@ -59,7 +60,7 @@ END COMPONENT;
 
    --Inputs
    signal data_in				: axi4_dvlk64_t;
-   signal our_ip_address 	: std_logic_vector (31 downto 0);
+   signal cfg				 	: xUDP_CONIGURATION_T;
    signal clk					: std_logic := '0';
    signal reset				: std_logic := '1';
 
@@ -102,7 +103,7 @@ BEGIN
 		-- control and status signals
 		req_count 					=> req_count,
 		-- system signals
-		our_ip_address				=> our_ip_address,
+		cfg							=> cfg,
 		clk							=> clk,
 		reset							=> reset
    );
@@ -141,7 +142,7 @@ BEGIN
 		test <= RST;
 		reset <= '1';
 		data_in <= empty_axi4_dvlk64;
-		our_ip_address <= OUR_IP;
+		cfg.ip_address <= OUR_IP;
 		
       -- hold reset state for 100 ns.
       wait for 100 ns;	

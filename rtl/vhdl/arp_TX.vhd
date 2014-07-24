@@ -23,6 +23,8 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.axi_types.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
+
 
 entity arp_tx is
   port (
@@ -37,8 +39,7 @@ entity arp_tx is
     data_out_ready	: in  std_logic;    -- indicates system ready to consume data
 	 data_out			: out axi4_dvlk64_t;
     -- system signals
-    our_mac_address	: in  std_logic_vector (47 downto 0);
-    our_ip_address	: in  std_logic_vector (31 downto 0);
+	 cfg				   : in xUDP_CONIGURATION_T;	-- system config
     clk					: in  std_logic;
     reset				: in  std_logic
     );
@@ -108,7 +109,7 @@ begin
   tx_combinatorial : process (
     -- input signals
     send_I_have, send_who_has, arp_entry, ip_entry, data_out_ready, mac_tx_granted,
-    our_mac_address, our_ip_address, reset,
+    cfg, reset,
     -- state variables
     tx_state, tx_count, tx_mac_chn_reqd, I_have_target, who_has_target,
     send_I_have_reg, send_who_has_reg, tx_mode, target,
@@ -199,12 +200,12 @@ begin
 				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 				--    |	0	 |               target mac                            | src mac (47..32)|
 				data_out.tdata(63 downto 16) <= target.mac;                    	-- DEST MAC
-				data_out.tdata(15 downto 0)  <= our_mac_address (47 downto 32);	-- SRC MAC (top 16 bits)
+				data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32);	-- SRC MAC (top 16 bits)
 
           when 1 =>
 				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 				--    |	1	 |           src mac (32..0)         |   pkt type      |arp type| HW type|
-				data_out.tdata(63 downto 32) <= our_mac_address (31 downto 0); -- SRC MAC (next 32 bits)
+				data_out.tdata(63 downto 32) <= cfg.mac_address (31 downto 0); -- SRC MAC (next 32 bits)
 				data_out.tdata(31 downto 0)  <= x"08060001"; -- pkt type = 0806 : ARP, HW type = 0001 : eth
 
           when 2 =>
@@ -216,13 +217,13 @@ begin
 				else
 					data_out.tdata(31 downto 16) <= x"0001"; -- opcode = 01 : REQ
 				end if;
-				data_out.tdata(15 downto 0)  <= our_mac_address (47 downto 32); -- SHA (sender HW addr)
+				data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32); -- SHA (sender HW addr)
 		  
           when 3 =>
 				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 				--    |	3	 |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-				data_out.tdata(63 downto 32)  <= our_mac_address (31 downto 0); -- SHA (sender HW addr)
-				data_out.tdata(31 downto 0)  <= our_ip_address; 					 -- SPA (sender prot addr)
+				data_out.tdata(63 downto 32)  <= cfg.mac_address (31 downto 0); -- SHA (sender HW addr)
+				data_out.tdata(31 downto 0)  <= cfg.ip_address; 					 -- SPA (sender prot addr)
 
           when 4 =>
 				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+

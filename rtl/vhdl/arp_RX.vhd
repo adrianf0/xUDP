@@ -31,6 +31,7 @@ use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.axi_types.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
 
 entity arp_rx is
   port (
@@ -44,7 +45,7 @@ entity arp_rx is
 	-- control and status signals
 	req_count					: out std_logic_vector(7 downto 0);   -- count of arp pkts received
 	-- system signals
-	our_ip_address				: in  std_logic_vector (31 downto 0);
+	cfg				   		: in xUDP_CONIGURATION_T;	-- system config
 	clk							: in  std_logic;
 	reset							: in  std_logic
    );
@@ -118,7 +119,7 @@ begin
 
   rx_combinatorial : process (
     -- input signals
-    data_in, our_ip_address,
+    data_in, cfg,
     -- state variables
     rx_state, rx_count, arp_operation, arp_req_count, arp_err_data, new_arp_entry, eop_reg, 
 	 -- busses
@@ -214,7 +215,7 @@ begin
 					when 4 =>
 						-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 						--    |	4	 |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-						if data_in.tdata(15 downto 0) /= our_ip_address(31 downto 16) then
+						if data_in.tdata(15 downto 0) /= cfg.ip_address(31 downto 16) then
 							-- not addressed to us
 							next_rx_state <= WAIT_END;
 						end if;
@@ -222,7 +223,7 @@ begin
 					when 5 =>
 						-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 						--    |	5	 |   TPA (15..0)   |
-						if data_in.tdata(63 downto 48) /= our_ip_address(15 downto 0) then
+						if data_in.tdata(63 downto 48) /= cfg.ip_address(15 downto 0) then
 							-- not addressed to us
 							if data_in.tlast = '1' then
 								next_rx_state <= IDLE;

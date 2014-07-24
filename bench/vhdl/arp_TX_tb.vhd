@@ -30,6 +30,8 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 use work.axi_types.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
+
  
 ENTITY arp_TX_tb IS
 END arp_TX_tb;
@@ -51,8 +53,7 @@ COMPONENT arp_TX
     data_out_ready	: in  std_logic;    -- indicates system ready to consume data
 	 data_out			: out axi4_dvlk64_t;
     -- system signals
-    our_mac_address	: in  std_logic_vector (47 downto 0);
-    our_ip_address	: in  std_logic_vector (31 downto 0);
+	 cfg				   : in xUDP_CONIGURATION_T;	-- system config
     clk					: in  std_logic;
     reset				: in  std_logic
     );
@@ -64,11 +65,10 @@ END COMPONENT;
    signal send_who_has 		: std_logic := '0';
 	signal arp_entry 			: arp_entry_t;
    signal ip_entry  			: std_logic_vector (31 downto 0);
-   signal our_mac_address	: std_logic_vector (47 downto 0);
-   signal our_ip_address 	: std_logic_vector (31 downto 0);
+   signal cfg					: xUDP_CONIGURATION_T;
    signal mac_tx_granted	: std_logic := '0';
    signal data_out_ready	: std_logic := '0';
-   signal clk				: std_logic := '0';
+   signal clk					: std_logic := '0';
    signal reset				: std_logic := '1';
 	
 	--Outputs
@@ -101,8 +101,7 @@ BEGIN
 		data_out_ready	=> data_out_ready,
 		data_out			=> data_out,
 		-- system signals
-		our_mac_address=> our_mac_address,
-		our_ip_address	=> our_ip_address,
+		cfg				=> cfg,
 		clk				=> clk,
 		reset				=> reset
    );
@@ -128,8 +127,6 @@ BEGIN
 		mac_tx_granted <= '0';
 		data_out_ready <= '0';
 		arp_entry <= empty_arp_entry;
-		our_mac_address <= (others => '0');
-		our_ip_address <= (others => '0');
 		
       -- hold reset state for 100 ns.
       wait for 100 ns;	
@@ -148,8 +145,8 @@ BEGIN
       -- insert stimulus here 
 
       wait for clk_period*5;
-		our_mac_address <= OUR_MAC;
-		our_ip_address <= OUR_IP;
+		cfg.mac_address <= OUR_MAC;
+		cfg.ip_address <= OUR_IP;
 		
 		------------
 		-- TEST 1 -- basic functional tx test - send who has
