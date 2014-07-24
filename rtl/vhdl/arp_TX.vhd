@@ -27,86 +27,86 @@ use work.xUDP_Common_pkg.all;
 
 
 entity arp_tx is
-  port (
-    -- control signals
-    send_I_have		: in  std_logic;    -- pulse will be latched
-    arp_entry			: in  arp_entry_t;  -- arp target for I_have req (will be latched)
-    send_who_has		: in  std_logic;    -- pulse will be latched
-    ip_entry			: in  std_logic_vector (31 downto 0);  -- IP target for who_has req (will be latched)
-    -- MAC layer TX signals
-    mac_tx_req			: out std_logic;  -- indicates that ip wants access to channel (stays up for as long as tx)
-    mac_tx_granted	: in  std_logic;  -- indicates that access to channel has been granted            
-    data_out_ready	: in  std_logic;    -- indicates system ready to consume data
-	 data_out			: out axi4_dvlk64_t;
-    -- system signals
-	 cfg				   : in xUDP_CONIGURATION_T;	-- system config
-    clk					: in  std_logic;
-    reset				: in  std_logic
+    port (
+        -- control signals
+        send_I_have     : in  std_logic;    -- pulse will be latched
+        arp_entry       : in  arp_entry_t;  -- arp target for I_have req (will be latched)
+        send_who_has    : in  std_logic;    -- pulse will be latched
+        ip_entry        : in  std_logic_vector (31 downto 0);  -- IP target for who_has req (will be latched)
+        -- MAC layer TX signals
+        mac_tx_req      : out std_logic;  -- indicates that ip wants access to channel (stays up for as long as tx)
+        mac_tx_granted  : in  std_logic;  -- indicates that access to channel has been granted            
+        data_out_ready  : in  std_logic;    -- indicates system ready to consume data
+        data_out        : out axi4_dvlk64_t;
+        -- system signals
+        cfg             : in xUDP_CONIGURATION_T; -- system config
+        clk             : in  std_logic;
+        reset           : in  std_logic
     );
 end arp_tx;
 
 architecture Behavioral of arp_tx is
 
-  type count_mode_t is (RST, INCR, HOLD);
-  type set_clr_t is (SET, CLR, HOLD);
-  type tx_state_t is (IDLE, WAIT_MAC, SEND);
-  type tx_mode_t is (REPLY, REQUEST);
+    type count_mode_t is (RST, INCR, HOLD);
+    type set_clr_t is (SET, CLR, HOLD);
+    type tx_state_t is (IDLE, WAIT_MAC, SEND);
+    type tx_mode_t is (REPLY, REQUEST);
 
-  -- state variables
-  signal tx_mac_chn_reqd  : std_logic;
-  signal tx_state         : tx_state_t;
-  signal tx_count         : unsigned (2 downto 0);
-  signal send_I_have_reg  : std_logic;
-  signal send_who_has_reg : std_logic;
-  signal I_have_target    : arp_entry_t;  -- latched target for "I have" request
-  signal who_has_target   : std_logic_vector (31 downto 0);  -- latched IP for "who has" request
-  signal tx_mode          : tx_mode_t;  -- what sort of tx to make
-  signal target           : arp_entry_t;  -- target to send to
+    -- state variables
+    signal tx_mac_chn_reqd  : std_logic;
+    signal tx_state         : tx_state_t;
+    signal tx_count         : unsigned (2 downto 0);
+    signal send_I_have_reg  : std_logic;
+    signal send_who_has_reg : std_logic;
+    signal I_have_target    : arp_entry_t;  -- latched target for "I have" request
+    signal who_has_target   : std_logic_vector (31 downto 0);  -- latched IP for "who has" request
+    signal tx_mode          : tx_mode_t;  -- what sort of tx to make
+    signal target           : arp_entry_t;  -- target to send to
 
-  -- busses
-  signal next_tx_state			: tx_state_t;
-  signal tx_mode_val				: tx_mode_t;
-  signal target_val				: arp_entry_t;
+    -- busses
+    signal next_tx_state   : tx_state_t;
+    signal tx_mode_val    : tx_mode_t;
+    signal target_val    : arp_entry_t;
 
-  -- tx control signals
-  signal tx_count_mode       : count_mode_t;
-  signal set_chn_reqd        : set_clr_t;
-  signal kill_data_out_valid : std_logic;
-  signal set_send_I_have     : set_clr_t;
-  signal set_send_who_has    : set_clr_t;
-  signal set_tx_mode         : std_logic;
-  signal set_target          : std_logic;
+    -- tx control signals
+    signal tx_count_mode       : count_mode_t;
+    signal set_chn_reqd        : set_clr_t;
+    signal kill_data_out_valid : std_logic;
+    signal set_send_I_have     : set_clr_t;
+    signal set_send_who_has    : set_clr_t;
+    signal set_tx_mode         : std_logic;
+    signal set_target          : std_logic;
 
 -- big endian encoding
--- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+--  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
 --    |      |                                                     |                 |
---    |	0	 |               target mac                            | src mac (47..32)|
+--    | 0  |               target mac                            | src mac (47..32)|
 --    |      |                                                     |                 |
 --    |------|-----------------------------------------------------------------------|
 --    |      |                                   |                 |        |        |
---    |	1	 |           src mac (32..0)         |   pkt type      |arp type| HW type|
+--    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
 --    |      |                                   |                 |        |        |
 --    |------|-----------------------------------------------------------------------|
 --    |      |                 |        |        |                 |                 |
---    |	2	 |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+--    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
 --    |      |                 | size   | size   |                 |                 |
 --    |------|-----------------------------------------------------------------------|
 --    |      |                                   |                                   |
---    |	3	 |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
+--    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
 --    |      |                                   |                                   |
 --    |------|-----------------------------------------------------------------------|
 --    |      |                                                     |                 |
---    |	4	 |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
+--    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
 --    |      |                                                     |                 |
 --    |------|-----------------+-----------------------------------------------------+
 --    |      |                 |
---    |	5	 |   TPA (15..0)   |
+--    | 5  |   TPA (15..0)   |
 --    |      |                 |
 --    +------+-----------------+
   
 begin
 
-  tx_combinatorial : process (
+tx_combinatorial : process (
     -- input signals
     send_I_have, send_who_has, arp_entry, ip_entry, data_out_ready, mac_tx_granted,
     cfg, reset,
@@ -118,21 +118,21 @@ begin
     -- control signals
     tx_count_mode, kill_data_out_valid, set_send_I_have, set_send_who_has,
     set_chn_reqd, set_tx_mode, set_target
-    )
-  begin
+)
+begin
     -- set output followers
     mac_tx_req <= tx_mac_chn_reqd;
 
     -- set combinatorial output defaults
-	 data_out <= empty_axi4_dvlk64;
+    data_out <= empty_axi4_dvlk64;
     case tx_state is
-      when SEND =>
-        if data_out_ready = '1' and kill_data_out_valid = '0' then
-          data_out.tvalid <= '1';
-        else
-          data_out.tvalid <= '0';
-        end if;
-      when others => data_out.tvalid <= '0';
+        when SEND =>
+            if data_out_ready = '1' and kill_data_out_valid = '0' then
+                data_out.tvalid <= '1';
+            else
+                data_out.tvalid <= '0';
+            end if;
+        when others => data_out.tvalid <= '0';
     end case;
 
     -- set bus defaults
@@ -152,120 +152,120 @@ begin
 
     -- process requests in regardless of FSM state
     if send_I_have = '1' then
-      set_send_I_have <= SET;
+        set_send_I_have <= SET;
     end if;
     if send_who_has = '1' then
-      set_send_who_has <= SET;
+        set_send_who_has <= SET;
     end if;
 
     -- TX FSM
     case tx_state is
-      when IDLE =>
-        tx_count_mode <= RST;
-        if send_I_have_reg = '1' then
-          set_chn_reqd    <= SET;
-          tx_mode_val     <= REPLY;
-          set_tx_mode     <= '1';
-          target_val      <= I_have_target;
-          set_target      <= '1';
-          set_send_I_have <= CLR;
-          next_tx_state   <= WAIT_MAC;
-        elsif send_who_has_reg = '1' then
-          set_chn_reqd     <= SET;
-          tx_mode_val      <= REQUEST;
-          set_tx_mode      <= '1';
-          target_val.ip    <= who_has_target;
-          target_val.mac   <= (others => '1');
-          set_target       <= '1';
-          set_send_who_has <= CLR;
-          next_tx_state    <= WAIT_MAC;
-        else
-          set_chn_reqd <= CLR;
-        end if;
+        when IDLE =>
+            tx_count_mode <= RST;
+            if send_I_have_reg = '1' then
+                set_chn_reqd    <= SET;
+                tx_mode_val     <= REPLY;
+                set_tx_mode     <= '1';
+                target_val      <= I_have_target;
+                set_target      <= '1';
+                set_send_I_have <= CLR;
+                next_tx_state   <= WAIT_MAC;
+            elsif send_who_has_reg = '1' then
+                set_chn_reqd     <= SET;
+                tx_mode_val      <= REQUEST;
+                set_tx_mode      <= '1';
+                target_val.ip    <= who_has_target;
+                target_val.mac   <= (others => '1');
+                set_target       <= '1';
+                set_send_who_has <= CLR;
+                next_tx_state    <= WAIT_MAC;
+            else
+                set_chn_reqd <= CLR;
+            end if;
 
-      when WAIT_MAC =>
-        tx_count_mode <= RST;
-        if mac_tx_granted = '1' then
-          next_tx_state <= SEND;
-        end if;
-        -- TODO - should handle timeout here
-        
-      when SEND =>
-        if data_out_ready = '1' then
-          tx_count_mode <= INCR;
-        end if;
-        case to_integer(tx_count) is
-		  
-          when 0 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	0	 |               target mac                            | src mac (47..32)|
-				data_out.tdata(63 downto 16) <= target.mac;                    	-- DEST MAC
-				data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32);	-- SRC MAC (top 16 bits)
+        when WAIT_MAC =>
+            tx_count_mode <= RST;
+            if mac_tx_granted = '1' then
+                next_tx_state <= SEND;
+            end if;
+            -- TODO - should handle timeout here
 
-          when 1 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	1	 |           src mac (32..0)         |   pkt type      |arp type| HW type|
-				data_out.tdata(63 downto 32) <= cfg.mac_address (31 downto 0); -- SRC MAC (next 32 bits)
-				data_out.tdata(31 downto 0)  <= x"08060001"; -- pkt type = 0806 : ARP, HW type = 0001 : eth
+        when SEND =>
+            if data_out_ready = '1' then
+                tx_count_mode <= INCR;
+            end if;
+            case to_integer(tx_count) is
 
-          when 2 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	2	 |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-				data_out.tdata(63 downto 32) <= x"08000604"; -- protocol = 0800 : ip, HW/prot size = 6/4
-            if tx_mode = REPLY then
-					data_out.tdata(31 downto 16) <= x"0002"; -- opcode = 02 : REPLY
-				else
-					data_out.tdata(31 downto 16) <= x"0001"; -- opcode = 01 : REQ
-				end if;
-				data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32); -- SHA (sender HW addr)
-		  
-          when 3 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	3	 |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-				data_out.tdata(63 downto 32)  <= cfg.mac_address (31 downto 0); -- SHA (sender HW addr)
-				data_out.tdata(31 downto 0)  <= cfg.ip_address; 					 -- SPA (sender prot addr)
+              when 0 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 0  |               target mac                            | src mac (47..32)|
+                data_out.tdata(63 downto 16) <= target.mac;                     -- DEST MAC
+                data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32); -- SRC MAC (top 16 bits)
 
-          when 4 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	4	 |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-				data_out.tdata(63 downto 16)  <= target.mac;							 -- THA (target HW addr)
-				data_out.tdata(15 downto 0)   <= target.ip(31 downto 16);	  	 -- TPA (target prot addr)
+              when 1 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
+                data_out.tdata(63 downto 32) <= cfg.mac_address (31 downto 0); -- SRC MAC (next 32 bits)
+                data_out.tdata(31 downto 0)  <= x"08060001"; -- pkt type = 0806 : ARP, HW type = 0001 : eth
 
-          when 5 =>
-				-- 	+-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-				--    |	5	 |   TPA (15..0)   |
-				data_out.tdata(63 downto 48)  <= target.ip (15 downto 0);	  	 -- TPA (target prot addr)
-            data_out.tlast <= '1';
-				data_out.tkeep <= "11000000";
+              when 2 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+                data_out.tdata(63 downto 32) <= x"08000604"; -- protocol = 0800 : ip, HW/prot size = 6/4
+                if tx_mode = REPLY then
+                    data_out.tdata(31 downto 16) <= x"0002"; -- opcode = 02 : REPLY
+                else
+                    data_out.tdata(31 downto 16) <= x"0001"; -- opcode = 01 : REQ
+                end if;
+                data_out.tdata(15 downto 0)  <= cfg.mac_address (47 downto 32); -- SHA (sender HW addr)
 
-          when 6 =>
-            kill_data_out_valid <= '1';  -- data is no longer valid
-				set_chn_reqd <= CLR;
-            next_tx_state       <= IDLE;
+              when 3 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
+                data_out.tdata(63 downto 32)  <= cfg.mac_address (31 downto 0); -- SHA (sender HW addr)
+                data_out.tdata(31 downto 0)  <= cfg.ip_address;       -- SPA (sender prot addr)
 
-          when others =>
-            next_tx_state <= IDLE;
+              when 4 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
+                data_out.tdata(63 downto 16)  <= target.mac;        -- THA (target HW addr)
+                data_out.tdata(15 downto 0)   <= target.ip(31 downto 16);     -- TPA (target prot addr)
+
+              when 5 =>
+                --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+                --    | 5  |   TPA (15..0)   |
+                data_out.tdata(63 downto 48)  <= target.ip (15 downto 0);     -- TPA (target prot addr)
+                data_out.tlast <= '1';
+                data_out.tkeep <= "11000000";
+
+              when 6 =>
+                kill_data_out_valid <= '1';  -- data is no longer valid
+                set_chn_reqd <= CLR;
+                next_tx_state       <= IDLE;
+
+              when others =>
+                next_tx_state <= IDLE;
+            end case;
         end case;
-    end case;
-  end process;
+end process;
 
-  tx_sequential : process (clk)
-  begin
+tx_sequential : process (clk)
+begin
     if rising_edge(clk) then
-      if reset = '1' then
-        -- reset state variables
-        tx_state          <= IDLE;
-        tx_count          <= (others => '0');
-        tx_mac_chn_reqd   <= '0';
-        send_I_have_reg   <= '0';
-        send_who_has_reg  <= '0';
-        who_has_target    <= (others => '0');
-        I_have_target.ip  <= (others => '0');
-        I_have_target.mac <= (others => '0');
-        target.ip         <= (others => '0');
-        target.mac        <= (others => '1');
-        
-      else
+        if reset = '1' then
+            -- reset state variables
+            tx_state          <= IDLE;
+            tx_count          <= (others => '0');
+            tx_mac_chn_reqd   <= '0';
+            send_I_have_reg   <= '0';
+            send_who_has_reg  <= '0';
+            who_has_target    <= (others => '0');
+            I_have_target.ip  <= (others => '0');
+            I_have_target.mac <= (others => '0');
+            target.ip         <= (others => '0');
+            target.mac        <= (others => '1');
+
+        else
         -- normal (non reset) processing
 
         -- Next tx_state processing
@@ -298,16 +298,16 @@ begin
 
         -- tx mode
         if set_tx_mode = '1' then
-          tx_mode <= tx_mode_val;
+            tx_mode <= tx_mode_val;
         else
-          tx_mode <= tx_mode;
+            tx_mode <= tx_mode;
         end if;
 
         -- target latching
         if set_target = '1' then
-          target <= target_val;
+            target <= target_val;
         else
-          target <= target;
+            target <= target;
         end if;
 
         -- tx_count processing
@@ -326,10 +326,10 @@ begin
           when CLR  => tx_mac_chn_reqd <= '0';
           when HOLD => tx_mac_chn_reqd <= tx_mac_chn_reqd;
         end case;
-        
-      end if;
+
     end if;
-  end process;
+end if;
+end process;
 
 
 end Behavioral;
