@@ -21,6 +21,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
 
 entity arp_SYNC is
     port (
@@ -37,9 +38,7 @@ entity arp_SYNC is
         I_have_received       : in  std_logic;
         nwk_result_status     : out arp_nwk_rslt_t;
         -- System Signals
-        rx_clk                : in  std_logic;
-        tx_clk                : in  std_logic;
-        reset                 : in  std_logic
+        clks                  : in xUDP_CLOCK_T
     );
 end arp_SYNC;
 
@@ -63,7 +62,7 @@ begin
 
 combinatorial : process (
     -- input signals
-    arp_nwk_req, recv_who_has, arp_entry_for_who_has, I_have_received, reset,
+    arp_nwk_req, recv_who_has, arp_entry_for_who_has, I_have_received, clks,
     -- state
     ip_entry_state, ip_entry_reg, arp_entry_state, arp_entry_reg,
     -- synchronisation registers
@@ -88,10 +87,10 @@ end process;
 -- process for stablisising RX clock domain data registers
 -- essentially holds data registers ip_entry and arp_entry static for 2 rx clk cycles
 -- during transfer to TX clk domain
-rx_sequential : process (tx_clk)
+rx_sequential : process (clks.tx_clk)
 begin
-    if rising_edge(tx_clk) then
-        if reset = '1' then
+    if rising_edge(clks.tx_clk) then
+        if clks.tx_reset = '1' then
             -- reset state variables
             ip_entry_reg      <= (others => '0');
             arp_entry_reg.ip  <= (others => '0');
@@ -141,10 +140,10 @@ end process;
 
 -- process for syncing to the TX clock domain
 -- clocks control signals through 2 layers of tx clocking
-tx_sequential : process (tx_clk)
+tx_sequential : process (clks.tx_clk)
 begin
-    if rising_edge(tx_clk) then
-        if reset = '1' then
+    if rising_edge(clks.tx_clk) then
+        if clks.tx_reset = '1' then
             -- reset state variables
             send_who_has_r1 <= '0';
             send_who_has_r2 <= '0';

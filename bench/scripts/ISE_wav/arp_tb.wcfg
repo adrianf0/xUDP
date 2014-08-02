@@ -12,17 +12,14 @@
             <top_module name="std_logic_1164" />
             <top_module name="std_logic_arith" />
             <top_module name="std_logic_unsigned" />
+            <top_module name="xudp_common_pkg" />
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="25" />
+   <WVObjectSize size="23" />
    <wave_markers>
       <marker time="729600000" label="" />
    </wave_markers>
-   <wvobject fp_name="/arp_tb/reset" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">reset</obj_property>
-      <obj_property name="ObjectShortName">reset</obj_property>
-   </wvobject>
    <wvobject fp_name="/arp_tb/arp_req_req" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">arp_req_req</obj_property>
       <obj_property name="ObjectShortName">arp_req_req</obj_property>
@@ -59,11 +56,9 @@
          <obj_property name="Radix">BINARYRADIX</obj_property>
       </wvobject>
    </wvobject>
-   <wvobject fp_name="/arp_tb/clk" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="CustomSignalColor">#00ff00</obj_property>
+   <wvobject fp_name="/arp_tb/clks" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">clks</obj_property>
+      <obj_property name="ObjectShortName">clks</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tb/test" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">test</obj_property>
@@ -201,15 +196,9 @@
       <obj_property name="ElementShortName">no_default_gateway</obj_property>
       <obj_property name="ObjectShortName">no_default_gateway</obj_property>
    </wvobject>
-   <wvobject fp_name="/arp_tb/our_mac_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">our_mac_address[47:0]</obj_property>
-      <obj_property name="ObjectShortName">our_mac_address[47:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/arp_tb/our_ip_address" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">our_ip_address[31:0]</obj_property>
-      <obj_property name="ObjectShortName">our_ip_address[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject fp_name="/arp_tb/cfg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">cfg</obj_property>
+      <obj_property name="ObjectShortName">cfg</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tb/nwk_gateway" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">nwk_gateway[31:0]</obj_property>

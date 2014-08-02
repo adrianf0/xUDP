@@ -168,9 +168,7 @@ component arp_sync
         I_have_received       : in  std_logic;
         nwk_result_status     : out arp_nwk_rslt_t;
         -- System Signals
-        rx_clk                : in  std_logic;
-        tx_clk                : in  std_logic;
-        reset                 : in  std_logic
+        clks                  : in xUDP_CLOCK_T
     );
 end component;
 
@@ -224,8 +222,8 @@ begin
             clear_cache         => control.clear_cache,
             nwk_gateway         => nwk_gateway,
             nwk_mask            => nwk_mask,
-            clk                 => clk.rx_clk,
-            reset               => clk.rx_reset
+            clk                 => clks.rx_clk,
+            reset               => clks.rx_reset
         );
 
     sync : arp_sync port map (
@@ -242,7 +240,7 @@ begin
         I_have_received         => recv_I_have_int,
         nwk_result_status       => nwk_result_status_int,
         -- system
-        clk                     => clk
+        clks                    => clks
     );
 
     tx : arp_tx port map (
@@ -258,8 +256,8 @@ begin
         data_out                => data_out,
         -- system signals
         cfg                     => cfg,
-        clk                     => clk.tx_clk,
-        reset                   => clk.tx_reset
+        clk                     => clks.tx_clk,
+        reset                   => clks.tx_reset
     );
 
     rx : arp_rx port map (
@@ -274,8 +272,8 @@ begin
         req_count               => req_count,
         -- system signals
         cfg                     => cfg,
-        clk                     => clk.rx_clk,
-        reset                   => clk.rx_reset
+        clk                     => clks.rx_clk,
+        reset                   => clks.rx_reset
         );
 
     store : arp_store_br
@@ -293,8 +291,8 @@ begin
             clear_store         => control.clear_cache,
             entry_count         => open,
             -- system signals
-            clk                 => clk.rx_clk,
-            reset               => clk.rx_reset
+            clk                 => clks.rx_clk,
+            reset               => clks.rx_reset
     );
 
 

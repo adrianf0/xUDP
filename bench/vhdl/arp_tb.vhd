@@ -31,6 +31,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.arp_types.all;
 use work.axi_types.all;
+use work.xUDP_Common_pkg.all;
 
 entity arp_tb is
 end arp_tb;
@@ -69,13 +70,10 @@ component arp
     );
 end component;
 
-
     --Inputs
-    signal clk             : std_logic                     := '0';
-    signal reset           : std_logic                     := '0';
+    signal clks            : xUDP_CLOCK_T;
     signal data_in         : axi4_dvlk64_t;
-    signal our_mac_address : std_logic_vector(47 downto 0) := (others => '0');
-    signal our_ip_address  : std_logic_vector(31 downto 0) := (others => '0');
+    signal cfg             : xUDP_CONIGURATION_T;
     signal nwk_gateway     : std_logic_vector(31 downto 0) := (others => '0');
     signal nwk_mask        : std_logic_vector(31 downto 0) := (others => '0');
     signal data_out_ready  : std_logic;
@@ -111,31 +109,32 @@ uut : arp
         arp_req_req     => arp_req_req,
         arp_req_rslt    => arp_req_rslt,
         -- rx mappings
-        data_in_clk     => clk,
-        reset           => reset,
         data_in         => data_in,
         -- tx mappings
         mac_tx_req      => mac_tx_req,
         mac_tx_granted  => mac_tx_granted,
-        data_out_clk    => clk,
         data_out_ready  => data_out_ready,
         data_out        => data_out,
         -- system mappings
-        our_mac_address => our_mac_address,
-        our_ip_address  => our_ip_address,
         nwk_gateway     => nwk_gateway,
         nwk_mask        => nwk_mask,
         control         => control,
-        req_count       => req_count
+        req_count       => req_count,
+        cfg             => cfg,
+        clks            => clks
 );
 
 -- Clock process definitions
 clk_process : process
 begin
-    clk <= '0';
-    wait for clk_period/2;
-    clk <= '1';
-    wait for clk_period/2;
+    clks.tx_clk <= '0';
+    wait for clk_period/4;
+    clks.rx_clk <= '0';
+    wait for clk_period/4;
+    clks.tx_clk <= '1';
+    wait for clk_period/4;
+    clks.rx_clk <= '1';
+    wait for clk_period/4;
 end process;
 
 
@@ -143,26 +142,26 @@ end process;
 stim_proc : process
 begin
     test <= RST;
-    -- hold reset state for 100 ns.
-    wait for 100 ns;
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
 
-    our_ip_address      <= x"c0a80509";  -- 192.168.5.9
+    cfg.ip_address      <= x"c0a80509";  -- 192.168.5.9
+    cfg.mac_address     <= x"002320212223";
     nwk_mask            <= x"FFFFFF00";
     nwk_gateway         <= x"c0a80501";  -- 192.168.5.9
-    our_mac_address     <= x"002320212223";
     mac_tx_granted      <= '0';
     data_out_ready    <= '0';
     control.clear_cache <= '0';
     data_in <= empty_axi4_dvlk64;
 
-    reset <= '1';
+    clks.tx_reset <= '1';
+    clks.rx_reset <= '1';
     wait for clk_period*10;
-    reset <= '0';
+    clks.tx_reset <= '0';
+    clks.rx_reset <= '0';
     wait for clk_period*5;
 
-    assert mac_tx_req = '0' report "RST: mac_tx_req asserted on reset" severity error;
-    assert req_count = x"00" report "RST: req_count incorrect" severity error;
+    assert mac_tx_req = '0'         report "RST: mac_tx_req asserted on reset" severity error;
+    assert req_count = x"00"        report "RST: req_count incorrect" severity error;
 
     arp_req_req.lookup_req <= '0';
     arp_req_req.ip         <= (others => '0');
@@ -211,7 +210,7 @@ begin
     mac_tx_granted <= '1';
     report "T1: waiting for data_out_valid";
     wait until data_out.tvalid = '1';
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
     report "T1: got data_out_valid";
     assert data_out.tvalid = '1'                report "T1a d0 - tvalid incorrect" severity error;
     assert data_out.tlast = '0'                 report "T1a d0 - tlast incorrect" severity error;
@@ -314,7 +313,7 @@ begin
     report "T2: waiting for data_out_valid";
     if data_out.tvalid = '0' then
         wait until data_out.tvalid = '1';
-        wait until falling_edge(clk);
+        wait until falling_edge(clks.rx_clk);
     end if;
     report "T2: got data_out_valid";
     assert data_out.tvalid = '1'                report "T2a d0 - tvalid incorrect" severity error;
@@ -379,7 +378,7 @@ begin
     arp_req_req.lookup_req <= '0';
     report "T3: wait for reply from store";
     wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
     assert arp_req_rslt.got_mac = '1'           report "T3: expected got mac" severity error;
     assert arp_req_rslt.got_err = '0'           report "T3: expected got err = 0" severity error;
     assert arp_req_rslt.mac = x"00231829267c"   report "T3: wrong mac value" severity error;
@@ -406,13 +405,13 @@ begin
     report "T5.1: Send an ARP req who has: 192.168.5.3?";
     report "T5: waiting for chn req";
     wait until mac_tx_req = '1';
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
     mac_tx_granted <= '1';
     data_out_ready <= '1';
     report "T5: waiting for data_out_valid";
     if data_out.tvalid = '0' then
         wait until data_out.tvalid = '1';
-        wait until falling_edge(clk);
+        wait until falling_edge(clks.rx_clk);
     end if;
     report "T5: got data_out_valid";
     assert data_out.tvalid = '1'                report "T5a d0 - tvalid incorrect" severity error;
@@ -503,7 +502,7 @@ begin
     wait for clk_period;
     report "T6.1: wait for reply from store";
     wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
     assert arp_req_rslt.got_mac = '1'           report "T6.1: expected got mac";
     assert arp_req_rslt.got_err = '0'           report "T6.1: expected got err = 0";
     assert arp_req_rslt.mac = x"00231829267c"   report "T6.1: wrong mac value";
@@ -516,7 +515,7 @@ begin
     wait for clk_period;
     report "T6.2: wait for reply from store";
     wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    wait until falling_edge(clk);
+    wait until falling_edge(clks.rx_clk);
     assert arp_req_rslt.got_mac = '1'           report "T6.2: expected got mac";
     assert arp_req_rslt.got_err = '0'           report "T6.2: expected got err = 0";
     assert arp_req_rslt.mac = x"021203230454"   report "T6.2: wrong mac value";
