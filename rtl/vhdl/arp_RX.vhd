@@ -36,18 +36,18 @@ use work.xUDP_Common_pkg.all;
 entity arp_rx is
     port (
         -- MAC layer RX signals
-        data_in      : in axi4_dvlk64_t; -- ethernet frame (from dst mac addr through to last word of frame)
+        data_in                 : in axi4_dvlk64_t; -- ethernet frame (from dst mac addr through to last word of frame)
         -- ARP output signals
-        recv_who_has    : out std_logic;    -- pulse will be latched
-        arp_entry_for_who_has : out arp_entry_t;  -- target for who_has msg (Iie, who to reply to)
-        recv_I_have     : out std_logic;    -- pulse will be latched
-        arp_entry_for_I_have  : out arp_entry_t;  -- arp target for I_have msg
+        recv_who_has            : out std_logic;    -- pulse will be latched
+        arp_entry_for_who_has   : out arp_entry_t;  -- target for who_has msg (Iie, who to reply to)
+        recv_I_have             : out std_logic;    -- pulse will be latched
+        arp_entry_for_I_have    : out arp_entry_t;  -- arp target for I_have msg
         -- control and status signals
-        req_count     : out std_logic_vector(7 downto 0);   -- count of arp pkts received
+        req_count               : out std_logic_vector(7 downto 0);   -- count of arp pkts received
         -- system signals
-        cfg         : in xUDP_CONIGURATION_T; -- system config
-        clk       : in  std_logic;
-        reset       : in  std_logic
+        cfg                     : in xUDP_CONIGURATION_T; -- system config
+        clk                     : in  std_logic;
+        reset                   : in  std_logic
     );
 end arp_rx;
 
