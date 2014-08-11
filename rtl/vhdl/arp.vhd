@@ -43,6 +43,7 @@ entity arp is
                                                 -- though a "default gateway or router"
         CLOCK_FREQ          : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
         ARP_TIMEOUT         : integer := 60;    -- ARP response timeout (s)
+        ARP_TX_TIMEOUT_CLKS : integer := 200;    -- # time allowed to tx before abort
         ARP_MAX_PKT_TMO     : integer := 5;     -- # wrong nwk pkts received before set error
         MAX_ARP_ENTRIES     : integer := 255    -- max entries in the arp store
         );
@@ -97,6 +98,9 @@ component arp_req
 end component;
 
 component arp_tx
+    generic (
+        TIMEOUT_CLKS    : integer := 200    -- # time allowed to tx before abort
+      );
     port (
         -- control signals
         send_I_have     : in  std_logic;    -- pulse will be latched
@@ -243,7 +247,11 @@ begin
         clks                    => clks
     );
 
-    tx : arp_tx port map (
+    tx : arp_tx 
+    generic map (
+        TIMEOUT_CLKS            => ARP_TX_TIMEOUT_CLKS
+    )
+    port map (
         -- control signals
         send_I_have             => send_I_have_int,
         arp_entry               => arp_entry_int,

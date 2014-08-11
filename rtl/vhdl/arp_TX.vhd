@@ -27,6 +27,9 @@ use work.xUDP_Common_pkg.all;
 
 
 entity arp_tx is
+    generic (
+        TIMEOUT_CLKS    : integer := 200    -- # time allowed to tx before abort
+      );
     port (
         -- control signals
         send_I_have     : in  std_logic;    -- pulse will be latched
@@ -48,6 +51,7 @@ end arp_tx;
 architecture Behavioral of arp_tx is
 
     type count_mode_t is (RST, INCR, HOLD);
+    type dcount_mode_t is (SET, DECR, HOLD);
     type set_clr_t is (SET, CLR, HOLD);
     type tx_state_t is (IDLE, WAIT_MAC, SEND);
     type tx_mode_t is (REPLY, REQUEST);
@@ -55,13 +59,14 @@ architecture Behavioral of arp_tx is
     -- state variables
     signal tx_mac_chn_reqd  : std_logic;
     signal tx_state         : tx_state_t;
-    signal tx_count         : unsigned (2 downto 0);
+    signal tx_count         : unsigned(2 downto 0);
     signal send_I_have_reg  : std_logic;
     signal send_who_has_reg : std_logic;
     signal I_have_target    : arp_entry_t;  -- latched target for "I have" request
     signal who_has_target   : std_logic_vector (31 downto 0);  -- latched IP for "who has" request
     signal tx_mode          : tx_mode_t;  -- what sort of tx to make
     signal target           : arp_entry_t;  -- target to send to
+    signal timer            : unsigned(7 downto 0); -- down counter which stops at 0
 
     -- busses
     signal next_tx_state   : tx_state_t;
@@ -76,6 +81,7 @@ architecture Behavioral of arp_tx is
     signal set_send_who_has    : set_clr_t;
     signal set_tx_mode         : std_logic;
     signal set_target          : std_logic;
+    signal set_timer           : dcount_mode_t;
 
 -- big endian encoding
 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
@@ -112,12 +118,12 @@ tx_combinatorial : process (
     cfg, reset,
     -- state variables
     tx_state, tx_count, tx_mac_chn_reqd, I_have_target, who_has_target,
-    send_I_have_reg, send_who_has_reg, tx_mode, target,
+    send_I_have_reg, send_who_has_reg, tx_mode, target, timer, 
     -- busses
     next_tx_state, tx_mode_val, target_val,
     -- control signals
     tx_count_mode, kill_data_out_valid, set_send_I_have, set_send_who_has,
-    set_chn_reqd, set_tx_mode, set_target
+    set_chn_reqd, set_tx_mode, set_target, set_timer
 )
 begin
     -- set output followers
@@ -149,6 +155,7 @@ begin
     set_send_who_has    <= HOLD;
     set_tx_mode         <= '0';
     set_target          <= '0';
+    set_timer           <= HOLD;
 
     -- process requests in regardless of FSM state
     if send_I_have = '1' then
@@ -170,6 +177,7 @@ begin
                 set_target      <= '1';
                 set_send_I_have <= CLR;
                 next_tx_state   <= WAIT_MAC;
+                set_timer       <= SET;
             elsif send_who_has_reg = '1' then
                 set_chn_reqd     <= SET;
                 tx_mode_val      <= REQUEST;
@@ -179,6 +187,7 @@ begin
                 set_target       <= '1';
                 set_send_who_has <= CLR;
                 next_tx_state    <= WAIT_MAC;
+                set_timer        <= SET;
             else
                 set_chn_reqd <= CLR;
             end if;
@@ -188,7 +197,11 @@ begin
             if mac_tx_granted = '1' then
                 next_tx_state <= SEND;
             end if;
-            -- TODO - should handle timeout here
+            set_timer <= DECR;
+            if timer = x"00" then
+                next_tx_state <= IDLE;
+                set_chn_reqd <= SET;
+            end if;
 
         when SEND =>
             if data_out_ready = '1' then
@@ -246,6 +259,12 @@ begin
               when others =>
                 next_tx_state <= IDLE;
             end case;
+            set_timer <= DECR;
+            if timer = x"00" then
+                next_tx_state <= IDLE;
+                set_chn_reqd <= SET;
+            end if;
+
         end case;
 end process;
 
@@ -264,7 +283,8 @@ begin
             I_have_target.mac <= (others => '0');
             target.ip         <= (others => '0');
             target.mac        <= (others => '1');
-
+            timer <= (others => '0');
+            
         else
         -- normal (non reset) processing
 
@@ -312,12 +332,19 @@ begin
 
         -- tx_count processing
         case tx_count_mode is
-          when RST =>
-            tx_count <= "000";
-          when INCR =>
-            tx_count <= tx_count + 1;
-          when HOLD =>
-            tx_count <= tx_count;
+          when RST =>  tx_count <= "000";
+          when INCR => tx_count <= tx_count + 1;
+          when HOLD => tx_count <= tx_count;
+        end case;
+
+        -- timer processing
+        case set_timer is
+          when SET =>  timer <= to_unsigned(TIMEOUT_CLKS,8);
+          when DECR => 
+            if timer /= x"00" then
+                timer <= timer - 1;
+            end if;
+          when HOLD => -- do nothing;
         end case;
 
         -- control access request to mac tx chn

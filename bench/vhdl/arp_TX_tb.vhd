@@ -41,7 +41,10 @@ ARCHITECTURE behavior OF arp_TX_tb IS
     -- Component Declaration for the Unit Under Test (UUT)
  
 COMPONENT arp_TX
-    PORT(
+    generic (
+        TIMEOUT_CLKS    : integer := 200    -- # time allowed to tx before abort
+      );
+    port (
         -- control signals
         send_I_have     : in  std_logic;    -- pulse will be latched
         arp_entry       : in  arp_entry_t;  -- arp target for I_have req (will be latched)
@@ -89,7 +92,11 @@ END COMPONENT;
 BEGIN
  
     -- Instantiate the Unit Under Test (UUT)
-    uut: arp_TX PORT MAP (
+    uut: arp_TX 
+    generic map (
+        TIMEOUT_CLKS    => 100
+    )
+    PORT MAP (
         -- control signals
         send_I_have     => send_I_have,
         arp_entry       => arp_entry,

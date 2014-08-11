@@ -14,10 +14,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="18" />
-   <wave_markers>
-      <marker time="393600000" label="" />
-   </wave_markers>
+   <WVObjectSize size="19" />
    <wvobject fp_name="/arp_tx_tb/reset" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">reset</obj_property>
       <obj_property name="ObjectShortName">reset</obj_property>
@@ -61,6 +58,10 @@
    <wvobject fp_name="/arp_tx_tb/uut/tx_state" type="other" db_ref_id="1">
       <obj_property name="ElementShortName">tx_state</obj_property>
       <obj_property name="ObjectShortName">tx_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tx_tb/uut/timer" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">timer[7:0]</obj_property>
+      <obj_property name="ObjectShortName">timer[7:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tx_tb/uut/mac_tx_req" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">mac_tx_req</obj_property>

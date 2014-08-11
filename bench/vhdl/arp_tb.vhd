@@ -46,6 +46,7 @@ component arp
                                                 -- though a "default gateway or router"
         CLOCK_FREQ          : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
         ARP_TIMEOUT         : integer := 60;    -- ARP response timeout (s)
+        ARP_TX_TIMEOUT_CLKS : integer := 200;    -- # time allowed to tx before abort
         ARP_MAX_PKT_TMO     : integer := 5;     -- # wrong nwk pkts received before set error
         MAX_ARP_ENTRIES     : integer := 255    -- max entries in the arp store
         );
@@ -91,7 +92,7 @@ end component;
     -- Clock period definitions
     constant clk_period : time := 6.4 ns;
 
-    type test_t is (RST,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,DONE);
+    type test_t is (RST,T1,T2,T3,T4,T5,T6,T7,T8,T81,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,DONE);
     signal test             : test_t;
  
   
@@ -100,9 +101,10 @@ begin
 -- Instantiate the Unit Under Test (UUT)
 uut : arp
     generic map (
-        no_default_gateway => no_default_gateway,
-        CLOCK_FREQ      => 10,                -- artificially low count to enable pragmatic testing
-        ARP_TIMEOUT     => 20
+        no_default_gateway  => no_default_gateway,
+        ARP_TX_TIMEOUT_CLKS => 100,
+        CLOCK_FREQ          => 10,                -- artificially low count to enable pragmatic testing
+        ARP_TIMEOUT         => 20
     )
     port map (
         -- lookup request mappings
@@ -160,8 +162,8 @@ begin
     clks.rx_reset <= '0';
     wait for clk_period*5;
 
-    assert mac_tx_req = '0'         report "RST: mac_tx_req asserted on reset" severity error;
-    assert req_count = x"00"        report "RST: req_count incorrect" severity error;
+    assert mac_tx_req = '0'         report "RST: mac_tx_req asserted on reset" severity failure;
+    assert req_count = x"00"        report "RST: req_count incorrect" severity failure;
 
     arp_req_req.lookup_req <= '0';
     arp_req_req.ip         <= (others => '0');
@@ -212,57 +214,57 @@ begin
     wait until data_out.tvalid = '1';
     wait until falling_edge(clks.rx_clk);
     report "T1: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T1a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"00231829267c0023" report "T1a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"00231829267c0023" report "T1a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T1a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T1a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T1a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T1a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400020023" report "T1a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400020023" report "T1a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T1a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T1a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T1a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T1a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"00231829267cC0A8" report "T1a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"00231829267cC0A8" report "T1a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T1a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T1a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T1a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T1a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T1a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T1a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"0501000000000000" report "T1a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0501000000000000" report "T1a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T1b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T1b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T1b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T1b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T1b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T1b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T1b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T1b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T1c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T1c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
-    assert req_count = x"01"                    report "T1c: req_count incorrect" severity error;
+    assert req_count = x"01"                    report "T1c: req_count incorrect" severity failure;
     wait for clk_period*5;
 
     report "T2:  Send another ARP request: who has 192.168.5.9? Tell 192.168.5.1, hold off tx";
@@ -316,57 +318,57 @@ begin
         wait until falling_edge(clks.rx_clk);
     end if;
     report "T2: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T2a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"00231829267c0023" report "T2a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"00231829267c0023" report "T2a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T2a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T2a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T2a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T2a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400020023" report "T2a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400020023" report "T2a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T2a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T2a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T2a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T2a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"00231829267cC0A8" report "T2a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"00231829267cC0A8" report "T2a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T2a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T2a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T2a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T2a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T2a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T2a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"0501000000000000" report "T2a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0501000000000000" report "T2a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T2b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T2b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T2b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T2b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T2b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T2b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T2b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T2b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T2c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T2c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
-    assert req_count = x"02"                    report "T2c: req_count incorrect" severity error;
+    assert req_count = x"02"                    report "T2c: req_count incorrect" severity failure;
     wait for clk_period*5;
 
 
@@ -379,9 +381,9 @@ begin
     report "T3: wait for reply from store";
     wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
     wait until falling_edge(clks.rx_clk);
-    assert arp_req_rslt.got_mac = '1'           report "T3: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'           report "T3: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"00231829267c"   report "T3: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'           report "T3: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'           report "T3: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"00231829267c"   report "T3: wrong mac value" severity failure;
     wait for clk_period*5;
 
     -- the entry that was in the store should now be in the cache - check it
@@ -391,9 +393,9 @@ begin
     arp_req_req.lookup_req <= '1';
     wait for clk_period;
     arp_req_req.lookup_req <= '0';
-    assert arp_req_rslt.got_mac = '1'           report "T4: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'           report "T4: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"00231829267c"   report "T4: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'           report "T4: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'           report "T4: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"00231829267c"   report "T4: wrong mac value" severity failure;
     wait for clk_period*5;
 
     report "T5 - Send a request for the IP that is not cached or in the store";
@@ -414,54 +416,54 @@ begin
         wait until falling_edge(clks.rx_clk);
     end if;
     report "T5: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T5a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"ffffffffffff0023" report "T5a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffff0023" report "T5a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T5a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T5a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T5a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T5a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400010023" report "T5a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400010023" report "T5a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T5a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T5a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T5a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T5a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"ffffffffffffC0A8" report "T5a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T5a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T5a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T5a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T5a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T5a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T5a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T5a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"0503000000000000" report "T5a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0503000000000000" report "T5a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T5b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T5b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T5b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T5b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T5b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T5b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T5b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T5b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T5c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T5c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
     wait for clk_period*5;
@@ -487,10 +489,10 @@ begin
     data_in <= empty_axi4_dvlk64;  
     wait for clk_period;
 
-    assert arp_req_rslt.got_mac = '1'           report "T5.2: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'           report "T5.2: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"021203230454"   report "T5.2: wrong mac value" severity error;
-    assert req_count = x"03"                    report "T5c: req_count incorrect" severity error;
+    assert arp_req_rslt.got_mac = '1'           report "T5.2: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'           report "T5.2: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"021203230454"   report "T5.2: wrong mac value" severity failure;
+    assert req_count = x"03"                    report "T5c: req_count incorrect" severity failure;
     wait for clk_period*5;
 
     report "T6: check that both these IPs remain in the store";
@@ -539,54 +541,54 @@ begin
         wait until falling_edge(clks.rx_clk);
     end if;
     report "T7: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T7a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"ffffffffffff0023" report "T7a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffff0023" report "T7a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T7a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T7a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T7a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T7a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400010023" report "T7a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400010023" report "T7a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T7a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T7a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T7a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T7a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"ffffffffffffC0A8" report "T7a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T7a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T7a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T7a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T7a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T7a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T7a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T7a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"050e000000000000" report "T7a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"050e000000000000" report "T7a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T7b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T7b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T7b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T7b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T7b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T7b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T7b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T7b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T7c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T7c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
     wait for clk_period*5;
@@ -617,8 +619,8 @@ begin
     data_in <= empty_axi4_dvlk64;  
     wait for clk_period;
 
-    assert arp_req_rslt.got_mac = '0'           report "T7.2: expected got mac = 0" severity error;
-    assert arp_req_rslt.got_err = '0'           report "T7.2: expected got err = 0" severity error;
+    assert arp_req_rslt.got_mac = '0'           report "T7.2: expected got mac = 0" severity failure;
+    assert arp_req_rslt.got_err = '0'           report "T7.2: expected got err = 0" severity failure;
     wait for clk_period*4;
 
     -- Send the reply
@@ -643,15 +645,15 @@ begin
     data_in <= empty_axi4_dvlk64;  
     wait for clk_period;
 
-    assert arp_req_rslt.got_mac = '1'               report "T7.3: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T7.3: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"76349855aa37"       report "T7.3: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T7.3: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T7.3: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"76349855aa37"       report "T7.3: wrong mac value" severity failure;
     wait for clk_period*4;
     
     -----------------------------
     -- Test for timeout
     -- T8  - send who has, but timeout waiting for reply
-    -- T8a - timeout waiting for mac granted
+    -- T81 - timeout waiting for mac granted
     -----------------------------
 
     report "T8: Request 192.168.5.4 (not cached), dont send a reply and wait for timeout";
@@ -661,13 +663,29 @@ begin
     wait for clk_period;
     arp_req_req.lookup_req <= '0';
     wait for clk_period*20;
-    assert mac_tx_req = '1'                         report "T8: should be requesting TX channel" severity error;
+    assert mac_tx_req = '1'                         report "T8: should be requesting TX channel" severity failure;
     wait for clk_period*20;
     mac_tx_granted <= '1';
     wait for clk_period*220;
-    assert arp_req_rslt.got_mac = '0'               report "T8: should not have got mac" severity error;
-    assert arp_req_rslt.got_err = '1'               report "T8: should have got err" severity error;
+    assert arp_req_rslt.got_mac = '0'               report "T8: should not have got mac" severity failure;
+    assert arp_req_rslt.got_err = '1'               report "T8: should have got err" severity failure;
     mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    report "T81: Request 192.168.5.20 (not cached), dont grant mac access, and wait for timeout";
+    test <= T81;
+    arp_req_req.ip         <= x"c0a80520";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';    
+    wait for clk_period*20;
+    assert mac_tx_req = '1'                         report "T81: should be requesting TX channel" severity failure;
+    wait for clk_period*20;
+    -- don't grant mac channel
+    wait for clk_period*220;
+    assert arp_req_rslt.got_mac = '0'               report "T81: should not have got mac" severity failure;
+    assert arp_req_rslt.got_err = '1'               report "T81: should have got err" severity failure;
+    assert mac_tx_req = '0'                         report "T81: should not be requesting TX channel" severity failure;
     wait for clk_period*5;
 
     ----------------------
@@ -679,12 +697,12 @@ begin
     arp_req_req.ip         <= x"c0a80507";
     arp_req_req.lookup_req <= '1';
     wait for clk_period;
-    assert arp_req_rslt.got_mac = '0'               report "T9: should not yet have mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity error;
+    assert arp_req_rslt.got_mac = '0'               report "T9: should not yet have mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity failure;
 
     arp_req_req.lookup_req <= '0';
     wait for clk_period*20;
-    assert mac_tx_req = '1'                         report "T9: should be requesting TX channel" severity error;
+    assert mac_tx_req = '1'                         report "T9: should be requesting TX channel" severity failure;
     wait for clk_period*5;
     mac_tx_granted <= '1';
     wait for clk_period*50;
@@ -710,9 +728,9 @@ begin
     data_in <= empty_axi4_dvlk64;  
     wait for clk_period;
 
-    assert arp_req_rslt.got_mac = '1'               report "T9: should have got mac" severity error;
-    assert arp_req_rslt.mac = x"021503230454"       report "T9: incorrect mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T9: should have got mac" severity failure;
+    assert arp_req_rslt.mac = x"021503230454"       report "T9: incorrect mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity failure;
     wait for clk_period*5;
 
     report "T10: Request 192.168.5.7 again an expect it to be in the cache";
@@ -720,8 +738,8 @@ begin
     arp_req_req.ip         <= x"c0a80507";
     arp_req_req.lookup_req <= '1';
     wait for clk_period;
-    assert arp_req_rslt.got_mac = '1'               report "T10: should have mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T10: should not have got err" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T10: should have mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T10: should not have got err" severity failure;
 
     arp_req_req.lookup_req <= '0';
     wait for clk_period*5;
@@ -742,9 +760,9 @@ begin
         wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
         wait until falling_edge(clks.rx_clk);
     end if;
-    assert arp_req_rslt.got_mac = '1'               report "T11: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T11: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"00231829267c"       report "T11: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T11: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T11: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"00231829267c"       report "T11: wrong mac value" severity failure;
     wait for clk_period*5;
 
     -------------------------
@@ -761,11 +779,11 @@ begin
     arp_req_req.ip         <= x"c0a80507";
     arp_req_req.lookup_req <= '1';
     wait for clk_period;
-    assert arp_req_rslt.got_mac = '0'           report "T12: should not yet have mac" severity error;
-    assert arp_req_rslt.got_err = '0'           report "T12: should not have got err" severity error;
+    assert arp_req_rslt.got_mac = '0'           report "T12: should not yet have mac" severity failure;
+    assert arp_req_rslt.got_err = '0'           report "T12: should not have got err" severity failure;
     arp_req_req.lookup_req <= '0';
     wait for clk_period*20;
-    assert mac_tx_req = '1'                     report "T12: should be requesting TX channel" severity error;
+    assert mac_tx_req = '1'                     report "T12: should be requesting TX channel" severity failure;
     wait for clk_period;
     mac_tx_granted <= '1';
     report "T12: waiting for data_out_valid";
@@ -774,54 +792,54 @@ begin
         wait until falling_edge(clks.rx_clk);
     end if;
     report "T12: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T12a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"ffffffffffff0023" report "T12a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffff0023" report "T12a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T12a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T12a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T12a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T12a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400010023" report "T12a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400010023" report "T12a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T12a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T12a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T12a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T12a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"ffffffffffffC0A8" report "T12a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T12a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T12a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T12a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T12a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T12a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T12a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T12a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"0507000000000000" report "T12a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0507000000000000" report "T12a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T12b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T12b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T12b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T12b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T12b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T12b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T12b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T12b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T12c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T12c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
     wait for clk_period*5;
@@ -873,54 +891,54 @@ begin
     end if;
     -- expect "who has" with IP addr of gateway: c0 a8 05 01
     report "T13: got data_out_valid";
-    assert data_out.tvalid = '1'                report "T13a d0 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13a d0 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13a d0 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13a d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13a d0 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 0  |               target mac                            | src mac (47..32)|
-    assert data_out.tdata = x"ffffffffffff0023" report "T13a d0 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffff0023" report "T13a d0 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T13a d1 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13a d1 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13a d1 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13a d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13a d1 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
-    assert data_out.tdata = x"2021222308060001" report "T13a d1 - tdata incorrect" severity error;
+    assert data_out.tdata = x"2021222308060001" report "T13a d1 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T13a d2 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13a d2 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13a d2 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13a d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13a d2 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
-    assert data_out.tdata = x"0800060400010023" report "T13a d2 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0800060400010023" report "T13a d2 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T13a d3 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13a d3 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13a d3 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13a d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13a d3 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
-    assert data_out.tdata = x"20212223c0a80509" report "T13a d3 - tdata incorrect" severity error;
+    assert data_out.tdata = x"20212223c0a80509" report "T13a d3 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T13a d4 - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13a d4 - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13a d4 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13a d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13a d4 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
-    assert data_out.tdata = x"ffffffffffffC0A8" report "T13a d4 - tdata incorrect" severity error;
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T13a d4 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '1'                report "T13a d5 - tvalid incorrect" severity error;
-    assert data_out.tlast = '1'                 report "T13a d5 - tlast incorrect" severity error;
-    assert data_out.tkeep = "11000000"          report "T13a d5 - tkeep incorrect" severity error;
+    assert data_out.tvalid = '1'                report "T13a d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'                 report "T13a d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"          report "T13a d5 - tkeep incorrect" severity failure;
     --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
     --    | 5  |   TPA (15..0)   |
-    assert data_out.tdata = x"0501000000000000" report "T13a d5 - tdata incorrect" severity error;
+    assert data_out.tdata = x"0501000000000000" report "T13a d5 - tdata incorrect" severity failure;
     wait for clk_period;
-    assert data_out.tvalid = '0'                report "T13b - tvalid incorrect" severity error;
-    assert data_out.tlast = '0'                 report "T13b - tlast incorrect" severity error;
-    assert data_out.tkeep = "00000000"          report "T13b - tkeep incorrect" severity error;
-    assert data_out.tdata = x"0000000000000000" report "T13b - tdata incorrect" severity error;
+    assert data_out.tvalid = '0'                report "T13b - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'                 report "T13b - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"          report "T13b - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T13b - tdata incorrect" severity failure;
     wait for clk_period;
-    assert mac_tx_req = '0'                     report "T13c - mac_tx_req incorrect" severity error;
+    assert mac_tx_req = '0'                     report "T13c - mac_tx_req incorrect" severity failure;
     wait for clk_period;
     mac_tx_granted <= '0';
     wait for clk_period*5;
@@ -949,9 +967,9 @@ begin
     data_in <= empty_axi4_dvlk64;  
     wait for clk_period;
 
-    assert arp_req_rslt.got_mac = '1'               report "T13.2: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T13.2: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"081203230464"       report "T13.2: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T13.2: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T13.2: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"081203230464"       report "T13.2: wrong mac value" severity failure;
     wait for clk_period*5;
     
     report "T14 - Send a request for an other IP that is not on the local network";
@@ -962,9 +980,9 @@ begin
     arp_req_req.lookup_req <= '0';
     report "T14: reply should be from cache as the gateway is the same";
     --    wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    assert arp_req_rslt.got_mac = '1'               report "T14: expected got mac" severity error;
-    assert arp_req_rslt.got_err = '0'               report "T14: expected got err = 0" severity error;
-    assert arp_req_rslt.mac = x"081203230464"       report "T14: wrong mac value" severity error;
+    assert arp_req_rslt.got_mac = '1'               report "T14: expected got mac" severity failure;
+    assert arp_req_rslt.got_err = '0'               report "T14: expected got err = 0" severity failure;
+    assert arp_req_rslt.mac = x"081203230464"       report "T14: wrong mac value" severity failure;
     wait for clk_period*5;
 
     report "--- end of tests ---";
