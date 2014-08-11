@@ -91,7 +91,7 @@ end component;
     -- Clock period definitions
     constant clk_period : time := 6.4 ns;
 
-    type test_t is (RST,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,DONE);
+    type test_t is (RST,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,T15,T16,T17,T18,T19,T20,DONE);
     signal test             : test_t;
  
   
@@ -402,7 +402,7 @@ begin
     arp_req_req.lookup_req <= '1';
     wait for clk_period;
     arp_req_req.lookup_req <= '0';
-    report "T5.1: Send an ARP req who has: 192.168.5.3?";
+    report "T5.1: Check that it sends an ARP req who has: 192.168.5.3?";
     report "T5: waiting for chn req";
     wait until mac_tx_req = '1';
     wait until falling_edge(clks.rx_clk);
@@ -521,569 +521,451 @@ begin
     assert arp_req_rslt.mac = x"021203230454"   report "T6.2: wrong mac value";
     wait for clk_period*5;
 
-    --
-    --    report "T7 - test that receipt of wrong I Have does not satisfy a current req";
-    --    arp_req_req.ip         <= x"c0a8050e";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    arp_req_req.lookup_req <= '0';
-    --    report "T7: waiting for data_out_valid";
-    --    wait until data_out_valid = '1';
-    --    report "T7: got data_out_valid";
-    --    wait for clk_period*10;
-    --    data_out_ready         <= '0';
-    --    wait for clk_period*2;
-    --    data_out_ready         <= '1';
-    --    wait for clk_period*12;
-    --    assert data_out = x"01" report "T7: expected opcode = 01 for request 'who has'";
-    --    -- expect our mac 00 23 20 21 22 23
-    --    wait for clk_period;
-    --    assert data_out = x"00" report "T7: incorrect our mac.0";
-    --    wait for clk_period;
-    --    assert data_out = x"23" report "T7: incorrect our mac.1";
-    --    wait for clk_period;
-    --    assert data_out = x"20" report "T7: incorrect our mac.2";
-    --    wait for clk_period;
-    --    assert data_out = x"21" report "T7: incorrect our mac.3";
-    --    wait for clk_period;
-    --    assert data_out = x"22" report "T7: incorrect our mac.4";
-    --    wait for clk_period;
-    --    assert data_out = x"23" report "T7: incorrect our mac.5";
-    --    -- expect our IP c0 a8 05 05
-    --    wait for clk_period;
-    --    assert data_out = x"c0" report "T7: incorrect our IP.0";
-    --    wait for clk_period;
-    --    assert data_out = x"a8" report "T7: incorrect our IP.1";
-    --    wait for clk_period;
-    --    assert data_out = x"05" report "T7: incorrect our IP.2";
-    --    wait for clk_period;
-    --    assert data_out = x"09" report "T7: incorrect our IP.3";
-    --
-    --    -- expect empty target mac
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.0";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.1";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.2";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.3";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.4";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T7: incorrect target mac.5";
-    --    -- expect target IP c0 a8 05 0e
-    --    wait for clk_period;
-    --    assert data_out = x"c0" report "T7: incorrect target IP.0";
-    --    wait for clk_period;
-    --    assert data_out = x"a8" report "T7: incorrect target IP.1";
-    --    wait for clk_period;
-    --    assert data_out = x"05" report "T7: incorrect target IP.2";
-    --    assert data_out_last = '0' report "T7: data out last incorrectly set on target IP.2 byte";
-    --    wait for clk_period;
-    --    assert data_out = x"0e" report "T7: incorrect target IP.3";
-    --    assert data_out_last = '1' report "T7: data out last should be set";
-    --
-    --    wait for clk_period*10;
-    --
-    --    -- Send the reply
-    --    data_out_ready <= '1';
-    --
-    --    report "T7.2: Send an arbitrary unwanted ARP reply: 192.168.5.143 has mac 57:12:34:19:23:9a";
-    --    data_in_valid <= '1';
-    --    -- dst MAC (bc)
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    -- src MAC
-    --    data_in       <= x"57"; wait for clk_period;
-    --    data_in       <= x"12"; wait for clk_period;
-    --    data_in       <= x"34"; wait for clk_period;
-    --    data_in       <= x"19"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"9a"; wait for clk_period;
-    --    -- type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- HW type
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Protocol type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    -- HW size
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- protocol size
-    --    data_in       <= x"04"; wait for clk_period;
-    --    -- Opcode
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"02"; wait for clk_period;
-    --    -- Sender MAC
-    --    data_in       <= x"57"; wait for clk_period;
-    --    data_in       <= x"12"; wait for clk_period;
-    --    data_in       <= x"34"; wait for clk_period;
-    --    data_in       <= x"19"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"9a"; wait for clk_period;
-    --    -- Sender IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"25"; wait for clk_period;
-    --    data_in       <= x"93"; wait for clk_period;
-    --    -- Target MAC
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"20"; wait for clk_period;
-    --    data_in       <= x"21"; wait for clk_period;
-    --    data_in       <= x"22"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    -- Target IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"09"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '1';
-    --    data_in       <= x"00"; wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '0' report "T7.2: expected got mac = 0";
-    --    assert arp_req_rslt.got_err = '0' report "T7.2: expected got err = 0";
-    --    data_in_last  <= '0';
-    --    data_in_valid <= '0';
-    --    wait for clk_period*4;
-    --
-    --    -- Send the reply
-    --    data_out_ready <= '1';
-    --
-    --    report "T7.3: Send a wanted ARP reply: 192.168.5.e has mac 76:34:98:55:aa:37";
-    --    data_in_valid <= '1';
-    --    -- dst MAC (bc)
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    -- src MAC
-    --    data_in       <= x"76"; wait for clk_period;
-    --    data_in       <= x"34"; wait for clk_period;
-    --    data_in       <= x"98"; wait for clk_period;
-    --    data_in       <= x"55"; wait for clk_period;
-    --    data_in       <= x"aa"; wait for clk_period;
-    --    data_in       <= x"37"; wait for clk_period;
-    --    -- type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- HW type
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Protocol type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    -- HW size
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- protocol size
-    --    data_in       <= x"04"; wait for clk_period;
-    --    -- Opcode
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"02"; wait for clk_period;
-    --    -- Sender MAC
-    --    data_in       <= x"76"; wait for clk_period;
-    --    data_in       <= x"34"; wait for clk_period;
-    --    data_in       <= x"98"; wait for clk_period;
-    --    data_in       <= x"55"; wait for clk_period;
-    --    data_in       <= x"aa"; wait for clk_period;
-    --    data_in       <= x"37"; wait for clk_period;
-    --    -- Sender IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"0e"; wait for clk_period;
-    --    -- Target MAC
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"20"; wait for clk_period;
-    --    data_in       <= x"21"; wait for clk_period;
-    --    data_in       <= x"22"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    -- Target IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"09"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '1' report "T7.3: expected got mac";
-    --    assert arp_req_rslt.got_err = '0' report "T7.3: expected got err = 0";
-    --    assert arp_req_rslt.mac = x"76349855aa37" report "T7.3: wrong mac value";
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '1';
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '0';
-    --    data_in_valid <= '0';
-    --    wait for clk_period*4;
-    --
-    --
-    --    report "T8: Request 192.168.5.4 (not cached), dont send a reply and wait for timeout";
-    --    arp_req_req.ip         <= x"c0a80504";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    arp_req_req.lookup_req <= '0';
-    --    wait for clk_period*20;
-    --    assert mac_tx_req = '1' report "T8: should be requesting TX channel";
-    --    wait for clk_period*220;
-    --    assert arp_req_rslt.got_mac = '0' report "T8: should not have got mac";
-    --    assert arp_req_rslt.got_err = '1' report "T8: should have got err";
-    --
-    --    report "T9: Request 192.168.5.7 (not cached= and Send an ARP reply: 192.168.5.7 has mac 02:15:03:23:04:54";
-    --    arp_req_req.ip         <= x"c0a80507";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '0' report "T9: should not yet have mac";
-    --    assert arp_req_rslt.got_err = '0' report "T9: should not have got err";
-    --
-    --    arp_req_req.lookup_req <= '0';
-    --    wait for clk_period*20;
-    --    assert mac_tx_req = '1' report "T9: should be requesting TX channel";
-    --    wait for clk_period*50;
-    --    -- Send the reply
-    --    data_out_ready         <= '1';
-    --
-    --    data_in_valid <= '1';
-    --    -- dst MAC (bc)
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    -- src MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"15"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"04"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- HW type
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Protocol type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    -- HW size
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- protocol size
-    --    data_in       <= x"04"; wait for clk_period;
-    --    -- Opcode
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"02"; wait for clk_period;
-    --    -- Sender MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"15"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"04"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- Sender IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"07"; wait for clk_period;
-    --    -- Target MAC
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"20"; wait for clk_period;
-    --    data_in       <= x"21"; wait for clk_period;
-    --    data_in       <= x"22"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    -- Target IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"09"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '1';
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '0';
-    --    data_in_valid <= '0';
-    --    wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '1' report "T9: should have got mac";
-    --    assert arp_req_rslt.mac = x"021503230454" report "T9: incorrect mac";
-    --    assert arp_req_rslt.got_err = '0' report "T9: should not have got err";
-    --    wait for clk_period*10;
-    --
-    --    report "T10: Request 192.168.5.7 again an expect it to be in the cache";
-    --    arp_req_req.ip         <= x"c0a80507";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '1' report "T10: should have mac";
-    --    assert arp_req_rslt.got_err = '0' report "T10: should not have got err";
-    --
-    --    arp_req_req.lookup_req <= '0';
-    --    wait for clk_period*20;
-    --    
-    ----
-    --    wait until clk = '1';
-    --    report "T11 - Send a request for the IP that is not on the local network";
-    --    arp_req_req.ip         <= x"0a000003";  --c0a80501
-    --    arp_req_req.lookup_req <= '1';
-    --    wait until clk = '1';               --for clk_period
-    --    arp_req_req.lookup_req <= '0';
-    --    report "T11: wait for reply from store";
+    report "T7 - test that receipt of wrong I Have does not satisfy a current req";
+    test <= T7;
+    arp_req_req.ip         <= x"c0a8050e";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';
+    report "T7.1: Check that it sends an ARP req who has: 192.168.5.14?";
+    report "T7: waiting for chn req";
+    wait until mac_tx_req = '1';
+    wait until falling_edge(clks.rx_clk);
+    mac_tx_granted <= '1';
+    data_out_ready <= '1';
+    report "T7: waiting for data_out_valid";
+    if data_out.tvalid = '0' then
+        wait until data_out.tvalid = '1';
+        wait until falling_edge(clks.rx_clk);
+    end if;
+    report "T7: got data_out_valid";
+    assert data_out.tvalid = '1'                report "T7a d0 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7a d0 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7a d0 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 0  |               target mac                            | src mac (47..32)|
+    assert data_out.tdata = x"ffffffffffff0023" report "T7a d0 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T7a d1 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7a d1 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7a d1 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
+    assert data_out.tdata = x"2021222308060001" report "T7a d1 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T7a d2 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7a d2 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7a d2 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+    assert data_out.tdata = x"0800060400010023" report "T7a d2 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T7a d3 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7a d3 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7a d3 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
+    assert data_out.tdata = x"20212223c0a80509" report "T7a d3 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T7a d4 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7a d4 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7a d4 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T7a d4 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T7a d5 - tvalid incorrect" severity error;
+    assert data_out.tlast = '1'                 report "T7a d5 - tlast incorrect" severity error;
+    assert data_out.tkeep = "11000000"          report "T7a d5 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 5  |   TPA (15..0)   |
+    assert data_out.tdata = x"050e000000000000" report "T7a d5 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '0'                report "T7b - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T7b - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T7b - tkeep incorrect" severity error;
+    assert data_out.tdata = x"0000000000000000" report "T7b - tdata incorrect" severity error;
+    wait for clk_period;
+    assert mac_tx_req = '0'                     report "T7c - mac_tx_req incorrect" severity error;
+    wait for clk_period;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    wait for clk_period*10;
+    -- Send the reply
+    report "T7.2: Send an arbitrary unwanted ARP reply: 192.168.5.143 has mac 57:12:34:19:23:9a";
+    data_out_ready <= '1';
+
+    report "T5.2: Send an ARP reply: 192.168.5.3 has mac 02:12:03:23:04:54";
+
+    data_in.tkeep <= "00000000";     -- tkeep not sent until last word
+    data_in.tdata <= x"0023202122355712";  -- target mac = 002320212235, src mac = 57:12 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"3419239a08060001";  -- src mac = ...34:19:23:9a, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400025712";  -- prot values, reply, SHA = 57:12 ...
+    wait for clk_period;
+    data_in.tdata <= x"3419239aC0A82593";  -- SHA = ...34:19:23:9a, SPA = C0A82593
+    wait for clk_period;
+    data_in.tdata <= x"002320212223C0A8";  -- THA = 002320212223,  TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0509000000000000";  -- TPA = ... 0509
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+
+    assert arp_req_rslt.got_mac = '0'           report "T7.2: expected got mac = 0" severity error;
+    assert arp_req_rslt.got_err = '0'           report "T7.2: expected got err = 0" severity error;
+    wait for clk_period*4;
+
+    -- Send the reply
+    report "T7.3: Send a wanted ARP reply: 192.168.5.e has mac 76:34:98:55:aa:37";
+    data_out_ready <= '1';
+    data_in.tkeep <= "00000000";     -- tkeep not sent until last word
+    data_in.tdata <= x"0023202122237634";  -- target mac = 002320212223, src mac = 76:34 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"9855aa3708060001";  -- src mac = ...34:19:23:9a, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400027634";  -- prot values, reply, SHA = 76:34 ...
+    wait for clk_period;
+    data_in.tdata <= x"9855aa37C0A8050E";  -- SHA = ...98:55:aa:37, SPA = C0A8050E
+    wait for clk_period;
+    data_in.tdata <= x"002320212223C0A8";  -- THA = 002320212223,  TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0509000000000000";  -- TPA = ... 0509
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+
+    assert arp_req_rslt.got_mac = '1'               report "T7.3: expected got mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T7.3: expected got err = 0" severity error;
+    assert arp_req_rslt.mac = x"76349855aa37"       report "T7.3: wrong mac value" severity error;
+    wait for clk_period*4;
+    
+    -----------------------------
+    -- Test for timeout
+    -- T8  - send who has, but timeout waiting for reply
+    -- T8a - timeout waiting for mac granted
+    -----------------------------
+
+    report "T8: Request 192.168.5.4 (not cached), dont send a reply and wait for timeout";
+    test <= T8;
+    arp_req_req.ip         <= x"c0a80504";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';
+    wait for clk_period*20;
+    assert mac_tx_req = '1'                         report "T8: should be requesting TX channel" severity error;
+    wait for clk_period*20;
+    mac_tx_granted <= '1';
+    wait for clk_period*220;
+    assert arp_req_rslt.got_mac = '0'               report "T8: should not have got mac" severity error;
+    assert arp_req_rslt.got_err = '1'               report "T8: should have got err" severity error;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    ----------------------
+    -- T9, T10
+    -- Test that we can get a new mapping and then later find it in the cache
+    ----------------------
+    report "T9: Request 192.168.5.7 (not cached= and Send an ARP reply: 192.168.5.7 has mac 02:15:03:23:04:54";
+    test <= T9;
+    arp_req_req.ip         <= x"c0a80507";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    assert arp_req_rslt.got_mac = '0'               report "T9: should not yet have mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity error;
+
+    arp_req_req.lookup_req <= '0';
+    wait for clk_period*20;
+    assert mac_tx_req = '1'                         report "T9: should be requesting TX channel" severity error;
+    wait for clk_period*5;
+    mac_tx_granted <= '1';
+    wait for clk_period*50;
+    mac_tx_granted <= '0';
+    -- Send the reply
+    data_out_ready <= '1';
+    data_in.tkeep <= "00000000";           -- tkeep not sent until last word
+    data_in.tdata <= x"0023202122230215";  -- target mac = 002320212223, src mac = 0215 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0323045408060001";  -- src mac = ...03230454, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400020215";  -- prot values, reply, SHA = 0215 ...
+    wait for clk_period;
+    data_in.tdata <= x"03230454C0A80507";  -- SHA = ...03230454, SPA = C0A80507
+    wait for clk_period;
+    data_in.tdata <= x"002320212223C0A8";  -- THA = 002320212223,  TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0509000000000000";  -- TPA = ... 0509
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+
+    assert arp_req_rslt.got_mac = '1'               report "T9: should have got mac" severity error;
+    assert arp_req_rslt.mac = x"021503230454"       report "T9: incorrect mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T9: should not have got err" severity error;
+    wait for clk_period*5;
+
+    report "T10: Request 192.168.5.7 again an expect it to be in the cache";
+    test <= T10;
+    arp_req_req.ip         <= x"c0a80507";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    assert arp_req_rslt.got_mac = '1'               report "T10: should have mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T10: should not have got err" severity error;
+
+    arp_req_req.lookup_req <= '0';
+    wait for clk_period*5;
+
+    ---------------------
+    -- Test mapping to gateway for external network
+    -- (Gateway addr already cached from T6)
+    ---------------------
+    report "T11 - Send a request for the IP that is not on the local network (should be found in the cache)";
+    test <= T11;
+    arp_req_req.ip         <= x"0a000003";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';
+    wait for clk_period;
+    report "T11: wait for reply from store";
+    if arp_req_rslt.got_mac = '0' and arp_req_rslt.got_err = '0' then
+        wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
+        wait until falling_edge(clks.rx_clk);
+    end if;
+    assert arp_req_rslt.got_mac = '1'               report "T11: expected got mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T11: expected got err = 0" severity error;
+    assert arp_req_rslt.mac = x"00231829267c"       report "T11: wrong mac value" severity error;
+    wait for clk_period*5;
+
+    -------------------------
+    -- Test clearing cache
+    -------------------------
+
+    report "T12: Clear the cache, Request 192.168.5.7 again an expect a 'who has' to be sent";
+    test <= T12;
+    control.clear_cache <= '1';
+    wait for clk_period;
+    control.clear_cache <= '0';
+    wait for clk_period;
+
+    arp_req_req.ip         <= x"c0a80507";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    assert arp_req_rslt.got_mac = '0'           report "T12: should not yet have mac" severity error;
+    assert arp_req_rslt.got_err = '0'           report "T12: should not have got err" severity error;
+    arp_req_req.lookup_req <= '0';
+    wait for clk_period*20;
+    assert mac_tx_req = '1'                     report "T12: should be requesting TX channel" severity error;
+    wait for clk_period;
+    mac_tx_granted <= '1';
+    report "T12: waiting for data_out_valid";
+    if data_out.tvalid = '0' then
+        wait until data_out.tvalid = '1';
+        wait until falling_edge(clks.rx_clk);
+    end if;
+    report "T12: got data_out_valid";
+    assert data_out.tvalid = '1'                report "T12a d0 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12a d0 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12a d0 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 0  |               target mac                            | src mac (47..32)|
+    assert data_out.tdata = x"ffffffffffff0023" report "T12a d0 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T12a d1 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12a d1 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12a d1 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
+    assert data_out.tdata = x"2021222308060001" report "T12a d1 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T12a d2 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12a d2 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12a d2 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+    assert data_out.tdata = x"0800060400010023" report "T12a d2 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T12a d3 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12a d3 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12a d3 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
+    assert data_out.tdata = x"20212223c0a80509" report "T12a d3 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T12a d4 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12a d4 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12a d4 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T12a d4 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T12a d5 - tvalid incorrect" severity error;
+    assert data_out.tlast = '1'                 report "T12a d5 - tlast incorrect" severity error;
+    assert data_out.tkeep = "11000000"          report "T12a d5 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 5  |   TPA (15..0)   |
+    assert data_out.tdata = x"0507000000000000" report "T12a d5 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '0'                report "T12b - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T12b - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T12b - tkeep incorrect" severity error;
+    assert data_out.tdata = x"0000000000000000" report "T12b - tdata incorrect" severity error;
+    wait for clk_period;
+    assert mac_tx_req = '0'                     report "T12c - mac_tx_req incorrect" severity error;
+    wait for clk_period;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    -- Send the reply
+    data_out_ready <= '1';
+     -- Send the reply
+    data_out_ready <= '1';
+    data_in.tkeep <= "00000000";           -- tkeep not sent until last word
+    data_in.tdata <= x"0023202122230225";  -- target mac = 002320212223, src mac = 0225 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0323145408060001";  -- src mac = ...03231454, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400020225";  -- prot values, reply, SHA = 0225 ...
+    wait for clk_period;
+    data_in.tdata <= x"03231454C0A80507";  -- SHA = ...03231454, SPA = C0A80507
+    wait for clk_period;
+    data_in.tdata <= x"002320212223C0A8";  -- THA = 002320212223,  TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0509000000000000";  -- TPA = ... 0509
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+   
+    assert arp_req_rslt.got_mac = '1'               report "T12: should have got mac";
+    assert arp_req_rslt.mac = x"022503231454"       report "T12: incorrect mac";
+    assert arp_req_rslt.got_err = '0'               report "T12: should not have got err";
+    wait for clk_period*5;
+    
+    -------------------------------------------------
+    -- Tests for requesting IP on different 
+    -- MAC returned should be MAC of gateway node
+    -------------------------------------------------
+    
+    report "T13 - Send a request for the IP that is not on the local network";
+    test <= T13;
+    arp_req_req.ip         <= x"0a000003";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';
+    mac_tx_granted <= '1';
+    report "T13: waiting for data_out_valid";
+    if data_out.tvalid = '0' then
+        wait until data_out.tvalid = '1';
+        wait until falling_edge(clks.rx_clk);
+    end if;
+    -- expect "who has" with IP addr of gateway: c0 a8 05 01
+    report "T13: got data_out_valid";
+    assert data_out.tvalid = '1'                report "T13a d0 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13a d0 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13a d0 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 0  |               target mac                            | src mac (47..32)|
+    assert data_out.tdata = x"ffffffffffff0023" report "T13a d0 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T13a d1 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13a d1 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13a d1 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
+    assert data_out.tdata = x"2021222308060001" report "T13a d1 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T13a d2 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13a d2 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13a d2 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+    assert data_out.tdata = x"0800060400010023" report "T13a d2 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T13a d3 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13a d3 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13a d3 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
+    assert data_out.tdata = x"20212223c0a80509" report "T13a d3 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T13a d4 - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13a d4 - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13a d4 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T13a d4 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '1'                report "T13a d5 - tvalid incorrect" severity error;
+    assert data_out.tlast = '1'                 report "T13a d5 - tlast incorrect" severity error;
+    assert data_out.tkeep = "11000000"          report "T13a d5 - tkeep incorrect" severity error;
+    --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
+    --    | 5  |   TPA (15..0)   |
+    assert data_out.tdata = x"0501000000000000" report "T13a d5 - tdata incorrect" severity error;
+    wait for clk_period;
+    assert data_out.tvalid = '0'                report "T13b - tvalid incorrect" severity error;
+    assert data_out.tlast = '0'                 report "T13b - tlast incorrect" severity error;
+    assert data_out.tkeep = "00000000"          report "T13b - tkeep incorrect" severity error;
+    assert data_out.tdata = x"0000000000000000" report "T13b - tdata incorrect" severity error;
+    wait for clk_period;
+    assert mac_tx_req = '0'                     report "T13c - mac_tx_req incorrect" severity error;
+    wait for clk_period;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+    wait for clk_period*10;
+
+    -- Send the reply
+    data_out_ready <= '1';
+    report "T13.2: Send an ARP reply: 192.168.5.1 has mac 08:12:03:23:04:64";
+    data_out_ready <= '1';
+    data_in.tkeep <= "00000000";           -- tkeep not sent until last word
+    data_in.tdata <= x"0023202122230812";  -- target mac = 002320212223, src mac = 0812 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0323046408060001";  -- src mac = ...03:23:04:64, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400020812";  -- prot values, reply, SHA = 0812 ...
+    wait for clk_period;
+    data_in.tdata <= x"03230464C0A80501";  -- SHA = ...03:23:04:64,  SPA = C0A80501
+    wait for clk_period;
+    data_in.tdata <= x"002320212223C0A8";  -- THA = 002320212223,  TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0509000000000000";  -- TPA = ... 0509
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+
+    assert arp_req_rslt.got_mac = '1'               report "T13.2: expected got mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T13.2: expected got err = 0" severity error;
+    assert arp_req_rslt.mac = x"081203230464"       report "T13.2: wrong mac value" severity error;
+    wait for clk_period*5;
+    
+    report "T14 - Send a request for an other IP that is not on the local network";
+    test <= T14;
+    arp_req_req.ip         <= x"0a000204";
+    arp_req_req.lookup_req <= '1';
+    wait for clk_period;
+    arp_req_req.lookup_req <= '0';
+    report "T14: reply should be from cache as the gateway is the same";
     --    wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    --    assert arp_req_rslt.got_mac = '1' report "T11: expected got mac";
-    --    assert arp_req_rslt.got_err = '0' report "T11: expected got err = 0";
-    --    assert arp_req_rslt.mac = x"00231829267c" report "T11: wrong mac value";-- severity error;
-    --    wait for clk_period*2;    
-    ----
-    --
-    --    report "T12: Clear the cache, Request 192.168.5.7 again an expect a 'who has' to be sent";
-    --    control.clear_cache <= '1';
-    --    wait for clk_period;
-    --    control.clear_cache <= '0';
-    --    wait for clk_period;
-    --
-    --    arp_req_req.ip         <= x"c0a80507";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '0' report "T12: should not yet have mac";
-    --    assert arp_req_rslt.got_err = '0' report "T12: should not have got err";
-    --
-    --    arp_req_req.lookup_req <= '0';
-    --    wait for clk_period*20;
-    --
-    --
-    --    assert mac_tx_req = '1' report "T12: should be requesting TX channel";
-    --    wait for clk_period*50;
-    --    -- Send the reply
-    --    data_out_ready <= '1';
-    --
-    --    data_in_valid <= '1';
-    --    -- dst MAC (bc)
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    -- src MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"15"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"04"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- HW type
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Protocol type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    -- HW size
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- protocol size
-    --    data_in       <= x"04"; wait for clk_period;
-    --    -- Opcode
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"02"; wait for clk_period;
-    --    -- Sender MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"15"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"55"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- Sender IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"07"; wait for clk_period;
-    --    -- Target MAC
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"20"; wait for clk_period;
-    --    data_in       <= x"21"; wait for clk_period;
-    --    data_in       <= x"22"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    -- Target IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"09"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '1';
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '0';
-    --    data_in_valid <= '0';
-    --    wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '1' report "T12: should have got mac";
-    --    assert arp_req_rslt.mac = x"021503235554" report "T12: incorrect mac";
-    --    assert arp_req_rslt.got_err = '0' report "T12: should not have got err";
-    --    wait for clk_period*10;
-    --
-    ----    
-    --    report "T13 - Send a request for the IP that is not on the local network";
-    --    arp_req_req.ip         <= x"0a000003";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    arp_req_req.lookup_req <= '0';
-    --    report "T13: waiting for data_out_valid";
-    --    wait until data_out_valid = '1';
-    --    report "T13: got data_out_valid";
-    --    wait for clk_period*10;
-    --    data_out_ready         <= '0';
-    --    wait for clk_period*2;
-    --    data_out_ready         <= '1';
-    --    wait for clk_period*12;
-    --    assert data_out = x"01" report "T13: expected opcode = 01 for request 'who has'";
-    --    -- expect our mac 00 23 20 21 22 23
-    --    wait for clk_period;
-    --    assert data_out = x"00" report "T13: incorrect our mac.0";
-    --    wait for clk_period;
-    --    assert data_out = x"23" report "T13: incorrect our mac.1";
-    --    wait for clk_period;
-    --    assert data_out = x"20" report "T13: incorrect our mac.2";
-    --    wait for clk_period;
-    --    assert data_out = x"21" report "T13: incorrect our mac.3";
-    --    wait for clk_period;
-    --    assert data_out = x"22" report "T13: incorrect our mac.4";
-    --    wait for clk_period;
-    --    assert data_out = x"23" report "T13: incorrect our mac.5";
-    --    -- expect our IP c0 a8 05 05
-    --    wait for clk_period;
-    --    assert data_out = x"c0" report "T13: incorrect our IP.0";
-    --    wait for clk_period;
-    --    assert data_out = x"a8" report "T13: incorrect our IP.1";
-    --    wait for clk_period;
-    --    assert data_out = x"05" report "T13: incorrect our IP.2";
-    --    wait for clk_period;
-    --    assert data_out = x"09" report "T13: incorrect our IP.3";
-    --
-    --    -- expect empty target mac 
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.0";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.1";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.2";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.3";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.4";
-    --    wait for clk_period;
-    --    assert data_out = x"ff" report "T13: incorrect target mac.5";
-    --    -- expect target IP c0 a8 05 01
-    --    wait for clk_period;
-    --    assert data_out = x"c0" report "T13: incorrect target IP.0";
-    --    wait for clk_period;
-    --    assert data_out = x"a8" report "T13: incorrect target IP.1";
-    --    wait for clk_period;
-    --    assert data_out = x"05" report "T13: incorrect target IP.2";
-    --    assert data_out_last = '0' report "T13: data out last incorrectly set on target IP.2 byte";
-    --    wait for clk_period;
-    --    assert data_out = x"01" report "T13: incorrect target IP.3";
-    --    assert data_out_last = '1' report "T13: data out last should be set";
-    --
-    --    wait for clk_period*10;
-    --
-    --    -- Send the reply
-    --    data_out_ready <= '1';
-    --
-    --    report "T13.2: Send an ARP reply: 192.168.5.1 has mac 02:12:03:23:04:54";
-    --    data_in_valid <= '1';
-    --    -- dst MAC (bc)
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    data_in       <= x"ff"; wait for clk_period;
-    --    -- src MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"12"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"04"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- HW type
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Protocol type
-    --    data_in       <= x"08"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    -- HW size
-    --    data_in       <= x"06"; wait for clk_period;
-    --    -- protocol size
-    --    data_in       <= x"04"; wait for clk_period;
-    --    -- Opcode
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"02"; wait for clk_period;
-    --    -- Sender MAC
-    --    data_in       <= x"02"; wait for clk_period;
-    --    data_in       <= x"12"; wait for clk_period;
-    --    data_in       <= x"03"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"04"; wait for clk_period;
-    --    data_in       <= x"54"; wait for clk_period;
-    --    -- Sender IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"01"; wait for clk_period;
-    --    -- Target MAC
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    data_in       <= x"20"; wait for clk_period;
-    --    data_in       <= x"21"; wait for clk_period;
-    --    data_in       <= x"22"; wait for clk_period;
-    --    data_in       <= x"23"; wait for clk_period;
-    --    -- Target IP
-    --    data_in       <= x"c0"; wait for clk_period;
-    --    data_in       <= x"a8"; wait for clk_period;
-    --    data_in       <= x"05"; wait for clk_period;
-    --    data_in       <= x"09"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in       <= x"00"; wait for clk_period;
-    --    assert arp_req_rslt.got_mac = '1' report "T13.2: expected got mac";
-    --    assert arp_req_rslt.got_err = '0' report "T13.2: expected got err = 0";
-    --    assert arp_req_rslt.mac = x"021203230454" report "T13.2: wrong mac value";
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '1';
-    --    data_in       <= x"00"; wait for clk_period;
-    --    data_in_last  <= '0';
-    --    data_in_valid <= '0';
-    --    wait for clk_period*4;
-    --
-    --    report "T14 - Send a request for an other IP that is not on the local network";
-    --    arp_req_req.ip         <= x"0a000204";
-    --    arp_req_req.lookup_req <= '1';
-    --    wait for clk_period;
-    --    arp_req_req.lookup_req <= '0';
-    --    report "T14: reply should be from cache";
-    ----    wait until arp_req_rslt.got_mac = '1' or arp_req_rslt.got_err = '1';
-    --    assert arp_req_rslt.got_mac = '1' report "T14: expected got mac";
-    --    assert arp_req_rslt.got_err = '0' report "T14: expected got err = 0";
-    --    assert arp_req_rslt.mac = x"021203230454" report "T14: wrong mac value";
-    --    wait for clk_period*2;    
-    ----    
-    --    
+    assert arp_req_rslt.got_mac = '1'               report "T14: expected got mac" severity error;
+    assert arp_req_rslt.got_err = '0'               report "T14: expected got err = 0" severity error;
+    assert arp_req_rslt.mac = x"081203230464"       report "T14: wrong mac value" severity error;
+    wait for clk_period*5;
 
     report "--- end of tests ---";
     test <= DONE;

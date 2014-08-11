@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/pjf/Documents/projects/fpga/NWK/xUDP/xUDP/arp_tb_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="arp_tb" />
+            <top_module name="arp_types" />
+            <top_module name="axi_types" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="std_logic_arith" />
+            <top_module name="std_logic_unsigned" />
+            <top_module name="xudp_common_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="29" />
+   <wvobject fp_name="/arp_tb/cfg" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">cfg</obj_property>
+      <obj_property name="ObjectShortName">cfg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/nwk_gateway" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">nwk_gateway[31:0]</obj_property>
+      <obj_property name="ObjectShortName">nwk_gateway[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/nwk_mask" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">nwk_mask[31:0]</obj_property>
+      <obj_property name="ObjectShortName">nwk_mask[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/data_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data_in</obj_property>
+      <obj_property name="ObjectShortName">data_in</obj_property>
+      <wvobject fp_name="/arp_tb/data_in.tdata" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tdata</obj_property>
+         <obj_property name="ObjectShortName">data_in.tdata</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_in.tvalid" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tvalid</obj_property>
+         <obj_property name="ObjectShortName">data_in.tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_in.tlast" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tlast</obj_property>
+         <obj_property name="ObjectShortName">data_in.tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_in.tkeep" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tkeep</obj_property>
+         <obj_property name="ObjectShortName">data_in.tkeep</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/data_out_ready" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out_ready</obj_property>
+      <obj_property name="ObjectShortName">data_out_ready</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/arp_req_req" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_req_req</obj_property>
+      <obj_property name="ObjectShortName">arp_req_req</obj_property>
+      <wvobject fp_name="/arp_tb/arp_req_req.lookup_req" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.lookup_req</obj_property>
+         <obj_property name="ObjectShortName">arp_req_req.lookup_req</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/arp_req_req.ip" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip</obj_property>
+         <obj_property name="ObjectShortName">arp_req_req.ip</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/mac_tx_granted" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mac_tx_granted</obj_property>
+      <obj_property name="ObjectShortName">mac_tx_granted</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/clks" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">clks</obj_property>
+      <obj_property name="ObjectShortName">clks</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#00ff00</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/test" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">test</obj_property>
+      <obj_property name="ObjectShortName">test</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="CustomSignalColor">#ff0000</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/req_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">req_state</obj_property>
+      <obj_property name="ObjectShortName">req_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/arp_store_req" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_store_req</obj_property>
+      <obj_property name="ObjectShortName">arp_store_req</obj_property>
+      <wvobject fp_name="/arp_tb/uut/req/arp_store_req.req" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.req</obj_property>
+         <obj_property name="ObjectShortName">arp_store_req.req</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/uut/req/arp_store_req.ip" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip</obj_property>
+         <obj_property name="ObjectShortName">arp_store_req.ip</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/arp_store_result" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_store_result</obj_property>
+      <obj_property name="ObjectShortName">arp_store_result</obj_property>
+      <wvobject fp_name="/arp_tb/uut/req/arp_store_result.status" type="other" db_ref_id="1">
+         <obj_property name="ElementShortName">.status</obj_property>
+         <obj_property name="ObjectShortName">arp_store_result.status</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/uut/req/arp_store_result.entry" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.entry</obj_property>
+         <obj_property name="ObjectShortName">arp_store_result.entry</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+         <wvobject fp_name="/arp_tb/uut/req/arp_store_result.entry.ip" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">.ip</obj_property>
+            <obj_property name="ObjectShortName">arp_store_result.entry.ip</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+         <wvobject fp_name="/arp_tb/uut/req/arp_store_result.entry.mac" type="array" db_ref_id="1">
+            <obj_property name="ElementShortName">.mac</obj_property>
+            <obj_property name="ObjectShortName">arp_store_result.entry.mac</obj_property>
+            <obj_property name="Radix">HEXRADIX</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/arp_nwk_req" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_nwk_req</obj_property>
+      <obj_property name="ObjectShortName">arp_nwk_req</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tb/uut/req/arp_nwk_req.req" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.req</obj_property>
+         <obj_property name="ObjectShortName">arp_nwk_req.req</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/uut/req/arp_nwk_req.ip" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip</obj_property>
+         <obj_property name="ObjectShortName">arp_nwk_req.ip</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/sync/send_who_has" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">send_who_has</obj_property>
+      <obj_property name="ObjectShortName">send_who_has</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/tx_state" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">tx_state</obj_property>
+      <obj_property name="ObjectShortName">tx_state</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/set_send_who_has" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">set_send_who_has</obj_property>
+      <obj_property name="ObjectShortName">set_send_who_has</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/send_who_has_reg" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">send_who_has_reg</obj_property>
+      <obj_property name="ObjectShortName">send_who_has_reg</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/sync/ip_entry" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">ip_entry[31:0]</obj_property>
+      <obj_property name="ObjectShortName">ip_entry[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/who_has_target" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">who_has_target[31:0]</obj_property>
+      <obj_property name="ObjectShortName">who_has_target[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/set_target" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">set_target</obj_property>
+      <obj_property name="ObjectShortName">set_target</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/tx/target" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">target</obj_property>
+      <obj_property name="ObjectShortName">target</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tb/uut/tx/target.ip" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip</obj_property>
+         <obj_property name="ObjectShortName">target.ip</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/uut/tx/target.mac" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.mac</obj_property>
+         <obj_property name="ObjectShortName">target.mac</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/cache_valid" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">cache_valid</obj_property>
+      <obj_property name="ObjectShortName">cache_valid</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/uut/req/arp_entry_cache" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_entry_cache</obj_property>
+      <obj_property name="ObjectShortName">arp_entry_cache</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tb/uut/req/arp_entry_cache.ip" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.ip</obj_property>
+         <obj_property name="ObjectShortName">arp_entry_cache.ip</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/uut/req/arp_entry_cache.mac" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.mac</obj_property>
+         <obj_property name="ObjectShortName">arp_entry_cache.mac</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/arp_req_rslt" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">arp_req_rslt</obj_property>
+      <obj_property name="ObjectShortName">arp_req_rslt</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <wvobject fp_name="/arp_tb/arp_req_rslt.got_mac" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.got_mac</obj_property>
+         <obj_property name="ObjectShortName">arp_req_rslt.got_mac</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/arp_req_rslt.got_err" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.got_err</obj_property>
+         <obj_property name="ObjectShortName">arp_req_rslt.got_err</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/arp_req_rslt.mac" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.mac</obj_property>
+         <obj_property name="ObjectShortName">arp_req_rslt.mac</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/mac_tx_req" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mac_tx_req</obj_property>
+      <obj_property name="ObjectShortName">mac_tx_req</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/data_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">data_out</obj_property>
+      <obj_property name="ObjectShortName">data_out</obj_property>
+      <wvobject fp_name="/arp_tb/data_out.tdata" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tdata</obj_property>
+         <obj_property name="ObjectShortName">data_out.tdata</obj_property>
+         <obj_property name="Radix">HEXRADIX</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_out.tvalid" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tvalid</obj_property>
+         <obj_property name="ObjectShortName">data_out.tvalid</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_out.tlast" type="logic" db_ref_id="1">
+         <obj_property name="ElementShortName">.tlast</obj_property>
+         <obj_property name="ObjectShortName">data_out.tlast</obj_property>
+      </wvobject>
+      <wvobject fp_name="/arp_tb/data_out.tkeep" type="array" db_ref_id="1">
+         <obj_property name="ElementShortName">.tkeep</obj_property>
+         <obj_property name="ObjectShortName">data_out.tkeep</obj_property>
+         <obj_property name="Radix">BINARYRADIX</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/control" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">control</obj_property>
+      <obj_property name="ObjectShortName">control</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/req_count" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">req_count[7:0]</obj_property>
+      <obj_property name="ObjectShortName">req_count[7:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/arp_tb/no_default_gateway" type="other" db_ref_id="1">
+      <obj_property name="ElementShortName">no_default_gateway</obj_property>
+      <obj_property name="ObjectShortName">no_default_gateway</obj_property>
+   </wvobject>
+</wave_config>
