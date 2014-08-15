@@ -23,13 +23,14 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
 
 entity arp_req is
     generic (
         no_default_gateway : boolean := true;  -- set to false if communicating with devices accessed
                                             -- through a "default gateway or router"
-        CLOCK_FREQ      : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
-        ARP_TIMEOUT     : integer := 60;    -- ARP response timeout (s)
+        CLOCK_FREQ_HZ   : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
+        ARP_TIMEOUT_S   : integer := 60;    -- ARP response timeout (s)
         ARP_MAX_PKT_TMO : integer := 5      -- # wrong nwk pkts received before set error
     );
     port (
@@ -44,8 +45,7 @@ entity arp_req is
         arp_nwk_result   : in  arp_nwk_result_t;   -- the result
         -- system signals
         clear_cache      : in  std_logic;   -- clear the internal cache
-        nwk_gateway      : in  std_logic_vector(31 downto 0);  -- IP address of default gateway
-        nwk_mask         : in  std_logic_vector(31 downto 0);  -- Net mask
+        cfg              : in xUDP_CONIGURATION_T;
         clk              : in  std_logic;
         reset            : in  std_logic
     );
@@ -86,15 +86,15 @@ architecture Behavioral of arp_req is
 begin
 
 default_GW: if (not no_default_gateway) generate
-    default_gw_comb_p: process (arp_req_req.ip, nwk_gateway, nwk_mask) is
+    default_gw_comb_p: process (arp_req_req.ip, cfg.nwk_gateway, cfg.nwk_mask) is
     begin  -- process default_gw_comb_p
         -- translate IP addresses to local IP address if necessary
-        if ((nwk_mask and arp_req_req.ip) = (nwk_mask and nwk_gateway)) then
+        if ((cfg.nwk_mask and arp_req_req.ip) = (cfg.nwk_mask and cfg.nwk_gateway)) then
             -- on local network
             l_arp_req_req_ip <= arp_req_req.ip;
         else
             -- on remote network
-            l_arp_req_req_ip <= nwk_gateway;
+            l_arp_req_req_ip <= cfg.nwk_gateway;
         end if;
     end process default_gw_comb_p;
 end generate default_GW;
@@ -108,7 +108,7 @@ end generate no_default_GW;
 
 req_combinatorial : process (
     -- inputs
-    arp_req_req, arp_store_result, arp_nwk_result, clear_cache, nwk_gateway, nwk_mask, reset, 
+    arp_req_req, arp_store_result, arp_nwk_result, clear_cache, cfg, reset, 
     -- state
     req_state, req_ip_addr, arp_entry_cache, cache_valid, nwk_rx_cntr, 
     freq_scaler, timer, timeout_reg, 
@@ -239,7 +239,7 @@ begin
             set_timeout <= SET;
 
           when others =>
-            if timer >= ARP_TIMEOUT then
+            if timer >= ARP_TIMEOUT_S then
                 set_timeout    <= SET;
                 next_req_state <= PAUSE1;
                 set_req_state  <= '1';
@@ -272,7 +272,7 @@ begin
             arp_entry_cache.mac <= (others => '0');
             cache_valid         <= '0';
             nwk_rx_cntr         <= (others => '0');
-            freq_scaler         <= to_unsigned(CLOCK_FREQ, 32);
+            freq_scaler         <= to_unsigned(CLOCK_FREQ_HZ, 32);
             timer               <= (others => '0');
             timeout_reg         <= '0';
         else
@@ -311,7 +311,7 @@ begin
 
             -- freq scaling and 1-sec timer
             if freq_scaler = x"00000000" then
-                freq_scaler <= to_unsigned(CLOCK_FREQ, 32);
+                freq_scaler <= to_unsigned(CLOCK_FREQ_HZ, 32);
             else
                 freq_scaler <= freq_scaler - 1;
             end if;

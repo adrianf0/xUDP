@@ -41,8 +41,8 @@ entity arp is
     generic (
         no_default_gateway  : boolean := true;  -- set to false if communicating with devices accessed
                                                 -- though a "default gateway or router"
-        CLOCK_FREQ          : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
-        ARP_TIMEOUT         : integer := 60;    -- ARP response timeout (s)
+        CLOCK_FREQ_HZ       : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
+        ARP_TIMEOUT_S       : integer := 60;    -- ARP response timeout (s)
         ARP_TX_TIMEOUT_CLKS : integer := 200;    -- # time allowed to tx before abort
         ARP_MAX_PKT_TMO     : integer := 5;     -- # wrong nwk pkts received before set error
         MAX_ARP_ENTRIES     : integer := 255    -- max entries in the arp store
@@ -60,8 +60,6 @@ entity arp is
         data_out            : out axi4_dvlk64_t; -- AXI4 output stream
         -- system signals
         cfg                 : in xUDP_CONIGURATION_T;
-        nwk_gateway         : in  std_logic_vector (31 downto 0) := (others => '0');  -- IP address of default gateway
-        nwk_mask            : in  std_logic_vector (31 downto 0) := (others => '0');  -- Net mask
         control             : in  arp_control_type;
         req_count           : out std_logic_vector(7 downto 0);    -- count of arp pkts received
         clks                : in xUDP_CLOCK_T
@@ -74,8 +72,8 @@ component arp_req
     generic (
         no_default_gateway : boolean := true;  -- set to false if communicating with devices accessed
                                             -- through a "default gateway or router"
-        CLOCK_FREQ      : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
-        ARP_TIMEOUT     : integer := 60;    -- ARP response timeout (s)
+        CLOCK_FREQ_HZ   : integer := 156250000;  -- freq of data_in_clk -- needed to timout cntr
+        ARP_TIMEOUT_S   : integer := 60;    -- ARP response timeout (s)
         ARP_MAX_PKT_TMO : integer := 5      -- # wrong nwk pkts received before set error
     );
     port (
@@ -90,8 +88,7 @@ component arp_req
         arp_nwk_result   : in  arp_nwk_result_t;   -- the result
         -- system signals
         clear_cache      : in  std_logic;   -- clear the internal cache
-        nwk_gateway      : in  std_logic_vector(31 downto 0);  -- IP address of default gateway
-        nwk_mask         : in  std_logic_vector(31 downto 0);  -- Net mask
+        cfg              : in xUDP_CONIGURATION_T;
         clk              : in  std_logic;
         reset            : in  std_logic
     );
@@ -207,8 +204,8 @@ begin
     req : arp_req
         generic map (
             no_default_gateway  => no_default_gateway,
-            CLOCK_FREQ          => CLOCK_FREQ,
-            ARP_TIMEOUT         => ARP_TIMEOUT,
+            CLOCK_FREQ_HZ       => CLOCK_FREQ_HZ,
+            ARP_TIMEOUT_S       => ARP_TIMEOUT_S,
             ARP_MAX_PKT_TMO     => ARP_MAX_PKT_TMO
         )
         port map (
@@ -224,8 +221,7 @@ begin
             arp_nwk_result.entry => arp_entry_for_I_have_int,
             -- system signals
             clear_cache         => control.clear_cache,
-            nwk_gateway         => nwk_gateway,
-            nwk_mask            => nwk_mask,
+            cfg                 => cfg,
             clk                 => clks.rx_clk,
             reset               => clks.rx_reset
         );
