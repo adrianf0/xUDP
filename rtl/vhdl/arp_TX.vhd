@@ -76,7 +76,6 @@ architecture Behavioral of arp_tx is
     -- tx control signals
     signal tx_count_mode       : count_mode_t;
     signal set_chn_reqd        : set_clr_t;
-    signal kill_data_out_valid : std_logic;
     signal set_send_I_have     : set_clr_t;
     signal set_send_who_has    : set_clr_t;
     signal set_tx_mode         : std_logic;
@@ -122,7 +121,7 @@ tx_combinatorial : process (
     -- busses
     next_tx_state, tx_mode_val, target_val,
     -- control signals
-    tx_count_mode, kill_data_out_valid, set_send_I_have, set_send_who_has,
+    tx_count_mode, set_send_I_have, set_send_who_has,
     set_chn_reqd, set_tx_mode, set_target, set_timer
 )
 begin
@@ -131,15 +130,7 @@ begin
 
     -- set combinatorial output defaults
     data_out <= empty_axi4_dvlk64;
-    case tx_state is
-        when SEND =>
-            if data_out_ready = '1' and kill_data_out_valid = '0' then
-                data_out.tvalid <= '1';
-            else
-                data_out.tvalid <= '0';
-            end if;
-        when others => data_out.tvalid <= '0';
-    end case;
+    data_out.tvalid <= '0';
 
     -- set bus defaults
     next_tx_state  <= tx_state;
@@ -150,7 +141,6 @@ begin
     -- set control defaults
     tx_count_mode       <= HOLD;
     set_chn_reqd        <= HOLD;
-    kill_data_out_valid <= '0';
     set_send_I_have     <= HOLD;
     set_send_who_has    <= HOLD;
     set_tx_mode         <= '0';
@@ -204,6 +194,7 @@ begin
             end if;
 
         when SEND =>
+            data_out.tvalid <= '1';
             if data_out_ready = '1' then
                 tx_count_mode <= INCR;
             end if;
@@ -252,7 +243,7 @@ begin
                 data_out.tkeep <= "11000000";
 
               when 6 =>
-                kill_data_out_valid <= '1';  -- data is no longer valid
+                data_out.tvalid <= '0';
                 set_chn_reqd <= CLR;
                 next_tx_state       <= IDLE;
 

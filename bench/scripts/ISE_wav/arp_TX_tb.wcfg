@@ -14,7 +14,7 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="19" />
+   <WVObjectSize size="17" />
    <wvobject fp_name="/arp_tx_tb/reset" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">reset</obj_property>
       <obj_property name="ObjectShortName">reset</obj_property>
@@ -62,6 +62,7 @@
    <wvobject fp_name="/arp_tx_tb/uut/timer" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">timer[7:0]</obj_property>
       <obj_property name="ObjectShortName">timer[7:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tx_tb/uut/mac_tx_req" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">mac_tx_req</obj_property>
@@ -75,17 +76,9 @@
       <obj_property name="ElementShortName">tx_count[2:0]</obj_property>
       <obj_property name="ObjectShortName">tx_count[2:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/arp_tx_tb/uut/kill_data_out_valid" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">kill_data_out_valid</obj_property>
-      <obj_property name="ObjectShortName">kill_data_out_valid</obj_property>
-   </wvobject>
    <wvobject fp_name="/arp_tx_tb/mac_tx_req" type="logic" db_ref_id="1">
       <obj_property name="ElementShortName">mac_tx_req</obj_property>
       <obj_property name="ObjectShortName">mac_tx_req</obj_property>
-   </wvobject>
-   <wvobject fp_name="/arp_tx_tb/uut/kill_data_out_valid" type="logic" db_ref_id="1">
-      <obj_property name="ElementShortName">kill_data_out_valid</obj_property>
-      <obj_property name="ObjectShortName">kill_data_out_valid</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tx_tb/data_out" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">data_out</obj_property>
@@ -114,15 +107,5 @@
       <obj_property name="ElementShortName">cfg</obj_property>
       <obj_property name="ObjectShortName">cfg</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
-      <wvobject fp_name="/arp_tx_tb/cfg.ip_address" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">.ip_address</obj_property>
-         <obj_property name="ObjectShortName">cfg.ip_address</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/arp_tx_tb/cfg.mac_address" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">.mac_address</obj_property>
-         <obj_property name="ObjectShortName">cfg.mac_address</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
    </wvobject>
 </wave_config>

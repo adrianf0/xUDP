@@ -16,18 +16,13 @@
          </top_modules>
       </db_ref>
    </db_ref_list>
-   <WVObjectSize size="29" />
+   <WVObjectSize size="27" />
+   <wave_markers>
+      <marker time="451200000" label="" />
+   </wave_markers>
    <wvobject fp_name="/arp_tb/cfg" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">cfg</obj_property>
       <obj_property name="ObjectShortName">cfg</obj_property>
-   </wvobject>
-   <wvobject fp_name="/arp_tb/nwk_gateway" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">nwk_gateway[31:0]</obj_property>
-      <obj_property name="ObjectShortName">nwk_gateway[31:0]</obj_property>
-   </wvobject>
-   <wvobject fp_name="/arp_tb/nwk_mask" type="array" db_ref_id="1">
-      <obj_property name="ElementShortName">nwk_mask[31:0]</obj_property>
-      <obj_property name="ObjectShortName">nwk_mask[31:0]</obj_property>
    </wvobject>
    <wvobject fp_name="/arp_tb/data_in" type="array" db_ref_id="1">
       <obj_property name="ElementShortName">data_in</obj_property>

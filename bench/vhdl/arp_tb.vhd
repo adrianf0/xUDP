@@ -300,6 +300,7 @@ begin
 
     report "T2: waiting for tx req";
     wait until mac_tx_req = '1';
+    wait until falling_edge(clks.rx_clk);
     -- ready to tx - but wait to give channel access
     wait for clk_period*10;
     mac_tx_granted <= '1';
