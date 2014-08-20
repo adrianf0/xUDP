@@ -6,15 +6,15 @@
 -- Author     : Adrian Fiergolski  <A.Fiergolski@gmail.com>
 -- Company    : 
 -- Created    : 2014-07-22
--- Last update: 2014-07-22
+-- Last update: 2014-08-19
 -- Platform   : 
 -- Standard   : VHDL'2008
 -------------------------------------------------------------------------------
 -- Description: Common Package used across xUDP stack.
 -------------------------------------------------------------------------------
--- This file is part of .
+-- This file is part of xUDP.
 --
---  is free firmware: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+-- xUDP is free firmware: you can redistribute it and/or modify it under the terms of the GNU General Public License 
 -- as published by the Free Software Foundation, either version 3 of the License, or any later version.
 --
 --  is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 

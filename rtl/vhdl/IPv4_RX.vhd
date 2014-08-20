@@ -1,54 +1,86 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer:            Peter Fall
--- 
--- Create Date:    16:20:42 06/01/2011 
--- Design Name: 
--- Module Name:    IPv4_RX - Behavioral 
--- Project Name: 
--- Target Devices: 
--- Tool versions: 
--- Description: 
---              handle simple IP RX
---              doesnt handle reassembly
---              checks and filters for IP protocol
---              checks and filters for IP addr
---              Handle IPv4 protocol
--- Dependencies: 
+-------------------------------------------------------------------------------
+-- Title      : IPv4_RX
+-- Project    : xUDP
+-------------------------------------------------------------------------------
+-- File       : IPv4_RX.vhd
+-- Author     : Adrian Fiergolski  <Adrian.Fiergolski@cern.ch>
+-- Company    : 
+-- Created    : 2014-08-19
+-- Last update: 2014-08-19
+-- Platform   : 
+-- Standard   : VHDL'2008
+-------------------------------------------------------------------------------
+-- Description: The module handles simple IP readout
+-------------------------------------------------------------------------------
+-- This file is part of XUDP.
 --
--- Revision: 
--- Revision 0.01 - File Created
--- Revision 0.02 - Improved error handling
--- Revision 0.03 - Added handling of broadcast address
--- Additional Comments: 
+-- xUDP is free firmware: you can redistribute it and/or modify it under the terms of the GINU General Public License 
+-- as published by the Free Software Foundation, either version 3 of the License, or any later version.
 --
-----------------------------------------------------------------------------------
+--  is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+-- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License along with . If not, see http://www.gnu.org/licenses/.
+
+-------------------------------------------------------------------------------
+-- Revisions  :
+-- Date        Version  Author  Description
+-- 2014-08-19  1.0      afiergol	Created
+-------------------------------------------------------------------------------
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.all;
 use IEEE.NUMERIC_STD.all;
 use work.axi.all;
 use work.ipv4_types.all;
 use work.arp_types.all;
+use work.xUDP_Common_pkg.all;
 
 entity IPv4_RX is
+  generic(
+    BUS_WIDTH : NATURAL := 8;  -- width of the AXI-S bus used in the design in bytes
+    )
   port (
-    -- IP Layer signals
-    ip_rx             : out ipv4_rx_type;
-    ip_rx_start       : out std_logic;  -- indicates receipt of ip frame.
-    -- system signals
-    clk               : in  std_logic;  -- same clock used to clock mac data and ip data
-    reset             : in  std_logic;
-    our_ip_address    : in  std_logic_vector (31 downto 0);
-    rx_pkt_count      : out std_logic_vector(7 downto 0);   -- number of IP pkts received for us
-    -- MAC layer RX signals
-    mac_data_in       : in  std_logic_vector (7 downto 0);  -- ethernet frame (from dst mac addr through to last byte of frame)
-    mac_data_in_valid : in  std_logic;  -- indicates data_in valid on clock
-    mac_data_in_last  : in  std_logic   -- indicates last data in frame
-    );                  
+    --outputs: IPv4
+    ip_rx             : out IPV4_RX_T;
+    ip_rx_data_tready : in  STD_LOGIC;
+    ip_rx_status      : out IPV4_TX_STATUS_T;
+
+    --inputs: MAC layer RX signals (AXI4-S bus)
+    mac_rx        : in  axi4_dvlk64_t;
+    max_rx_tready : out STD_LOGIC;
+    
+    --system signals
+    clk        : in xUDP_CLOCK_T;
+    cfg        : in xUDP_CONIGURATION_T;
+    ip_control : in IPV4_CONTROL_T;
+  );
 end IPv4_RX;
 
 architecture Behavioral of IPv4_RX is
+  
+  type OCTET_REGISTER_T is record
+    en    : STD_LOGIC;
+    value : STD_LOGIC_VECTOR(7 downto 0);
+  end record;
 
+  --header values to be filtered out from the MAC stream
+  signal protocol is OCTET_REGISTER_T;                 -- encapsulated transport protocol
+  signal data_length is OCTET_REGISTER_T(1 downto 0);  -- user data size, bytes
+  signal src_ip_addr is OCTET_REGISTER_T(3 downto 0);  -- source IP address
+  signal broadcst is OCTET_REGISTER_T;                 -- set if the frame is IP broadcast
+
+  type COUNTER_T is record
+    value : UNSIGNED(15 downto 0);      -- current value
+    incr  : STD_LOGIC;                  -- increment
+    rst   : STD_LOGIC;                  -- reset the counter
+  end record;
+
+  signal counter is COUNTER_T;
+
+  constant PROTOCOL : NATURAL := 9;
+  constant DATA_LENGTH0 : NATURAL := 
+  
   type rx_state_type is (IDLE, ETH_HDR, IP_HDR, USER_DATA, WAIT_END, ERR);
 
   type rx_event_type is (NO_EVENT, DATA);
@@ -63,7 +95,7 @@ architecture Behavioral of IPv4_RX is
   signal src_ip           : std_logic_vector (31 downto 0);  -- src IP captured from input
   signal dst_ip           : std_logic_vector (23 downto 0);  -- 1st 3 bytes of dst IP captured from input
   signal is_broadcast_reg : std_logic;
-  signal protocol         : std_logic_vector (7 downto 0);   -- src protocol captured from input
+  signal protocol         : std_logic_vector (7 downto 0);  -- src protocol captured from input
   signal data_len         : std_logic_vector (15 downto 0);  -- src data length captured from input
   signal ip_rx_start_reg  : std_logic;  -- indicates start of user data
   signal hdr_valid_reg    : std_logic;  -- indicates that hdr data is valid
