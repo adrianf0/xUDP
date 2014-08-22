@@ -157,25 +157,21 @@ begin
  
     -- RX FSM
     case rx_state is
-        when IDLE =>
-            rx_count_mode <= RST;
-            set_eop <= CLR;
-            if data_in.tvalid = '1' then
-                next_rx_state <= PARSE;
-                rx_count_mode <= INCR;
-            end if;
+      when IDLE =>
+        rx_count_mode <= RST;
+        set_eop <= CLR;
+        if data_in.tvalid = '1' then
+            next_rx_state <= PARSE;
+            rx_count_mode <= INCR;
+        end if;
 
-    when PARSE =>
+      when PARSE =>
         if data_in.tvalid = '1' then
             rx_count_mode <= INCR;
             -- handle early frame termination as default case
-        if data_in.tlast = '1' then
-            next_rx_state <= IDLE;
-            rx_count_mode <= RST;
-        end if;
      
-        case (to_integer(rx_count)) is
-            when 1 =>
+            case (to_integer(rx_count)) is
+              when 1 =>
                 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
                 --    | 1  |           src mac (32..0)         |   pkt type      |arp type| HW type|
                 if data_in.tdata(31 downto 0) /= x"08060001" then
@@ -183,10 +179,15 @@ begin
                     set_err_data  <= '1';
                     next_rx_state <= WAIT_END;
                 end if;
+                if data_in.tlast = '1' then
+                    set_err_data  <= '1';
+                    next_rx_state <= IDLE;
+                    rx_count_mode <= RST;
+                end if;
 
-            when 2 =>
+              when 2 =>
                 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
-                --    | 2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
+                --  |   2  |        prot     | HW     | prot   |    opcode       |  SHA (47..32)   |
                 case data_in.tdata(31 downto 16) is
                     when x"0001" =>         
                         arp_oper_set_val <= REQUEST;
@@ -205,21 +206,36 @@ begin
                     set_err_data  <= '1';
                     next_rx_state <= WAIT_END;
                 end if;
+                if data_in.tlast = '1' then
+                    set_err_data  <= '1';
+                    next_rx_state <= IDLE;
+                    rx_count_mode <= RST;
+                end if;
 
-            when 3 =>
+              when 3 =>
                 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
                 --    | 3  |    SHA (sender HW addr) (31..0)   |   SPA (sender PROT addr) (31..0)  |
                 arp_save <= MAC_LOW_IP;
+                if data_in.tlast = '1' then
+                    set_err_data  <= '1';
+                    next_rx_state <= IDLE;
+                    rx_count_mode <= RST;
+                end if;
 
-            when 4 =>
+              when 4 =>
                 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
                 --    | 4  |         THA (target HW addr) (47..0)                |  TPA  (31..16)  |
                 if data_in.tdata(15 downto 0) /= cfg.ip_address(31 downto 16) then
                     -- not addressed to us
                     next_rx_state <= WAIT_END;
                 end if;
+                if data_in.tlast = '1' then
+                    set_err_data  <= '1';
+                    next_rx_state <= IDLE;
+                    rx_count_mode <= RST;
+                end if;
      
-            when 5 =>
+              when 5 =>
                 --  +-word-+63----56|55----48|47----40|39----32|31----24|23----16|15----08|07----00+
                 --    | 5  |   TPA (15..0)   |
                 if data_in.tdata(63 downto 48) /= cfg.ip_address(15 downto 0) then
@@ -228,15 +244,16 @@ begin
                         next_rx_state <= IDLE;
                         rx_count_mode <= RST;
                     else
+                        -- maybe there are some options being transmitted. Just ignore them.
                         next_rx_state <= WAIT_END;
                     end if;
                 else
                     next_rx_state <= PROCESS_ARP;
                 end if;
 
-            when others =>  -- do nothing
-        end case;
-    end if;
+              when others =>  -- do nothing
+            end case;
+        end if;
 
     when PROCESS_ARP =>
         case arp_operation is

@@ -240,6 +240,303 @@ begin
     assert req_count = x"02"            report "T2b: req_count incorrect" severity failure;
     wait for clk_period*5;
 
+    --  ------------
+    --  -- TEST handling of errored pkts
+    --  ------------
+
+    report "T3: check rx of short pkt";
+    test <= T3;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T3-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T3-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff3142";  -- target mac = ???, src mac = 3142 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"7683920208060001";  -- src mac = ...76839202, prot values
+    wait for clk_period;
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period*10;
+    assert got_who_has = '0'            report "T3a: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T3a: got_I_have incorrect" severity failure;
+    wait for clk_period;
+    assert req_count = x"02"            report "T3a: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T4: rx I have after error pkt";
+    test <= T4;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T4-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T4-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff3142";  -- target mac = ???, src mac = 3142 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"7683920208060001";  -- src mac = ...76839202, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400023142";  -- prot values, reply, SHA = 3142 ...
+    wait for clk_period;
+    data_in.tdata <= x"76839202C1A95566";  -- SHA = ...76839202, SPA = C1A95566
+    wait for clk_period;
+    data_in.tdata <= x"261537045869C0A8";  -- THA = ???, TPA = ???? ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word 
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '0'            report "T4a: got_who_has incorrect" severity failure;
+    assert got_I_have = '1'             report "T4a: got_I_have incorrect" severity failure;
+    assert entry_for_I_have.mac = x"314276839202"   report "T4a: entry_for_I_have.mac incorrect" severity failure;
+    assert entry_for_I_have.ip  = x"C1A95566"       report "T4a: entry_for_I_have.ip incorrect" severity failure;
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;
+    assert recv_who_has = '0'           report "T4b: recv_who_has incorrect" severity failure;
+    assert recv_I_have = '0'            report "T4b: recv_I_have incorrect" severity failure;  
+    assert req_count = x"03"            report "T4b: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T5: check rx of pkt with wrong prot type";
+    test <= T5;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T5-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T5-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050607060001";  -- src mac = ...03040506, incorrect prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400010102";  -- prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '0'            report "T5a: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T5a: got_I_have incorrect" severity failure;
+    wait for clk_period;
+    assert req_count = x"03"            report "T5a: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T6: Check rx of who has after error pkt";
+    test <= T6;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T6-: got_who_has incorrect" severity failure;
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    assert got_I_have = '0'             report "T6-: got_I_have incorrect" severity failure;  
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400010102";  -- prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '1'            report "T6a: got_who_has incorrect" severity failure;
+    assert entry_for_who_has.mac = x"010203040506"  report "T6a: entry_for_who_has.mac incorrect" severity failure;
+    assert entry_for_who_has.ip  = x"44871234"      report "T6a: entry_for_who_has.ip incorrect" severity failure;
+    assert got_I_have = '1'             report "T6a: got_I_have incorrect" severity failure;
+    assert entry_for_I_have.mac = x"010203040506"   report "T6a: entry_for_I_have.mac incorrect" severity failure;
+    assert entry_for_I_have.ip  = x"44871234"       report "T6a: entry_for_I_have.ip incorrect" severity failure;
+    wait for clk_period;
+    assert recv_who_has = '0'           report "T6b: recv_who_has incorrect" severity failure;
+    assert recv_I_have = '0'            report "T6b: recv_I_have incorrect" severity failure;  
+    assert req_count = x"04"            report "T6b: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T7: check rx of pkt with invalid ARP opcode";
+    test <= T7;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T7-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T7-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400030102";  -- prot values, invalid request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '0'            report "T7a: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T7a: got_I_have incorrect" severity failure;
+    wait for clk_period;
+    assert req_count = x"04"            report "T7a: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T8: check rx of pkt with unsupported address sizes";
+    test <= T8;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T8-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T8-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800050400010102";  -- invalid prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '0'            report "T8a: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T8a: got_I_have incorrect" severity failure;
+    wait for clk_period;
+    assert req_count = x"04"            report "T8a: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T9: Check rx of who has after error pkt";
+    test <= T9;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T9-: got_who_has incorrect" severity failure;
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    assert got_I_have = '0'             report "T9-: got_I_have incorrect" severity failure;  
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400010102";  -- prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '1'            report "T9a: got_who_has incorrect" severity failure;
+    assert entry_for_who_has.mac = x"010203040506"  report "T9a: entry_for_who_has.mac incorrect" severity failure;
+    assert entry_for_who_has.ip  = x"44871234"      report "T9a: entry_for_who_has.ip incorrect" severity failure;
+    assert got_I_have = '1'             report "T9a: got_I_have incorrect" severity failure;
+    assert entry_for_I_have.mac = x"010203040506"   report "T9a: entry_for_I_have.mac incorrect" severity failure;
+    assert entry_for_I_have.ip  = x"44871234"       report "T9a: entry_for_I_have.ip incorrect" severity failure;
+    wait for clk_period;
+    assert recv_who_has = '0'           report "T9b: recv_who_has incorrect" severity failure;
+    assert recv_I_have = '0'            report "T9b: recv_I_have incorrect" severity failure;  
+    assert req_count = x"05"            report "T9b: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+
+    --  ------------
+    --  -- TEST handling of ARP pkts not addressed to us
+    --  ------------
+
+
+    report "T10: check ignore rx of pkt not addressed to us";
+    test <= T10;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T10-: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T10-: got_I_have incorrect" severity failure;  
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400010102";  -- prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0406000000000000";  -- TPA = ... 0406 (not us)
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '0'            report "T10a: got_who_has incorrect" severity failure;
+    assert got_I_have = '0'             report "T10a: got_I_have incorrect" severity failure;
+    wait for clk_period;
+    assert req_count = x"05"            report "T10a: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T11: Check rx of who has after arp pkt not addr to us";
+    test <= T11;
+    clear_state <= '1';
+    wait for clk_period;
+    clear_state <= '0';
+    assert got_who_has = '0'            report "T11-: got_who_has incorrect" severity failure;
+    data_in.tdata <= x"ffffffffffff0102";  -- target mac = ???, src mac = 0102 ... 
+    assert got_I_have = '0'             report "T11-: got_I_have incorrect" severity failure;  
+    data_in.tvalid <= '1';
+    wait for clk_period;
+    data_in.tdata <= x"0304050608060001";  -- src mac = ...03040506, prot values
+    wait for clk_period;
+    data_in.tdata <= x"0800060400010102";  -- prot values, request, SHA = 0102 ...
+    wait for clk_period;
+    data_in.tdata <= x"0304050644871234";  -- SHA = ...03040506, SPA = 44871234
+    wait for clk_period;
+    data_in.tdata <= x"ffffffffffffC0A8";  -- THA = ???, TPA = C0A8 ... 
+    wait for clk_period;
+    data_in.tdata <= x"0405000000000000";  -- TPA = ... 0405
+    data_in.tlast <= '1';
+    data_in.tkeep <= "11000000";     -- 2 bytes valid in last word
+    wait for clk_period;
+    data_in <= empty_axi4_dvlk64;  
+    wait for clk_period;
+    assert got_who_has = '1'                        report "T11a: got_who_has incorrect" severity failure;
+    assert entry_for_who_has.mac = x"010203040506"  report "T11a: entry_for_who_has.mac incorrect" severity failure;
+    assert entry_for_who_has.ip  = x"44871234"      report "T11a: entry_for_who_has.ip incorrect" severity failure;
+    assert got_I_have = '1'                         report "T11a: got_I_have incorrect" severity failure;
+    assert entry_for_I_have.mac = x"010203040506"   report "T11a: entry_for_I_have.mac incorrect" severity failure;
+    assert entry_for_I_have.ip  = x"44871234"       report "T11a: entry_for_I_have.ip incorrect" severity failure;
+    wait for clk_period;
+    assert recv_who_has = '0'                       report "T11b: recv_who_has incorrect" severity failure;
+    assert recv_I_have = '0'                        report "T11b: recv_I_have incorrect" severity failure;  
+    assert req_count = x"06"                        report "T11b: req_count incorrect" severity failure;
+    wait for clk_period*5;
+
+
     test <= DONE;
     report "--- end of tests ---";
 
