@@ -72,7 +72,6 @@ architecture Behavioral of arp_req is
     signal arp_entry_val  : arp_entry_t;
 
     -- requester control signals
-    signal set_req_state     : std_logic;
     signal set_req_ip        : std_logic;
     signal store_arp_cache   : std_logic;
     signal set_nwk_rx_cntr   : set_cntr_t;
@@ -115,7 +114,7 @@ req_combinatorial : process (
     -- busses
     next_req_state, arp_entry_val, 
     -- controls
-    set_req_state, set_req_ip, store_arp_cache, set_nwk_rx_cntr, 
+    set_req_ip, store_arp_cache, set_nwk_rx_cntr, 
     set_timer, timer_enable, set_timeout, clear_cache_valid, l_arp_req_req_ip
 )
 begin
@@ -149,8 +148,7 @@ begin
     end if;
 
     -- set signal defaults
-    next_req_state    <= IDLE;
-    set_req_state     <= '0';
+    next_req_state    <= req_state;
     set_req_ip        <= '0';
     store_arp_cache   <= '0';
     arp_entry_val.ip  <= (others => '0');
@@ -179,9 +177,8 @@ begin
             else
                 clear_cache_valid <= '1';   -- remove cache entry
                 set_timeout       <= CLR;
-                next_req_state    <= LOOKUP;
-                set_req_state     <= '1';
                 set_req_ip        <= '1';
+                next_req_state    <= LOOKUP;
             end if;
         end if;
 
@@ -198,7 +195,6 @@ begin
             arp_req_rslt.got_mac <= '1';
             arp_req_rslt.mac     <= arp_store_result.entry.mac;
             next_req_state       <= IDLE;
-            set_req_state        <= '1';
 
           when NOT_FOUND =>
             -- need to request from the network
@@ -207,7 +203,6 @@ begin
             arp_nwk_req.req <= '1';
             arp_nwk_req.ip  <= req_ip_addr;
             next_req_state  <= WAIT_REPLY;
-            set_req_state   <= '1';
 
           when others =>
             -- just keep waiting - no timeout (assumes lookup with either succeed or fail)
@@ -224,12 +219,10 @@ begin
                 arp_req_rslt.got_mac <= '1';
                 arp_req_rslt.mac     <= arp_nwk_result.entry.mac;
                 next_req_state       <= IDLE;
-                set_req_state        <= '1';
             else
                 if nwk_rx_cntr > ARP_MAX_PKT_TMO then
                     set_timeout    <= SET;
                     next_req_state <= IDLE;
-                    set_req_state  <= '1';
                 else
                     set_nwk_rx_cntr <= INCR;
                 end if;
@@ -242,21 +235,17 @@ begin
             if timer >= ARP_TIMEOUT_S then
                 set_timeout    <= SET;
                 next_req_state <= PAUSE1;
-                set_req_state  <= '1';
             end if;
         end case;
 
       when PAUSE1 =>
         next_req_state <= PAUSE2;
-        set_req_state  <= '1';
 
       when PAUSE2 =>
         next_req_state <= PAUSE3;
-        set_req_state  <= '1';
 
       when PAUSE3 =>
         next_req_state <= IDLE;
-        set_req_state  <= '1';
 
     end case;
 end process;
@@ -277,17 +266,11 @@ begin
             timeout_reg         <= '0';
         else
             -- Next req_state processing
-            if set_req_state = '1' then
-                req_state <= next_req_state;
-            else
-                req_state <= req_state;
-            end if;
+            req_state <= next_req_state;
 
             -- Latch the requested IP address
             if set_req_ip = '1' then
                 req_ip_addr <= l_arp_req_req_ip;
-            else
-                req_ip_addr <= req_ip_addr;
             end if;
 
             -- network received counter
@@ -304,9 +287,6 @@ begin
             elsif store_arp_cache = '1' then
                 arp_entry_cache <= arp_entry_val;
                 cache_valid     <= '1';
-            else
-                arp_entry_cache <= arp_entry_cache;
-                cache_valid     <= cache_valid;
             end if;
 
             -- freq scaling and 1-sec timer

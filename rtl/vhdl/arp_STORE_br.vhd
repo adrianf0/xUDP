@@ -52,8 +52,8 @@ architecture Behavioral of arp_STORE_br is
 
     type st_state_t is (IDLE, PAUSE, SEARCH, FOUND, NOT_FOUND);
 
-    type ip_ram_t is array (0 to MAX_ARP_ENTRIES-1) of std_logic_vector(31 downto 0);
-    type mac_ram_t is array (0 to MAX_ARP_ENTRIES-1) of std_logic_vector(47 downto 0);
+    type ip_ram_t is array (0 to MAX_ARP_ENTRIES) of std_logic_vector(31 downto 0);
+    type mac_ram_t is array (0 to MAX_ARP_ENTRIES) of std_logic_vector(47 downto 0);
     subtype addr_t is integer range 0 to MAX_ARP_ENTRIES;
 
     type count_mode_t is (RST, INCR, HOLD);
@@ -79,7 +79,6 @@ architecture Behavioral of arp_STORE_br is
     signal read_result_int  : arp_store_result_t;
 
     -- control signals
-    signal set_st_state        : std_logic;
     signal set_next_write_addr : count_mode_t;
     signal set_num_entries     : count_mode_t;
     signal set_next_read_addr  : count_mode_t;
@@ -113,7 +112,7 @@ combinatorial : process (
     -- busses
     next_st_state, arp_entry_val, mode_val, write_addr, read_result_int, 
     -- control signals
-    set_st_state, set_next_write_addr, set_num_entries, set_next_read_addr, set_entry_found,
+    set_next_write_addr, set_num_entries, set_next_read_addr, set_entry_found,
     write_ram, set_mode
     )
 begin
@@ -123,12 +122,11 @@ begin
     entry_count        <= to_unsigned(num_entries, 8);
 
     -- set bus defaults
-    next_st_state <= IDLE;
+    next_st_state <= st_state;
     mode_val      <= MREAD;
     write_addr    <= next_write_addr;
 
     -- set signal defaults
-    set_st_state        <= '0';
     set_next_write_addr <= HOLD;
     set_num_entries     <= HOLD;
     set_next_read_addr  <= HOLD;
@@ -145,13 +143,11 @@ begin
             mode_val           <= MWRITE;
             set_mode           <= '1';
             next_st_state      <= PAUSE;
-            set_st_state       <= '1';
         elsif read_req.req = '1' then
             set_next_read_addr <= RST;    -- start lookup from beginning
             mode_val           <= MREAD;
             set_mode           <= '1';
             next_st_state      <= PAUSE;
-            set_st_state       <= '1';
         end if;
 
       when PAUSE =>
@@ -159,7 +155,6 @@ begin
         read_result_int.status <= read_status(BUSY, mode);
         set_next_read_addr <= INCR;
         next_st_state      <= SEARCH;
-        set_st_state       <= '1';
 
       when SEARCH =>
         read_result_int.status <= read_status(SEARCHING, mode);
@@ -168,12 +163,10 @@ begin
             -- found it
             set_entry_found <= '1';
             next_st_state   <= FOUND;
-            set_st_state    <= '1';
         elsif next_read_addr > num_entries or next_read_addr >= MAX_ARP_ENTRIES then
             -- reached end of entry table
             read_result_int.status <= read_status(NOT_FOUND, mode);
             next_st_state      <= NOT_FOUND;
-            set_st_state       <= '1';
         else
             -- no match at this entry , go to next
             set_next_read_addr <= INCR;
@@ -185,10 +178,8 @@ begin
             write_addr    <= next_read_addr - 1;
             write_ram     <= '1';
             next_st_state <= IDLE;
-            set_st_state  <= '1';
         elsif read_req.req = '0' then   -- wait in this state until request de-asserted
             next_st_state <= IDLE;
-            set_st_state  <= '1';
         end if;
 
       when NOT_FOUND =>
@@ -203,10 +194,8 @@ begin
                 set_num_entries <= INCR;
             end if;
             next_st_state <= IDLE;
-            set_st_state  <= '1';
         elsif read_req.req = '0' then   -- wait in this state until request de-asserted
             next_st_state <= IDLE;
-            set_st_state  <= '1';
         end if;
 
     end case;
@@ -244,11 +233,7 @@ begin
 
         else
             -- Next req_state processing
-            if set_st_state = '1' then
-                st_state <= next_st_state;
-            else
-                st_state <= st_state;
-            end if;
+            st_state <= next_st_state;
 
             -- mode setting and write request latching
             if set_mode = '1' then
@@ -259,16 +244,11 @@ begin
                     req_entry.ip  <= read_req.ip;
                     req_entry.mac <= (others => '0');
                 end if;
-            else
-                mode      <= mode;
-                req_entry <= req_entry;
             end if;
 
             -- latch entry found
             if set_entry_found = '1' then
                 entry_found <= arp_entry_val;
-            else
-                entry_found <= entry_found;
             end if;
 
             -- next_write_addr counts and wraps
@@ -290,8 +270,6 @@ begin
               when INCR => 
                 if next_write_addr < MAX_ARP_ENTRIES then 
                     num_entries <= num_entries + 1; 
-                else 
-                    num_entries <= num_entries; 
                 end if;
             end case;
 

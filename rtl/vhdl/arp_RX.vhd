@@ -76,8 +76,8 @@ architecture Behavioral of arp_rx is
     signal arp_err_data : axi4_dvlk64_t;
     signal set_err_data : std_logic;
 
-    attribute keep                 : string;
-    attribute keep of arp_err_data : signal is "true";
+--    attribute keep                 : string;
+--    attribute keep of arp_err_data : signal is "true";
 
     -- busses
     signal next_rx_state   : rx_state_t;
@@ -326,8 +326,6 @@ begin
             -- err data
             if set_err_data = '1' then
                 arp_err_data <= data_in;
-            else
-                arp_err_data <= arp_err_data;
             end if;
 
             -- arp operation processing

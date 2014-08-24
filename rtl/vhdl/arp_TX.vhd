@@ -310,15 +310,11 @@ begin
         -- tx mode
         if set_tx_mode = '1' then
             tx_mode <= tx_mode_val;
-        else
-            tx_mode <= tx_mode;
         end if;
 
         -- target latching
         if set_target = '1' then
             target <= target_val;
-        else
-            target <= target;
         end if;
 
         -- tx_count processing
