@@ -101,12 +101,8 @@ entity xaui_v10_4_block is
       drp_rdy          : out std_logic_vector(3 downto 0);
       drp_we           : in  std_logic_vector(3 downto 0);
       mgt_tx_ready     : out std_logic;
-      mdc              : in  std_logic;
-      mdio_in          : in  std_logic;
-      mdio_out         : out std_logic;
-      mdio_tri         : out std_logic;
-      prtad            : in  std_logic_vector(4 downto 0);
-      type_sel         : in  std_logic_vector(1 downto 0)
+      configuration_vector : in  std_logic_vector(6 downto 0);
+      status_vector        : out std_logic_vector(7 downto 0)
 );
 end xaui_v10_4_block;
 
@@ -144,16 +140,11 @@ architecture wrapper of xaui_v10_4_block is
       mgt_powerdown    : out std_logic;
       mgt_tx_reset     : in  std_logic_vector(3 downto 0);
       mgt_rx_reset     : in  std_logic_vector(3 downto 0);
-      soft_reset       : out std_logic;
       signal_detect    : in  std_logic_vector(3 downto 0);
       align_status     : out std_logic;
       sync_status      : out std_logic_vector(3 downto 0);
-      mdc              : in  std_logic;
-      mdio_in          : in  std_logic;
-      mdio_out         : out std_logic;
-      mdio_tri         : out std_logic;
-      prtad            : in  std_logic_vector(4 downto 0);
-      type_sel         : in  std_logic_vector(1 downto 0));
+      configuration_vector : in  std_logic_vector(6 downto 0);
+      status_vector    : out std_logic_vector(7 downto 0));
   end component;
 
  --------------------------------------------------------------------------
@@ -657,8 +648,6 @@ end component;
   signal lock                  : std_logic;
   signal cbm_rx_reset          : std_logic;
   signal reset_txsync          : std_logic;
-        
-  signal soft_reset            : std_logic;
 
   -------------------------- Channel Bonding Wires ---------------------------
   signal    gtx0_rxchbondo_i : std_logic_vector(3 downto 0);
@@ -724,16 +713,11 @@ begin
       mgt_powerdown    => mgt_powerdown,
       mgt_tx_reset     => mgt_tx_fault,
       mgt_rx_reset     => mgt_rxcdr_reset,
-      soft_reset       => soft_reset,
       signal_detect    => signal_detect,
       align_status     => align_status_i,
       sync_status      => sync_status_i,
-      mdc              => mdc,
-      mdio_in          => mdio_in,
-      mdio_out         => mdio_out,
-      mdio_tri         => mdio_tri,
-      prtad            => prtad,
-      type_sel         => type_sel);
+      configuration_vector => configuration_vector,
+      status_vector        => status_vector);
 
   ----------------------------------------------------------------------
    -- Transceiver instances
@@ -1191,7 +1175,7 @@ begin
   mgt_tx_ready <= tx_sync_done;
   mgt_tx_fault <= "1111" when tx_sync_done = '0' else "0000";
 
-  mgt_reset_terms <= soft_reset or reset or  mgt_powerdown_falling;
+  mgt_reset_terms <= reset or  mgt_powerdown_falling;
 
   -- reset the rx side when the buffer overflows / underflows or on a falling
   -- edge of powerdown

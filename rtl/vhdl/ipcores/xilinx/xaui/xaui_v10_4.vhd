@@ -7,7 +7,7 @@
 -- \   \   \/     Version: P.20131013
 --  \   \         Application: netgen
 --  /   /         Filename: xaui_v10_4.vhd
--- /___/   /\     Timestamp: Thu Aug 28 10:56:05 2014
+-- /___/   /\     Timestamp: Tue Sep 16 11:28:17 2014
 -- \   \  /  \ 
 --  \___\/\___\
 --             
@@ -44,15 +44,10 @@ entity xaui_v10_4 is
   port (
     reset : in STD_LOGIC := 'X'; 
     usrclk : in STD_LOGIC := 'X'; 
-    mdc : in STD_LOGIC := 'X'; 
-    mdio_in : in STD_LOGIC := 'X'; 
     mgt_enchansync : out STD_LOGIC; 
     mgt_loopback : out STD_LOGIC; 
     mgt_powerdown : out STD_LOGIC; 
-    soft_reset : out STD_LOGIC; 
     align_status : out STD_LOGIC; 
-    mdio_out : out STD_LOGIC; 
-    mdio_tri : out STD_LOGIC; 
     xgmii_txd : in STD_LOGIC_VECTOR ( 63 downto 0 ); 
     xgmii_txc : in STD_LOGIC_VECTOR ( 7 downto 0 ); 
     mgt_rxdata : in STD_LOGIC_VECTOR ( 63 downto 0 ); 
@@ -64,49 +59,40 @@ entity xaui_v10_4 is
     mgt_tx_reset : in STD_LOGIC_VECTOR ( 3 downto 0 ); 
     mgt_rx_reset : in STD_LOGIC_VECTOR ( 3 downto 0 ); 
     signal_detect : in STD_LOGIC_VECTOR ( 3 downto 0 ); 
-    type_sel : in STD_LOGIC_VECTOR ( 1 downto 0 ); 
-    prtad : in STD_LOGIC_VECTOR ( 4 downto 0 ); 
+    configuration_vector : in STD_LOGIC_VECTOR ( 6 downto 0 ); 
     xgmii_rxd : out STD_LOGIC_VECTOR ( 63 downto 0 ); 
     xgmii_rxc : out STD_LOGIC_VECTOR ( 7 downto 0 ); 
     mgt_txdata : out STD_LOGIC_VECTOR ( 63 downto 0 ); 
     mgt_txcharisk : out STD_LOGIC_VECTOR ( 7 downto 0 ); 
     mgt_enable_align : out STD_LOGIC_VECTOR ( 3 downto 0 ); 
-    sync_status : out STD_LOGIC_VECTOR ( 3 downto 0 ) 
+    sync_status : out STD_LOGIC_VECTOR ( 3 downto 0 ); 
+    status_vector : out STD_LOGIC_VECTOR ( 7 downto 0 ) 
   );
 end xaui_v10_4;
 
 architecture STRUCTURE of xaui_v10_4 is
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_in : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_331 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_332 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_333 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_334 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_327 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_328 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_329 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_330 : STD_LOGIC; 
+  signal NlwRenamedSig_OI_U0_status_vector_int_7_Q : STD_LOGIC; 
+  signal NlwRenamedSig_OI_U0_status_vector_int_6_Q : STD_LOGIC; 
+  signal NlwRenamedSig_OI_U0_status_vector_int_1_Q : STD_LOGIC; 
+  signal NlwRenamedSig_OI_U0_status_vector_int_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_339 : STD_LOGIC; 
-  signal NlwRenamedSig_OI_U0_mgt_loopback_keep : STD_LOGIC; 
-  signal NlwRenamedSig_OI_U0_mgt_powerdown_keep : STD_LOGIC; 
-  signal NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg : STD_LOGIC; 
-  signal NlwRenamedSig_OI_U0_xaui_inst_align_status_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_344 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_345 : STD_LOGIC; 
+  signal NlwRenamedSignal_U0_mgt_loopback_keep : STD_LOGIC; 
+  signal NlwRenamedSignal_U0_mgt_powerdown_keep : STD_LOGIC; 
   signal N0 : STD_LOGIC; 
-  signal N1 : STD_LOGIC; 
   signal U0_xaui_inst_align_status_int_inv : STD_LOGIC; 
-  signal U0_xaui_inst_type_sel_reg_done_inv : STD_LOGIC; 
-  signal U0_xaui_inst_aligned_sticky_350 : STD_LOGIC; 
-  signal U0_xaui_inst_rx_local_fault_351 : STD_LOGIC; 
-  signal U0_xaui_inst_tx_local_fault_352 : STD_LOGIC; 
-  signal U0_xaui_inst_type_sel_reg_done_353 : STD_LOGIC; 
-  signal U0_xaui_inst_usrclk_reset_354 : STD_LOGIC; 
-  signal U0_xaui_inst_p_clear_aligned_edge_last_value_355 : STD_LOGIC; 
-  signal U0_xaui_inst_clear_aligned_edge_356 : STD_LOGIC; 
-  signal U0_xaui_inst_p_clear_local_fault_edge_last_value_357 : STD_LOGIC; 
-  signal U0_xaui_inst_clear_local_fault_edge_358 : STD_LOGIC; 
-  signal U0_xaui_inst_usrclk_reset_pipe_359 : STD_LOGIC; 
-  signal U0_xaui_inst_reset_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_clear_aligned_362 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_clear_local_fault_363 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_382 : STD_LOGIC; 
+  signal U0_xaui_inst_p_clear_aligned_edge_last_value_344 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_aligned_edge_345 : STD_LOGIC; 
+  signal U0_xaui_inst_p_clear_local_fault_edge_last_value_346 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_local_fault_edge_347 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_aligned_348 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_local_fault_349 : STD_LOGIC; 
+  signal U0_xaui_inst_usrclk_reset_350 : STD_LOGIC; 
+  signal U0_xaui_inst_usrclk_reset_pipe_351 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_364 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_Q : STD_LOGIC; 
@@ -115,7 +101,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_391 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_373 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_Q : STD_LOGIC; 
@@ -124,7 +110,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_400 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_382 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_Q : STD_LOGIC; 
@@ -133,7 +119,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_409 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_391 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_Q : STD_LOGIC; 
@@ -142,7 +128,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_418 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_400 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_Q : STD_LOGIC; 
@@ -151,7 +137,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_427 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_409 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_Q : STD_LOGIC; 
@@ -160,7 +146,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_436 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_418 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_Q : STD_LOGIC; 
@@ -169,7 +155,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_445 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_427 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_Q : STD_LOGIC; 
@@ -178,14 +164,14 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT3211 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1511 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT161 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT511 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT123 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT302 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT331 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT311 : STD_LOGIC; 
@@ -291,24 +277,32 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_3_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_align_extra_a_675 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_align_extra_a_659 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_k_r_prbs_i_prbs_6_prbs_7_XOR_66_o : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_k_r_prbs_i_prbs_5_prbs_6_XOR_65_o : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_state_machine_is_idle_1_is_q_1_AND_15_o_0 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_680 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_2_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_702 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_686 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_694 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_696 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_698 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_700 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_702 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_704 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_706 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_708 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_sync_status_int : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_sync_status_726 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_sync_status_718 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_Mram_got_a_7_GND_18_o_Mux_10_o : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_Mram_got_a_3_GND_18_o_Mux_9_o : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_i_norst_inv_0 : STD_LOGIC; 
@@ -317,15 +311,15 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1_2_PWR_19_o_wide_mux_42_OUT_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a_4_got_a_7_AND_50_o : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a_0_got_a_3_AND_47_o : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_756 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_748 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_116_o2 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_110_o1 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_114_o1 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_112_o1 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_rxc_pipe_3_PWR_20_o_MUX_341_o : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_rxc_pipe_2_PWR_20_o_MUX_323_o : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_rxc_pipe_1_PWR_20_o_MUX_305_o : STD_LOGIC; 
@@ -405,18 +399,18 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_recoder_error_lane_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_3_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_848 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_849 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_850 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_851 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_852 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_853 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_854 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_855 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_code_error_delay_0_898 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_code_error_delay_1_899 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_code_error_delay_2_900 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_code_error_delay_3_901 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_840 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_841 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_842 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_843 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_844 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_845 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_846 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_847 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_code_error_delay_0_890 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_code_error_delay_1_891 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_code_error_delay_2_892 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_code_error_delay_3_893 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q : STD_LOGIC; 
@@ -434,7 +428,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q : STD_LOGIC; 
@@ -456,7 +450,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q : STD_LOGIC; 
@@ -478,7 +472,7 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q : STD_LOGIC; 
@@ -500,179 +494,79 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_2_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1121 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd101 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_n0218_inv : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_n0185 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_mdc_reg3_AND_205_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_271_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_269_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_aligned_sticky_reg_1088 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_aligned_reg_1089 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_rx_local_fault_reg_1090 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_tx_local_fault_reg_1091 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg1_1092 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_in_reg3 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg3_1095 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_1096 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_rd_1105 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT17_1145 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2_1147 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_11 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count4 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count3 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count1 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_In : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int15 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int14 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int13 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int12 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int11 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int10 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int9 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int8 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int7 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int6 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int5 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int4 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int3 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int2 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int1 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int15 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int14 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int13 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int12 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int11 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int10 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int9 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int8 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int7 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int6 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int5 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int4 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int3 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int2 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int1 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_PWR_22_o_MUX_374_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_GND_21_o_MUX_373_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_int : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_load_en : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o_1262 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_0_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_1_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_2_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_3_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_5_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_6_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_8_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_9_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_10_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_11_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_12_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_13_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_14_Q : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_15_Q : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1307 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1308 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1309 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1310 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1311 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1312 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1313 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1314 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1315 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1316 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1317 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1318 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1319 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1320 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1321 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1322 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_1_1323 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_2_1324 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_3_1325 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_4_1326 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_5_1327 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_6_1328 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_1_7_1329 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_1_1330 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_2_1331 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_3_1332 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_4_1333 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_5_1334 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_6_1335 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_is_terminate_0_7_1336 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1066 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1067 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1068 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1069 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1070 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1071 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1072 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1073 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1074 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1075 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1076 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1077 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1078 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1079 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1080 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1081 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_1_1082 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_2_1083 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_3_1084 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_4_1085 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_5_1086 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_6_1087 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_7_1088 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_1_1089 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_2_1090 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_3_1091 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_4_1092 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_5_1093 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_6_1094 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_7_1095 : STD_LOGIC; 
   signal N4 : STD_LOGIC; 
   signal N6 : STD_LOGIC; 
   signal N10 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1340 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1341 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1099 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1100 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102 : STD_LOGIC; 
   signal N16 : STD_LOGIC; 
-  signal N20 : STD_LOGIC; 
+  signal N18 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_Q : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_2 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp4 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1347 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1108 : STD_LOGIC; 
   signal U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp2 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1349 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1350 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1351 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1352 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1353 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1354 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1355 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1356 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_7_1_1357 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_7_2_1358 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_6_1_1359 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_6_2_1360 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_5_1_1361 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_5_2_1362 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_4_1_1363 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_4_2_1364 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_3_1_1365 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_3_2_1366 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_2_1_1367 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_2_2_1368 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_1_1_1369 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_1_2_1370 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_0_1_1371 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_code_error_0_2_1372 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1110 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1111 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1112 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1113 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1114 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1115 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1116 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1117 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_7_1_1118 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_7_2_1119 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_6_1_1120 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_6_2_1121 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_5_1_1122 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_5_2_1123 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_4_1_1124 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_4_2_1125 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_3_1_1126 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_3_2_1127 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_2_1_1128 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_2_2_1129 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_1_1_1130 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_1_2_1131 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_0_1_1132 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_code_error_0_2_1133 : STD_LOGIC; 
   signal N40 : STD_LOGIC; 
   signal N42 : STD_LOGIC; 
   signal N44 : STD_LOGIC; 
@@ -681,23 +575,27 @@ architecture STRUCTURE of xaui_v10_4 is
   signal N50 : STD_LOGIC; 
   signal N52 : STD_LOGIC; 
   signal N54 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_0_0_Q : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_2_2_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1383 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1384 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1143 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1144 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_1_1_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1386 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1146 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147 : STD_LOGIC; 
   signal N56 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_6_6_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1390 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1391 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1150 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1151 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_3_1152 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_6_6_4_1153 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_5_5_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1393 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1155 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_5_5_2_1156 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_5_5_3_1157 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_7_7_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1395 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1159 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_error_lane_4_4_Q : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1397 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1161 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_recoder_error_lane_4_4_2_1162 : STD_LOGIC; 
   signal N58 : STD_LOGIC; 
   signal N60 : STD_LOGIC; 
   signal N62 : STD_LOGIC; 
@@ -742,157 +640,119 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24 : STD_LOGIC; 
   signal N128 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o1_1442 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o2_1443 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o3_1444 : STD_LOGIC; 
+  signal U0_xaui_inst_aligned_sticky_glue_set_1207 : STD_LOGIC; 
+  signal U0_xaui_inst_rx_local_fault_glue_set_1208 : STD_LOGIC; 
+  signal U0_xaui_inst_tx_local_fault_glue_set_1209 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1210 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1211 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1212 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1213 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1214 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1215 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1216 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1217 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_align_extra_a_glue_set_1218 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1219 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_aligned_edge_rstpot_1220 : STD_LOGIC; 
+  signal U0_xaui_inst_clear_local_fault_edge_rstpot_1221 : STD_LOGIC; 
+  signal U0_xaui_inst_usrclk_reset_rstpot_1222 : STD_LOGIC; 
+  signal U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1223 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1224 : STD_LOGIC; 
   signal N130 : STD_LOGIC; 
   signal N132 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448 : STD_LOGIC; 
   signal N134 : STD_LOGIC; 
   signal N136 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In3_1451 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In1_1452 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In2_1453 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In1_1454 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In3_1455 : STD_LOGIC; 
   signal N138 : STD_LOGIC; 
   signal N140 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o1_1458 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT1 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT12_1460 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT13_1461 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT14_1462 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT15_1463 : STD_LOGIC; 
   signal N142 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT3 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT32 : STD_LOGIC; 
   signal N144 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1233 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1234 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1235 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1236 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1237 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1238 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1239 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1240 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1241 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1242 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1243 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1244 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1245 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1246 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1247 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1248 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1249 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1250 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1251 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1252 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1253 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1254 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1255 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1256 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1257 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1258 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1259 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1260 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1261 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1262 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1263 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1264 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1265 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1266 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1267 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1268 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1269 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1270 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1271 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1272 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1273 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1274 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1275 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1276 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1277 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1278 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1279 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1280 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1281 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1282 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1283 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1284 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1285 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1286 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1287 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1288 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1289 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1290 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1291 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1292 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1293 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1294 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1295 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1296 : STD_LOGIC; 
   signal N146 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT72 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT82 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT92 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT94 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT95_1473 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT113_1475 : STD_LOGIC; 
-  signal N148 : STD_LOGIC; 
+  signal N147 : STD_LOGIC; 
+  signal N149 : STD_LOGIC; 
   signal N150 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4 : STD_LOGIC; 
   signal N152 : STD_LOGIC; 
-  signal U0_xaui_inst_aligned_sticky_glue_set_1485 : STD_LOGIC; 
-  signal U0_xaui_inst_rx_local_fault_glue_set_1486 : STD_LOGIC; 
-  signal U0_xaui_inst_tx_local_fault_glue_set_1487 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1488 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1489 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1490 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1491 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1492 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1493 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1494 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1495 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_align_extra_a_glue_set_1496 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1497 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg_glue_set_1498 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_loopback_reg_rstpot_1499 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_powerdown_reg_rstpot_1500 : STD_LOGIC; 
-  signal U0_xaui_inst_clear_aligned_edge_rstpot_1501 : STD_LOGIC; 
-  signal U0_xaui_inst_clear_local_fault_edge_rstpot_1502 : STD_LOGIC; 
-  signal U0_xaui_inst_usrclk_reset_rstpot_1503 : STD_LOGIC; 
-  signal U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1504 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1505 : STD_LOGIC; 
-  signal N154 : STD_LOGIC; 
+  signal N153 : STD_LOGIC; 
   signal N155 : STD_LOGIC; 
   signal N156 : STD_LOGIC; 
-  signal N160 : STD_LOGIC; 
-  signal N161 : STD_LOGIC; 
-  signal N163 : STD_LOGIC; 
-  signal N164 : STD_LOGIC; 
-  signal N166 : STD_LOGIC; 
+  signal N170 : STD_LOGIC; 
   signal N171 : STD_LOGIC; 
-  signal N172 : STD_LOGIC; 
+  signal N173 : STD_LOGIC; 
   signal N174 : STD_LOGIC; 
   signal N176 : STD_LOGIC; 
-  signal N178 : STD_LOGIC; 
+  signal N177 : STD_LOGIC; 
+  signal N179 : STD_LOGIC; 
   signal N180 : STD_LOGIC; 
-  signal N182 : STD_LOGIC; 
-  signal N184 : STD_LOGIC; 
-  signal N186 : STD_LOGIC; 
-  signal N188 : STD_LOGIC; 
-  signal N190 : STD_LOGIC; 
-  signal N192 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1526 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1527 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1528 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1529 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1530 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1531 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1532 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1533 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1534 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1535 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1536 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1537 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1538 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1539 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1540 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1541 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1542 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1543 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1544 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1545 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1546 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1547 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1548 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1549 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1550 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1551 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1552 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1553 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1554 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1555 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1556 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1557 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1558 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1559 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1560 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1561 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1562 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1563 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1564 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1565 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1566 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1567 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1568 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1569 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1570 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1571 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1572 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1573 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1574 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1575 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1576 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1577 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1578 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1579 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1580 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1581 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1582 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1583 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1584 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1585 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1586 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1587 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1588 : STD_LOGIC; 
-  signal U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1589 : STD_LOGIC; 
-  signal N196 : STD_LOGIC; 
+  signal N194 : STD_LOGIC; 
+  signal N195 : STD_LOGIC; 
   signal N197 : STD_LOGIC; 
   signal N198 : STD_LOGIC; 
   signal N200 : STD_LOGIC; 
+  signal N201 : STD_LOGIC; 
+  signal N203 : STD_LOGIC; 
   signal N204 : STD_LOGIC; 
   signal N206 : STD_LOGIC; 
   signal N207 : STD_LOGIC; 
@@ -902,194 +762,162 @@ architecture STRUCTURE of xaui_v10_4 is
   signal N213 : STD_LOGIC; 
   signal N215 : STD_LOGIC; 
   signal N216 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_0_dpot_1603 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_1_dpot_1604 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_2_dpot_1605 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_3_dpot_1606 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_4_dpot_1607 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_5_dpot_1608 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_6_dpot_1609 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_7_dpot_1610 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_8_dpot_1611 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_9_dpot_1612 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_10_dpot_1613 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_11_dpot_1614 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_12_dpot_1615 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_13_dpot_1616 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_14_dpot_1617 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_15_dpot_1618 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_0_dpot_1620 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_1_dpot_1621 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_2_dpot_1622 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_3_dpot_1623 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_4_dpot_1624 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_5_dpot_1625 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_6_dpot_1626 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_7_dpot_1627 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_8_dpot_1628 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_9_dpot_1629 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_10_dpot_1630 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_11_dpot_1631 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_12_dpot_1632 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_13_dpot_1633 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_14_dpot_1634 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_15_dpot_1635 : STD_LOGIC; 
   signal N218 : STD_LOGIC; 
+  signal N219 : STD_LOGIC; 
+  signal N221 : STD_LOGIC; 
   signal N222 : STD_LOGIC; 
-  signal N223 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_2_rstpot_1639 : STD_LOGIC; 
+  signal N224 : STD_LOGIC; 
   signal N225 : STD_LOGIC; 
-  signal N226 : STD_LOGIC; 
+  signal N227 : STD_LOGIC; 
+  signal N228 : STD_LOGIC; 
+  signal N232 : STD_LOGIC; 
+  signal N234 : STD_LOGIC; 
+  signal N236 : STD_LOGIC; 
+  signal N238 : STD_LOGIC; 
   signal N240 : STD_LOGIC; 
-  signal N241 : STD_LOGIC; 
-  signal N243 : STD_LOGIC; 
+  signal N242 : STD_LOGIC; 
   signal N244 : STD_LOGIC; 
   signal N246 : STD_LOGIC; 
-  signal N247 : STD_LOGIC; 
+  signal N248 : STD_LOGIC; 
   signal N249 : STD_LOGIC; 
-  signal N250 : STD_LOGIC; 
+  signal N251 : STD_LOGIC; 
+  signal N252 : STD_LOGIC; 
+  signal N254 : STD_LOGIC; 
+  signal N255 : STD_LOGIC; 
+  signal N261 : STD_LOGIC; 
+  signal N262 : STD_LOGIC; 
   signal N264 : STD_LOGIC; 
-  signal N266 : STD_LOGIC; 
+  signal N265 : STD_LOGIC; 
+  signal N267 : STD_LOGIC; 
   signal N268 : STD_LOGIC; 
   signal N270 : STD_LOGIC; 
-  signal N272 : STD_LOGIC; 
+  signal N271 : STD_LOGIC; 
+  signal N273 : STD_LOGIC; 
   signal N274 : STD_LOGIC; 
-  signal N276 : STD_LOGIC; 
-  signal N278 : STD_LOGIC; 
   signal N280 : STD_LOGIC; 
-  signal N282 : STD_LOGIC; 
+  signal N281 : STD_LOGIC; 
+  signal N283 : STD_LOGIC; 
+  signal N284 : STD_LOGIC; 
   signal N286 : STD_LOGIC; 
   signal N287 : STD_LOGIC; 
-  signal N288 : STD_LOGIC; 
+  signal N289 : STD_LOGIC; 
   signal N290 : STD_LOGIC; 
-  signal N291 : STD_LOGIC; 
   signal N292 : STD_LOGIC; 
-  signal N294 : STD_LOGIC; 
-  signal N295 : STD_LOGIC; 
-  signal N296 : STD_LOGIC; 
-  signal N298 : STD_LOGIC; 
+  signal N293 : STD_LOGIC; 
+  signal N299 : STD_LOGIC; 
   signal N300 : STD_LOGIC; 
   signal N302 : STD_LOGIC; 
-  signal N304 : STD_LOGIC; 
+  signal N303 : STD_LOGIC; 
+  signal N305 : STD_LOGIC; 
   signal N306 : STD_LOGIC; 
-  signal N310 : STD_LOGIC; 
-  signal N314 : STD_LOGIC; 
-  signal N316 : STD_LOGIC; 
+  signal N308 : STD_LOGIC; 
+  signal N309 : STD_LOGIC; 
+  signal N311 : STD_LOGIC; 
+  signal N312 : STD_LOGIC; 
   signal N318 : STD_LOGIC; 
-  signal N320 : STD_LOGIC; 
+  signal N319 : STD_LOGIC; 
+  signal N321 : STD_LOGIC; 
   signal N322 : STD_LOGIC; 
-  signal N326 : STD_LOGIC; 
+  signal N324 : STD_LOGIC; 
+  signal N325 : STD_LOGIC; 
+  signal N327 : STD_LOGIC; 
+  signal N328 : STD_LOGIC; 
   signal N330 : STD_LOGIC; 
-  signal N332 : STD_LOGIC; 
-  signal N334 : STD_LOGIC; 
-  signal N336 : STD_LOGIC; 
+  signal N331 : STD_LOGIC; 
+  signal N337 : STD_LOGIC; 
   signal N338 : STD_LOGIC; 
-  signal N342 : STD_LOGIC; 
+  signal N340 : STD_LOGIC; 
+  signal N341 : STD_LOGIC; 
+  signal N343 : STD_LOGIC; 
+  signal N344 : STD_LOGIC; 
   signal N346 : STD_LOGIC; 
-  signal N348 : STD_LOGIC; 
+  signal N347 : STD_LOGIC; 
+  signal N349 : STD_LOGIC; 
   signal N350 : STD_LOGIC; 
-  signal N352 : STD_LOGIC; 
-  signal N354 : STD_LOGIC; 
-  signal N358 : STD_LOGIC; 
+  signal N356 : STD_LOGIC; 
+  signal N357 : STD_LOGIC; 
+  signal N359 : STD_LOGIC; 
+  signal N360 : STD_LOGIC; 
   signal N362 : STD_LOGIC; 
-  signal N364 : STD_LOGIC; 
+  signal N363 : STD_LOGIC; 
+  signal N365 : STD_LOGIC; 
   signal N366 : STD_LOGIC; 
   signal N368 : STD_LOGIC; 
-  signal N370 : STD_LOGIC; 
-  signal N374 : STD_LOGIC; 
+  signal N369 : STD_LOGIC; 
+  signal N375 : STD_LOGIC; 
+  signal N376 : STD_LOGIC; 
   signal N378 : STD_LOGIC; 
-  signal N380 : STD_LOGIC; 
+  signal N379 : STD_LOGIC; 
+  signal N381 : STD_LOGIC; 
   signal N382 : STD_LOGIC; 
   signal N384 : STD_LOGIC; 
-  signal N386 : STD_LOGIC; 
-  signal N390 : STD_LOGIC; 
+  signal N385 : STD_LOGIC; 
+  signal N387 : STD_LOGIC; 
+  signal N388 : STD_LOGIC; 
   signal N394 : STD_LOGIC; 
-  signal N396 : STD_LOGIC; 
+  signal N395 : STD_LOGIC; 
+  signal N397 : STD_LOGIC; 
   signal N398 : STD_LOGIC; 
   signal N400 : STD_LOGIC; 
-  signal N402 : STD_LOGIC; 
-  signal N406 : STD_LOGIC; 
-  signal N410 : STD_LOGIC; 
-  signal N412 : STD_LOGIC; 
+  signal N401 : STD_LOGIC; 
+  signal N403 : STD_LOGIC; 
+  signal N404 : STD_LOGIC; 
   signal N414 : STD_LOGIC; 
-  signal N416 : STD_LOGIC; 
+  signal N415 : STD_LOGIC; 
+  signal N417 : STD_LOGIC; 
   signal N418 : STD_LOGIC; 
-  signal N422 : STD_LOGIC; 
+  signal N420 : STD_LOGIC; 
+  signal N421 : STD_LOGIC; 
+  signal N423 : STD_LOGIC; 
+  signal N424 : STD_LOGIC; 
   signal N426 : STD_LOGIC; 
-  signal N427 : STD_LOGIC; 
-  signal N429 : STD_LOGIC; 
+  signal N428 : STD_LOGIC; 
   signal N430 : STD_LOGIC; 
   signal N432 : STD_LOGIC; 
-  signal N433 : STD_LOGIC; 
   signal N434 : STD_LOGIC; 
+  signal N436 : STD_LOGIC; 
   signal N438 : STD_LOGIC; 
   signal N440 : STD_LOGIC; 
   signal N442 : STD_LOGIC; 
   signal N443 : STD_LOGIC; 
   signal N444 : STD_LOGIC; 
   signal N446 : STD_LOGIC; 
-  signal N447 : STD_LOGIC; 
-  signal N449 : STD_LOGIC; 
+  signal N448 : STD_LOGIC; 
   signal N450 : STD_LOGIC; 
   signal N452 : STD_LOGIC; 
-  signal N453 : STD_LOGIC; 
-  signal N455 : STD_LOGIC; 
+  signal N454 : STD_LOGIC; 
   signal N456 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_41 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_1_61 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_41 : STD_LOGIC; 
+  signal U0_xaui_inst_transmitter_is_terminate_0_61 : STD_LOGIC; 
   signal N458 : STD_LOGIC; 
   signal N459 : STD_LOGIC; 
+  signal N460 : STD_LOGIC; 
   signal N461 : STD_LOGIC; 
   signal N462 : STD_LOGIC; 
+  signal N463 : STD_LOGIC; 
   signal N464 : STD_LOGIC; 
+  signal N465 : STD_LOGIC; 
   signal N466 : STD_LOGIC; 
-  signal N468 : STD_LOGIC; 
-  signal N469 : STD_LOGIC; 
-  signal N473 : STD_LOGIC; 
-  signal N474 : STD_LOGIC; 
-  signal N475 : STD_LOGIC; 
-  signal N477 : STD_LOGIC; 
-  signal N479 : STD_LOGIC; 
-  signal N481 : STD_LOGIC; 
-  signal N483 : STD_LOGIC; 
-  signal N485 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_dpot_1753 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_0_dpot_1754 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_1_dpot_1755 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1756 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1_1757 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758 : STD_LOGIC; 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1_1759 : STD_LOGIC; 
-  signal N487 : STD_LOGIC; 
-  signal N488 : STD_LOGIC; 
-  signal N489 : STD_LOGIC; 
-  signal N490 : STD_LOGIC; 
-  signal N491 : STD_LOGIC; 
-  signal N492 : STD_LOGIC; 
-  signal N493 : STD_LOGIC; 
-  signal N494 : STD_LOGIC; 
-  signal N495 : STD_LOGIC; 
-  signal N496 : STD_LOGIC; 
-  signal N497 : STD_LOGIC; 
-  signal N498 : STD_LOGIC; 
-  signal NLW_U0_xaui_inst_G_HAS_MDIO_management_1_Mshreg_mdio_in_reg3_Q15_UNCONNECTED : STD_LOGIC; 
+  signal N467 : STD_LOGIC; 
   signal U0_xaui_inst_receiver_recoder_rxd_out : STD_LOGIC_VECTOR ( 63 downto 0 ); 
   signal U0_xaui_inst_receiver_recoder_rxc_out : STD_LOGIC_VECTOR ( 7 downto 0 ); 
   signal U0_xaui_inst_transmitter_recoder_txd_out : STD_LOGIC_VECTOR ( 63 downto 0 ); 
   signal U0_xaui_inst_transmitter_recoder_txc_out : STD_LOGIC_VECTOR ( 7 downto 0 ); 
-  signal NlwRenamedSig_OI_U0_xaui_inst_sync : STD_LOGIC_VECTOR ( 3 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg : STD_LOGIC_VECTOR ( 1 downto 0 ); 
-  signal U0_xaui_inst_type_sel_reg : STD_LOGIC_VECTOR ( 1 downto 0 ); 
+  signal NlwRenamedSignal_U0_xaui_inst_sync : STD_LOGIC_VECTOR ( 3 downto 0 ); 
   signal U0_xaui_inst_signal_detect_int : STD_LOGIC_VECTOR ( 3 downto 0 ); 
-  signal U0_xaui_inst_transmitter_is_terminate : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_is_q_comb : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_is_idle_comb : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_is_idle : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_is_q : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_code_r : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_tx_code_q : STD_LOGIC_VECTOR ( 1 downto 0 ); 
+  signal U0_xaui_inst_transmitter_tx_code_k : STD_LOGIC_VECTOR ( 1 downto 1 ); 
   signal U0_xaui_inst_transmitter_tx_code_a : STD_LOGIC_VECTOR ( 1 downto 0 ); 
   signal U0_xaui_inst_transmitter_k_r_prbs_i_prbs : STD_LOGIC_VECTOR ( 8 downto 1 ); 
   signal U0_xaui_inst_transmitter_a_due : STD_LOGIC_VECTOR ( 1 downto 0 ); 
+  signal U0_xaui_inst_transmitter_last_qmsg : STD_LOGIC_VECTOR ( 0 downto 0 ); 
   signal U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg : STD_LOGIC_VECTOR ( 31 downto 7 ); 
   signal U0_xaui_inst_transmitter_txc_pipe : STD_LOGIC_VECTOR ( 7 downto 0 ); 
   signal U0_xaui_inst_transmitter_txd_pipe : STD_LOGIC_VECTOR ( 63 downto 0 ); 
@@ -1113,22 +941,9 @@ architecture STRUCTURE of xaui_v10_4 is
   signal U0_xaui_inst_receiver_recoder_code_error_pipe : STD_LOGIC_VECTOR ( 7 downto 0 ); 
   signal U0_xaui_inst_receiver_recoder_rxc_pipe : STD_LOGIC_VECTOR ( 7 downto 0 ); 
   signal U0_xaui_inst_receiver_recoder_rxd_pipe : STD_LOGIC_VECTOR ( 63 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_data_rd : STD_LOGIC_VECTOR ( 13 downto 13 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg : STD_LOGIC_VECTOR ( 3 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg : STD_LOGIC_VECTOR ( 3 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg : STD_LOGIC_VECTOR ( 15 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int : STD_LOGIC_VECTOR ( 15 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int : STD_LOGIC_VECTOR ( 15 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut : STD_LOGIC_VECTOR ( 15 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy : STD_LOGIC_VECTOR ( 14 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut : STD_LOGIC_VECTOR ( 15 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy : STD_LOGIC_VECTOR ( 14 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg : STD_LOGIC_VECTOR ( 4 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode : STD_LOGIC_VECTOR ( 1 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count : STD_LOGIC_VECTOR ( 4 downto 0 ); 
-  signal U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0 : STD_LOGIC_VECTOR ( 15 downto 15 ); 
 begin
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_in <= mdc;
+  NlwRenamedSignal_U0_mgt_powerdown_keep <= configuration_vector(1);
+  NlwRenamedSignal_U0_mgt_loopback_keep <= configuration_vector(0);
   xgmii_rxd(63) <= U0_xaui_inst_receiver_recoder_rxd_out(63);
   xgmii_rxd(62) <= U0_xaui_inst_receiver_recoder_rxd_out(62);
   xgmii_rxd(61) <= U0_xaui_inst_receiver_recoder_rxd_out(61);
@@ -1273,86 +1088,87 @@ begin
   mgt_txcharisk(2) <= U0_xaui_inst_transmitter_recoder_txc_out(1);
   mgt_txcharisk(1) <= U0_xaui_inst_transmitter_recoder_txc_out(4);
   mgt_txcharisk(0) <= U0_xaui_inst_transmitter_recoder_txc_out(0);
-  mgt_enable_align(3) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_331;
-  mgt_enable_align(2) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_332;
-  mgt_enable_align(1) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_333;
-  mgt_enable_align(0) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_334;
-  sync_status(3) <= NlwRenamedSig_OI_U0_xaui_inst_sync(3);
-  sync_status(2) <= NlwRenamedSig_OI_U0_xaui_inst_sync(2);
-  sync_status(1) <= NlwRenamedSig_OI_U0_xaui_inst_sync(1);
-  sync_status(0) <= NlwRenamedSig_OI_U0_xaui_inst_sync(0);
+  mgt_enable_align(3) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_327;
+  mgt_enable_align(2) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_328;
+  mgt_enable_align(1) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_329;
+  mgt_enable_align(0) <= U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_330;
+  sync_status(3) <= NlwRenamedSignal_U0_xaui_inst_sync(3);
+  sync_status(2) <= NlwRenamedSignal_U0_xaui_inst_sync(2);
+  sync_status(1) <= NlwRenamedSignal_U0_xaui_inst_sync(1);
+  sync_status(0) <= NlwRenamedSignal_U0_xaui_inst_sync(0);
+  status_vector(7) <= NlwRenamedSig_OI_U0_status_vector_int_7_Q;
+  status_vector(6) <= NlwRenamedSig_OI_U0_status_vector_int_6_Q;
+  status_vector(5) <= NlwRenamedSignal_U0_xaui_inst_sync(3);
+  status_vector(4) <= NlwRenamedSignal_U0_xaui_inst_sync(2);
+  status_vector(3) <= NlwRenamedSignal_U0_xaui_inst_sync(1);
+  status_vector(2) <= NlwRenamedSignal_U0_xaui_inst_sync(0);
+  status_vector(1) <= NlwRenamedSig_OI_U0_status_vector_int_1_Q;
+  status_vector(0) <= NlwRenamedSig_OI_U0_status_vector_int_0_Q;
   mgt_enchansync <= U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_339;
-  mgt_loopback <= NlwRenamedSig_OI_U0_mgt_loopback_keep;
-  mgt_powerdown <= NlwRenamedSig_OI_U0_mgt_powerdown_keep;
-  soft_reset <= NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg;
-  align_status <= NlwRenamedSig_OI_U0_xaui_inst_align_status_int;
-  mdio_out <= U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_344;
-  mdio_tri <= U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_345;
+  mgt_loopback <= NlwRenamedSignal_U0_mgt_loopback_keep;
+  mgt_powerdown <= NlwRenamedSignal_U0_mgt_powerdown_keep;
+  align_status <= NlwRenamedSig_OI_U0_status_vector_int_6_Q;
   XST_VCC : VCC
     port map (
       P => N0
     );
   XST_GND : GND
     port map (
-      G => N1
-    );
-  U0_xaui_inst_p_clear_aligned_edge_last_value : FDR
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_clear_aligned_362,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_p_clear_aligned_edge_last_value_355
-    );
-  U0_xaui_inst_p_clear_local_fault_edge_last_value : FDR
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_clear_local_fault_363,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_p_clear_local_fault_edge_last_value_357
+      G => U0_xaui_inst_transmitter_last_qmsg(0)
     );
   U0_xaui_inst_signal_detect_int_3 : FDS
     port map (
       C => usrclk,
       D => signal_detect(3),
-      S => U0_xaui_inst_type_sel_reg(1),
+      S => U0_xaui_inst_transmitter_last_qmsg(0),
       Q => U0_xaui_inst_signal_detect_int(3)
     );
   U0_xaui_inst_signal_detect_int_2 : FDS
     port map (
       C => usrclk,
       D => signal_detect(2),
-      S => U0_xaui_inst_type_sel_reg(1),
+      S => U0_xaui_inst_transmitter_last_qmsg(0),
       Q => U0_xaui_inst_signal_detect_int(2)
     );
   U0_xaui_inst_signal_detect_int_1 : FDS
     port map (
       C => usrclk,
       D => signal_detect(1),
-      S => U0_xaui_inst_type_sel_reg(1),
+      S => U0_xaui_inst_transmitter_last_qmsg(0),
       Q => U0_xaui_inst_signal_detect_int(1)
     );
   U0_xaui_inst_signal_detect_int_0 : FDS
     port map (
       C => usrclk,
       D => signal_detect(0),
-      S => U0_xaui_inst_type_sel_reg(1),
+      S => U0_xaui_inst_transmitter_last_qmsg(0),
       Q => U0_xaui_inst_signal_detect_int(0)
     );
-  U0_xaui_inst_type_sel_reg_1 : FDRE
+  U0_xaui_inst_p_clear_aligned_edge_last_value : FDR
     port map (
       C => usrclk,
-      CE => U0_xaui_inst_type_sel_reg_done_inv,
-      D => type_sel(1),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_type_sel_reg(1)
+      D => U0_xaui_inst_clear_aligned_348,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => U0_xaui_inst_p_clear_aligned_edge_last_value_344
     );
-  U0_xaui_inst_type_sel_reg_0 : FDRE
+  U0_xaui_inst_p_clear_local_fault_edge_last_value : FDR
     port map (
       C => usrclk,
-      CE => U0_xaui_inst_type_sel_reg_done_inv,
-      D => type_sel(0),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_type_sel_reg(0)
+      D => U0_xaui_inst_clear_local_fault_349,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => U0_xaui_inst_p_clear_local_fault_edge_last_value_346
+    );
+  U0_xaui_inst_clear_aligned : FD
+    port map (
+      C => usrclk,
+      D => configuration_vector(3),
+      Q => U0_xaui_inst_clear_aligned_348
+    );
+  U0_xaui_inst_clear_local_fault : FD
+    port map (
+      C => usrclk,
+      D => configuration_vector(2),
+      Q => U0_xaui_inst_clear_local_fault_349
     );
   U0_xaui_inst_usrclk_reset_pipe : FD
     generic map(
@@ -1360,8 +1176,8 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_reset_int,
-      Q => U0_xaui_inst_usrclk_reset_pipe_359
+      D => reset,
+      Q => U0_xaui_inst_usrclk_reset_pipe_351
     );
   U0_xaui_inst_transmitter_tx_is_idle_1 : FD
     generic map(
@@ -2753,7 +2569,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0051_inv,
       D => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_4_Q,
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_count(4)
     );
   U0_xaui_inst_transmitter_align_count_3 : FDRE
@@ -2764,7 +2580,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0051_inv,
       D => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_3_Q,
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_count(3)
     );
   U0_xaui_inst_transmitter_align_count_2 : FDRE
@@ -2775,7 +2591,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0051_inv,
       D => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_2_Q,
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_count(2)
     );
   U0_xaui_inst_transmitter_align_count_1 : FDRE
@@ -2786,7 +2602,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0051_inv,
       D => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_1_Q,
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_count(1)
     );
   U0_xaui_inst_transmitter_align_count_0 : FDRE
@@ -2797,7 +2613,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0051_inv,
       D => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_0_Q,
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_count(0)
     );
   U0_xaui_inst_transmitter_align_prbs_7 : FDSE
@@ -2808,7 +2624,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(6),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(7)
     );
   U0_xaui_inst_transmitter_align_prbs_6 : FDSE
@@ -2819,7 +2635,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(5),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(6)
     );
   U0_xaui_inst_transmitter_align_prbs_5 : FDSE
@@ -2830,7 +2646,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(4),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(5)
     );
   U0_xaui_inst_transmitter_align_prbs_4 : FDSE
@@ -2841,7 +2657,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(3),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(4)
     );
   U0_xaui_inst_transmitter_align_prbs_3 : FDSE
@@ -2852,7 +2668,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(2),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(3)
     );
   U0_xaui_inst_transmitter_align_prbs_2 : FDSE
@@ -2863,7 +2679,7 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs(1),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(2)
     );
   U0_xaui_inst_transmitter_align_prbs_1 : FDSE
@@ -2874,63 +2690,63 @@ begin
       C => usrclk,
       CE => U0_xaui_inst_transmitter_align_n0020_inv,
       D => U0_xaui_inst_transmitter_align_prbs_6_prbs_7_XOR_49_o,
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_align_prbs(1)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_8 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(6),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_7 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(5),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(7)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_6 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(4),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(6)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_5 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(3),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(5)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_4 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(2),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(4)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_3 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(1),
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(3)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_2 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs_6_prbs_7_XOR_66_o,
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(2)
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_prbs_1 : FDS
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_k_r_prbs_i_prbs_5_prbs_6_XOR_65_o,
-      S => U0_xaui_inst_usrclk_reset_354,
+      S => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(1)
     );
   U0_xaui_inst_transmitter_state_machine_state_0_2 : FDR
@@ -2940,7 +2756,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_state_machine_state_0(2)
     );
   U0_xaui_inst_transmitter_state_machine_state_0_1 : FDR
@@ -2950,7 +2766,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1),
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_state_machine_state_0(1)
     );
   U0_xaui_inst_transmitter_state_machine_state_0_0 : FDR
@@ -2960,7 +2776,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
-      R => U0_xaui_inst_usrclk_reset_354,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_state_machine_state_0(0)
     );
   U0_xaui_inst_transmitter_state_machine_state_1_2 : FDR
@@ -2989,8 +2805,8 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1,
-      R => U0_xaui_inst_usrclk_reset_354,
+      D => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_680,
+      R => U0_xaui_inst_usrclk_reset_350,
       Q => U0_xaui_inst_transmitter_state_machine_state_1(0)
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out : FD
@@ -3000,7 +2816,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(7),
-      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_382
+      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_364
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out : FD
     generic map(
@@ -3009,7 +2825,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(6),
-      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_391
+      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_373
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out : FD
     generic map(
@@ -3018,7 +2834,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(5),
-      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_400
+      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_382
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out : FD
     generic map(
@@ -3027,7 +2843,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(4),
-      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_409
+      Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_391
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out : FD
     generic map(
@@ -3036,7 +2852,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(3),
-      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_418
+      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_400
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out : FD
     generic map(
@@ -3045,7 +2861,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(2),
-      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_427
+      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_409
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out : FD
     generic map(
@@ -3054,7 +2870,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(1),
-      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_436
+      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_418
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out : FD
     generic map(
@@ -3063,43 +2879,43 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_transmitter_txc_pipe(0),
-      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_445
+      Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_427
     );
   U0_xaui_inst_receiver_sync_ok_3 : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_sync_ok_int(3),
-      Q => NlwRenamedSig_OI_U0_xaui_inst_sync(3)
+      Q => NlwRenamedSignal_U0_xaui_inst_sync(3)
     );
   U0_xaui_inst_receiver_sync_ok_2 : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_sync_ok_int(2),
-      Q => NlwRenamedSig_OI_U0_xaui_inst_sync(2)
+      Q => NlwRenamedSignal_U0_xaui_inst_sync(2)
     );
   U0_xaui_inst_receiver_sync_ok_1 : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_sync_ok_int(1),
-      Q => NlwRenamedSig_OI_U0_xaui_inst_sync(1)
+      Q => NlwRenamedSignal_U0_xaui_inst_sync(1)
     );
   U0_xaui_inst_receiver_sync_ok_0 : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_sync_ok_int(0),
-      Q => NlwRenamedSig_OI_U0_xaui_inst_sync(0)
+      Q => NlwRenamedSignal_U0_xaui_inst_sync(0)
     );
   U0_xaui_inst_receiver_sync_status : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_sync_status_int,
-      Q => U0_xaui_inst_receiver_sync_status_726
+      Q => U0_xaui_inst_receiver_sync_status_718
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_align_status : FD
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(2),
-      Q => NlwRenamedSig_OI_U0_xaui_inst_align_status_int
+      Q => NlwRenamedSig_OI_U0_status_vector_int_6_Q
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1_2 : FDR
     generic map(
@@ -3138,7 +2954,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_deskew_state_Mram_got_a_3_GND_18_o_Mux_9_o,
-      Q => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_756
+      Q => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_748
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_1 : FD
     generic map(
@@ -4218,7 +4034,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_recoder_code_error_pipe(4),
-      Q => U0_xaui_inst_receiver_recoder_code_error_delay_0_898
+      Q => U0_xaui_inst_receiver_recoder_code_error_delay_0_890
     );
   U0_xaui_inst_receiver_recoder_code_error_delay_1 : FD
     generic map(
@@ -4227,7 +4043,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_recoder_code_error_pipe(5),
-      Q => U0_xaui_inst_receiver_recoder_code_error_delay_1_899
+      Q => U0_xaui_inst_receiver_recoder_code_error_delay_1_891
     );
   U0_xaui_inst_receiver_recoder_code_error_delay_3 : FD
     generic map(
@@ -4236,7 +4052,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_recoder_code_error_pipe(7),
-      Q => U0_xaui_inst_receiver_recoder_code_error_delay_3_901
+      Q => U0_xaui_inst_receiver_recoder_code_error_delay_3_893
     );
   U0_xaui_inst_receiver_recoder_rxc_half_pipe_3 : FD
     generic map(
@@ -4281,7 +4097,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_recoder_code_error_pipe(6),
-      Q => U0_xaui_inst_receiver_recoder_code_error_delay_2_900
+      Q => U0_xaui_inst_receiver_recoder_code_error_delay_2_892
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_7 : FD
     generic map(
@@ -4289,7 +4105,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_848,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_840,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(7)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_6 : FD
@@ -4298,7 +4114,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_849,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_841,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(6)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_5 : FD
@@ -4307,7 +4123,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_850,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_842,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(5)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_4 : FD
@@ -4316,7 +4132,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_851,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_843,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(4)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_3 : FD
@@ -4325,7 +4141,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_852,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_844,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(3)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_2 : FD
@@ -4334,7 +4150,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_853,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_845,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(2)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_1 : FD
@@ -4343,7 +4159,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_854,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_846,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(1)
     );
   U0_xaui_inst_receiver_recoder_lane_terminate_0 : FD
@@ -4352,7 +4168,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_855,
+      D => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_847,
       Q => U0_xaui_inst_receiver_recoder_lane_terminate(0)
     );
   U0_xaui_inst_receiver_recoder_rxc_pipe_7 : FD
@@ -5129,7 +4945,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_i,
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_331
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_enable_align_327
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1 : FD
     generic map(
@@ -5171,7 +4987,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_signal_detect_int(3),
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4 : FDR
     generic map(
@@ -5227,7 +5043,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_i,
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_332
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_enable_align_328
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_1 : FD
     generic map(
@@ -5269,7 +5085,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_signal_detect_int(2),
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4 : FDR
     generic map(
@@ -5325,7 +5141,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_i,
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_333
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_enable_align_329
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_1 : FD
     generic map(
@@ -5367,7 +5183,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_signal_detect_int(1),
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4 : FDR
     generic map(
@@ -5423,7 +5239,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_i,
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_334
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_330
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_1 : FD
     generic map(
@@ -5465,1221 +5281,7 @@ begin
     port map (
       C => usrclk,
       D => U0_xaui_inst_signal_detect_int(0),
-      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_1 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_1_dpot_1755,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_0 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_0_dpot_1754,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_dpot_1753,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg3 : FD
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_1096,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg3_1095
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_clear_local_fault : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_271_o,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_clear_local_fault_363
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_clear_aligned : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_269_o,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_clear_aligned_362
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_aligned_sticky_reg : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_aligned_sticky_350,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_aligned_sticky_reg_1088
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_aligned_reg : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => NlwRenamedSig_OI_U0_xaui_inst_align_status_int,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_aligned_reg_1089
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_rx_local_fault_reg : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_rx_local_fault_351,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_rx_local_fault_reg_1090
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_tx_local_fault_reg : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_tx_local_fault_352,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_tx_local_fault_reg_1091
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2 : FD
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg1_1092,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_1096
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg_3 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => NlwRenamedSig_OI_U0_xaui_inst_sync(3),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg_2 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => NlwRenamedSig_OI_U0_xaui_inst_sync(2),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg_1 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => NlwRenamedSig_OI_U0_xaui_inst_sync(1),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg_0 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => NlwRenamedSig_OI_U0_xaui_inst_sync(0),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg_3 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_signal_detect_int(3),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg_2 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_signal_detect_int(2),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg_1 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_signal_detect_int(1),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg_0 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_signal_detect_int(0),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg1 : FD
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_in,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg1_1092
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising : FD
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_mdc_reg3_AND_205_o,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_4 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count4,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_3 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count3,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_1 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count1,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_0 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_15 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_15_dpot_1635,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_14 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_14_dpot_1634,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_13 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_13_dpot_1633,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_12 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_12_dpot_1632,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_11 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_11_dpot_1631,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_10 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_10_dpot_1630,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_9 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_9_dpot_1629,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_8 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_8_dpot_1628,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_7 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_7_dpot_1627,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_6 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_6_dpot_1626,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_5 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_5_dpot_1625,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_4 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_4_dpot_1624,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_3 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_3_dpot_1623,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_2 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_2_dpot_1622,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_1 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_1_dpot_1621,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_0 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_0_dpot_1620,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_15 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_15_dpot_1618,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_14 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_14_dpot_1617,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_13 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_13_dpot_1616,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_12 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_12_dpot_1615,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_11 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_11_dpot_1614,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_10 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_10_dpot_1613,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_9 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_9_dpot_1612,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_8 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_8_dpot_1611,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_7 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_7_dpot_1610,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_6 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_6_dpot_1609,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_5 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_5_dpot_1608,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_4 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_4_dpot_1607,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_3 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_3_dpot_1606,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_2 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_2_dpot_1605,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_1 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_1_dpot_1604,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_0 : FDRE
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_0_dpot_1603,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_15_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(14),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(15),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int15
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_14_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(13),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int14
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_14_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(13),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_13_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(12),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int13
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_13_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(12),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_12_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(11),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int12
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_12_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(11),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_11_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(10),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int11
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_11_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(10),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_10_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(9),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int10
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_10_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(9),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_9_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(8),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int9
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_9_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(8),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_8_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(7),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int8
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_8_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(7),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_7_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(6),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int7
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_7_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(6),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_6_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(5),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int6
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_6_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(5),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_5_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(4),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int5
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_5_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(4),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_4_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(3),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int4
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_4_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(3),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_3_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(2),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int3
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_3_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(2),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_2_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(1),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int2
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_2_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(1),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_1_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(0),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int1
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_1_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(0),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_xor_0_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy_0_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_cy(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_15_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(14),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(15),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int15
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_14_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(13),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int14
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_14_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(13),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_13_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(12),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int13
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_13_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(12),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_12_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(11),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int12
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_12_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(11),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_11_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(10),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int11
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_11_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(10),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_10_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(9),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int10
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_10_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(9),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_9_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(8),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int9
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_9_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(8),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_8_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(7),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int8
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_8_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(7),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_7_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(6),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int7
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_7_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(6),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_6_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(5),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int6
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_6_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(5),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_5_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(4),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int5
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_5_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(4),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_4_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(3),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int4
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_4_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(3),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_3_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(2),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int3
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_3_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(2),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_2_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(1),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int2
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_2_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(1),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_1_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(0),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int1
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_1_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(0),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_xor_0_Q : XORCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      LI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy_0_Q : MUXCY
-    port map (
-      CI => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      DI => N1,
-      S => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_cy(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_int,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_344
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri : FDSE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_int,
-      S => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_345
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_rd : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_PWR_22_o_MUX_374_o,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_rd_1105
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_GND_21_o_MUX_373_o,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg_4 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg_3 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg_2 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg_1 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg_0 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode_1 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o_1262,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode_0 : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o_1262,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg : FDRE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_in_reg3,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_15 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_15_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_14_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_13 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_13_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_12 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_12_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_11 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_11_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_10 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_10_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_9 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_9_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_8 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_8_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_7 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_7_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_6 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_6_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_5 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_5_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_4 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_4_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_3 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_3_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_2 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_2_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_1 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_1_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_0 : FDE
-    port map (
-      C => usrclk,
-      CE => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_0_Q,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0)
-    );
-  U0_xaui_inst_reset_int1 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => reset,
-      I1 => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg,
-      O => U0_xaui_inst_reset_int
+      Q => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT411 : LUT6
     generic map(
@@ -6868,9 +5470,9 @@ begin
       INIT => X"04"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I0 => configuration_vector(6),
+      I1 => configuration_vector(4),
+      I2 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT6311 : LUT2
@@ -6878,8 +5480,8 @@ begin
       INIT => X"D"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I0 => configuration_vector(4),
+      I1 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT631
     );
   U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o1 : LUT3
@@ -6887,9 +5489,9 @@ begin
       INIT => X"20"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I0 => configuration_vector(4),
+      I1 => configuration_vector(6),
+      I2 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o
     );
   U0_xaui_inst_transmitter_align_mux411 : LUT6
@@ -6932,12 +5534,12 @@ begin
       INIT => X"FFFFFFFFFFFFFFFE"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tx_code_a(1),
-      I1 => U0_xaui_inst_transmitter_tx_code_a(0),
-      I2 => U0_xaui_inst_transmitter_align_count(4),
-      I3 => U0_xaui_inst_transmitter_align_count(3),
-      I4 => U0_xaui_inst_transmitter_align_count(2),
-      I5 => U0_xaui_inst_transmitter_align_count(1),
+      I0 => U0_xaui_inst_transmitter_align_count(4),
+      I1 => U0_xaui_inst_transmitter_align_count(3),
+      I2 => U0_xaui_inst_transmitter_align_count(2),
+      I3 => U0_xaui_inst_transmitter_align_count(1),
+      I4 => U0_xaui_inst_transmitter_tx_code_a(0),
+      I5 => U0_xaui_inst_transmitter_tx_code_a(1),
       O => U0_xaui_inst_transmitter_align_n0051_inv
     );
   U0_xaui_inst_transmitter_k_r_prbs_i_Mxor_prbs_5_prbs_6_XOR_65_o_xo_0_1 : LUT2
@@ -6964,11 +5566,21 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_tx_is_q(1),
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
       I2 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
       I3 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
       I4 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1),
       O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_2_Q
+    );
+  U0_xaui_inst_transmitter_state_machine_tx_code_k_1_1 : LUT3
+    generic map(
+      INIT => X"41"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_state_machine_state_1(1),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_1(0),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_1(2),
+      O => U0_xaui_inst_transmitter_tx_code_k(1)
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp51 : LUT6
     generic map(
@@ -6980,7 +5592,7 @@ begin
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(2),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I4 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I5 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
+      I5 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
       O => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2)
     );
   U0_xaui_inst_transmitter_state_machine_tx_code_q_1_1 : LUT2
@@ -7015,7 +5627,7 @@ begin
       INIT => X"AB"
     )
     port map (
-      I0 => U0_xaui_inst_usrclk_reset_354,
+      I0 => U0_xaui_inst_usrclk_reset_350,
       I1 => U0_xaui_inst_transmitter_tx_is_idle(1),
       I2 => U0_xaui_inst_transmitter_tx_is_q(1),
       O => U0_xaui_inst_transmitter_state_machine_is_idle_1_is_q_1_AND_15_o_0
@@ -7066,8 +5678,8 @@ begin
       INIT => X"282880A002202020"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_sync_status_726,
-      I1 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_756,
+      I0 => U0_xaui_inst_receiver_sync_status_718,
+      I1 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_748,
       I2 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(1),
       I3 => U0_xaui_inst_receiver_G_SYNC_deskew_state_got_align(0),
       I4 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(0),
@@ -7091,11 +5703,11 @@ begin
       INIT => X"2200282822200828"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_sync_status_726,
+      I0 => U0_xaui_inst_receiver_sync_status_718,
       I1 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(0),
       I2 => U0_xaui_inst_receiver_G_SYNC_deskew_state_got_align(0),
       I3 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(2),
-      I4 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_756,
+      I4 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_748,
       I5 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(1),
       O => U0_xaui_inst_receiver_G_SYNC_deskew_state_p_state_comb_state_temp(0)
     );
@@ -7104,11 +5716,11 @@ begin
       INIT => X"0888A88808888888"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_sync_status_726,
+      I0 => U0_xaui_inst_receiver_sync_status_718,
       I1 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(2),
       I2 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(1),
       I3 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(0),
-      I4 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_756,
+      I4 => U0_xaui_inst_receiver_G_SYNC_deskew_state_deskew_error_sliced_748,
       I5 => U0_xaui_inst_receiver_G_SYNC_deskew_state_got_align(0),
       O => U0_xaui_inst_receiver_G_SYNC_deskew_state_p_state_comb_state_temp(2)
     );
@@ -7151,8 +5763,8 @@ begin
       INIT => X"D"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_sync_status_726,
-      I1 => U0_xaui_inst_usrclk_reset_354,
+      I0 => U0_xaui_inst_receiver_sync_status_718,
+      I1 => U0_xaui_inst_usrclk_reset_350,
       O => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_i_norst_inv_0
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a_4_got_a_7_AND_50_o_4_1 : LUT4
@@ -7281,15 +5893,15 @@ begin
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_17_PWR_20_o_MUX_320_o11 : LUT6
     generic map(
-      INIT => X"FFFFFFFFAEEBAAAA"
+      INIT => X"FFFFFFFFFFFF0882"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(17),
+      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_114_o1,
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(21),
-      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(23),
-      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(22),
-      I4 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_114_o1,
-      I5 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(22),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(23),
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I5 => U0_xaui_inst_receiver_recoder_rxd_pipe(17),
       O => U0_xaui_inst_receiver_recoder_rxd_pipe_17_PWR_20_o_MUX_320_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_20_PWR_20_o_MUX_317_o11 : LUT6
@@ -7535,7 +6147,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(24),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_24_GND_19_o_MUX_267_o
     );
@@ -7545,7 +6157,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(16),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_16_GND_19_o_MUX_249_o
     );
@@ -7555,19 +6167,19 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(0),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_0_GND_19_o_MUX_213_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_GND_19_o_GND_19_o_mux_97_OUT21 : LUT4
     generic map(
-      INIT => X"1110"
+      INIT => X"000E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
-      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
-      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
-      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
+      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
+      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
+      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
       O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_mux_97_OUT(1)
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_116_o21 : LUT6
@@ -7627,8 +6239,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
-      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(26),
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(26),
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_26_PWR_20_o_MUX_265_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_18_PWR_20_o_MUX_247_o11 : LUT2
@@ -7636,8 +6248,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
-      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(18),
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(18),
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_18_PWR_20_o_MUX_247_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_2_PWR_20_o_MUX_211_o11 : LUT2
@@ -7654,8 +6266,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
-      I1 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(3),
+      I0 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(3),
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxc_half_pipe_3_PWR_20_o_MUX_269_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxc_half_pipe_2_PWR_20_o_MUX_251_o11 : LUT2
@@ -7663,8 +6275,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
-      I1 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(2),
+      I0 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(2),
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxc_half_pipe_2_PWR_20_o_MUX_251_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxc_half_pipe_0_PWR_20_o_MUX_215_o11 : LUT2
@@ -7690,8 +6302,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxc_pipe(2),
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I0 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I1 => U0_xaui_inst_receiver_recoder_rxc_pipe(2),
       O => U0_xaui_inst_receiver_recoder_rxc_pipe_2_PWR_20_o_MUX_323_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxc_pipe_1_PWR_20_o_MUX_305_o11 : LUT2
@@ -7702,15 +6314,6 @@ begin
       I0 => U0_xaui_inst_receiver_recoder_rxc_pipe(1),
       I1 => U0_xaui_inst_receiver_recoder_error_lane_5_Q,
       O => U0_xaui_inst_receiver_recoder_rxc_pipe_1_PWR_20_o_MUX_305_o
-    );
-  U0_xaui_inst_receiver_recoder_Mmux_rxc_pipe_0_PWR_20_o_MUX_287_o11 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxc_pipe(0),
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_4_Q,
-      O => U0_xaui_inst_receiver_recoder_rxc_pipe_0_PWR_20_o_MUX_287_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_26_PWR_20_o_MUX_337_o11 : LUT2
     generic map(
@@ -7726,8 +6329,8 @@ begin
       INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(18),
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I0 => U0_xaui_inst_receiver_recoder_error_lane_6_Q,
+      I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(18),
       O => U0_xaui_inst_receiver_recoder_rxd_pipe_18_PWR_20_o_MUX_319_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_10_PWR_20_o_MUX_301_o11 : LUT2
@@ -7739,21 +6342,12 @@ begin
       I1 => U0_xaui_inst_receiver_recoder_error_lane_5_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_pipe_10_PWR_20_o_MUX_301_o
     );
-  U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_2_PWR_20_o_MUX_283_o11 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(2),
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_4_Q,
-      O => U0_xaui_inst_receiver_recoder_rxd_pipe_2_PWR_20_o_MUX_283_o
-    );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_25_PWR_20_o_MUX_266_o11 : LUT3
     generic map(
       INIT => X"FE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(25),
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_25_PWR_20_o_MUX_266_o
@@ -7764,7 +6358,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(27),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_27_PWR_20_o_MUX_264_o
     );
@@ -7774,7 +6368,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(28),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_28_PWR_20_o_MUX_263_o
     );
@@ -7784,7 +6378,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(29),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_29_PWR_20_o_MUX_262_o
     );
@@ -7794,7 +6388,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(30),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_30_PWR_20_o_MUX_261_o
     );
@@ -7804,7 +6398,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(31),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_3_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_31_PWR_20_o_MUX_260_o
     );
@@ -7813,7 +6407,7 @@ begin
       INIT => X"FE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(17),
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_17_PWR_20_o_MUX_248_o
@@ -7824,7 +6418,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(19),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_19_PWR_20_o_MUX_246_o
     );
@@ -7834,7 +6428,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(20),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_20_PWR_20_o_MUX_245_o
     );
@@ -7844,7 +6438,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(22),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_22_PWR_20_o_MUX_243_o
     );
@@ -7854,7 +6448,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(23),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_23_PWR_20_o_MUX_242_o
     );
@@ -7864,7 +6458,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(21),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_2_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_21_PWR_20_o_MUX_244_o
     );
@@ -7873,7 +6467,7 @@ begin
       INIT => X"FE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I0 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(1),
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_1_PWR_20_o_MUX_212_o
@@ -7884,7 +6478,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(3),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_3_PWR_20_o_MUX_210_o
     );
@@ -7894,7 +6488,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(5),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_5_PWR_20_o_MUX_208_o
     );
@@ -7904,7 +6498,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(6),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_6_PWR_20_o_MUX_207_o
     );
@@ -7914,7 +6508,7 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(4),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_4_PWR_20_o_MUX_209_o
     );
@@ -7924,19 +6518,19 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(7),
-      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764,
+      I1 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_0_Q,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_7_PWR_20_o_MUX_206_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_GND_19_o_GND_19_o_mux_97_OUT31 : LUT4
     generic map(
-      INIT => X"0002"
+      INIT => X"0100"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
-      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
-      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
-      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
+      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
+      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
+      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
       O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_mux_97_OUT(2)
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_change_01 : LUT4
@@ -7945,9 +6539,9 @@ begin
     )
     port map (
       I0 => mgt_rx_reset(3),
-      I1 => U0_xaui_inst_usrclk_reset_354,
+      I1 => U0_xaui_inst_usrclk_reset_350,
       I2 => U0_xaui_inst_signal_detect_int(3),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_change_0
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mram_sync_ok11 : LUT3
@@ -7978,9 +6572,9 @@ begin
     )
     port map (
       I0 => mgt_rx_reset(2),
-      I1 => U0_xaui_inst_usrclk_reset_354,
+      I1 => U0_xaui_inst_usrclk_reset_350,
       I2 => U0_xaui_inst_signal_detect_int(2),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_change_0
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mram_sync_ok11 : LUT3
@@ -8011,9 +6605,9 @@ begin
     )
     port map (
       I0 => mgt_rx_reset(1),
-      I1 => U0_xaui_inst_usrclk_reset_354,
+      I1 => U0_xaui_inst_usrclk_reset_350,
       I2 => U0_xaui_inst_signal_detect_int(1),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_change_0
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mram_sync_ok11 : LUT3
@@ -8044,9 +6638,9 @@ begin
     )
     port map (
       I0 => mgt_rx_reset(0),
-      I1 => U0_xaui_inst_usrclk_reset_354,
+      I1 => U0_xaui_inst_usrclk_reset_350,
       I2 => U0_xaui_inst_signal_detect_int(0),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_change_0
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mram_sync_ok11 : LUT3
@@ -8071,169 +6665,6 @@ begin
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_enable_align_i
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o_15_1 : LUT6
-    generic map(
-      INIT => X"0000000100000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd11211 : LUT5
-    generic map(
-      INIT => X"00040000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1121
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_271_o1 : LUT4
-    generic map(
-      INIT => X"0200"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_rd_1105,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1121,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_271_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_mdc_reg3_AND_205_o1 : LUT2
-    generic map(
-      INIT => X"4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg3_1095,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_1096,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_reg2_mdc_reg3_AND_205_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_269_o1 : LUT3
-    generic map(
-      INIT => X"08"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_rd_1105,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_rd_AND_269_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111 : LUT5
-    generic map(
-      INIT => X"FFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o1 : LUT4
-    generic map(
-      INIT => X"0008"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1756,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o1 : LUT5
-    generic map(
-      INIT => X"00000800"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_214_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_GND_21_o_GND_21_o_MUX_373_o11 : LUT5
-    generic map(
-      INIT => X"00080000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_GND_21_o_MUX_373_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_GND_21_o_PWR_22_o_MUX_374_o11 : LUT4
-    generic map(
-      INIT => X"0080"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_PWR_22_o_MUX_374_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv21 : LUT5
-    generic map(
-      INIT => X"00004000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_mdio_out_int11 : LUT6
-    generic map(
-      INIT => X"FFFFFFFF00080000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(15),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_int,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_out_int
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_mdio_tri_int11 : LUT6
-    generic map(
-      INIT => X"FDFFFFFFFDBFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_tri_int
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_In1 : LUT5
-    generic map(
-      INIT => X"6AAA6A2A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_In
-    );
   U0_xaui_inst_transmitter_tx_is_q_comb_1_1 : LUT6
     generic map(
       INIT => X"4000000000000000"
@@ -8245,7 +6676,7 @@ begin
       I3 => xgmii_txd(36),
       I4 => xgmii_txd(39),
       I5 => xgmii_txd(34),
-      O => U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1307
+      O => U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1066
     );
   U0_xaui_inst_transmitter_tx_is_q_comb_1_2 : LUT6
     generic map(
@@ -8258,15 +6689,15 @@ begin
       I3 => xgmii_txc(7),
       I4 => xgmii_txc(6),
       I5 => xgmii_txc(5),
-      O => U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1308
+      O => U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1067
     );
   U0_xaui_inst_transmitter_tx_is_q_comb_1_3 : LUT2
     generic map(
       INIT => X"8"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1307,
-      I1 => U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1308,
+      I0 => U0_xaui_inst_transmitter_tx_is_q_comb_1_1_1066,
+      I1 => U0_xaui_inst_transmitter_tx_is_q_comb_1_2_1067,
       O => U0_xaui_inst_transmitter_tx_is_q_comb(1)
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_1 : LUT6
@@ -8280,7 +6711,7 @@ begin
       I3 => xgmii_txd(32),
       I4 => xgmii_txc(5),
       I5 => xgmii_txc(6),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1309
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1068
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_2 : LUT6
     generic map(
@@ -8293,7 +6724,7 @@ begin
       I3 => xgmii_txd(49),
       I4 => xgmii_txd(41),
       I5 => xgmii_txd(42),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1310
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1069
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_3 : LUT6
     generic map(
@@ -8306,7 +6737,7 @@ begin
       I3 => xgmii_txd(37),
       I4 => xgmii_txd(38),
       I5 => xgmii_txc(4),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1311
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1070
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_4 : LUT6
     generic map(
@@ -8319,7 +6750,7 @@ begin
       I3 => xgmii_txd(60),
       I4 => xgmii_txd(59),
       I5 => xgmii_txd(55),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1312
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1071
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_5 : LUT6
     generic map(
@@ -8332,7 +6763,7 @@ begin
       I3 => xgmii_txd(51),
       I4 => xgmii_txd(47),
       I5 => xgmii_txd(46),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1313
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1072
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_6 : LUT6
     generic map(
@@ -8345,19 +6776,19 @@ begin
       I3 => xgmii_txd(39),
       I4 => xgmii_txd(36),
       I5 => xgmii_txd(35),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1314
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1073
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_1_7 : LUT6
     generic map(
       INIT => X"8000000000000000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1309,
-      I1 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1310,
-      I2 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1311,
-      I3 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1312,
-      I4 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1313,
-      I5 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1314,
+      I0 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_1_1068,
+      I1 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_2_1069,
+      I2 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_3_1070,
+      I3 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_4_1071,
+      I4 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_5_1072,
+      I5 => U0_xaui_inst_transmitter_tx_is_idle_comb_1_6_1073,
       O => U0_xaui_inst_transmitter_tx_is_idle_comb(1)
     );
   U0_xaui_inst_transmitter_tx_is_q_comb_0_1 : LUT6
@@ -8371,7 +6802,7 @@ begin
       I3 => xgmii_txd(4),
       I4 => xgmii_txd(7),
       I5 => xgmii_txd(2),
-      O => U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1315
+      O => U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1074
     );
   U0_xaui_inst_transmitter_tx_is_q_comb_0_2 : LUT6
     generic map(
@@ -8384,15 +6815,15 @@ begin
       I3 => xgmii_txc(3),
       I4 => xgmii_txc(2),
       I5 => xgmii_txc(1),
-      O => U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1316
+      O => U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1075
     );
   U0_xaui_inst_transmitter_tx_is_q_comb_0_3 : LUT2
     generic map(
       INIT => X"8"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1315,
-      I1 => U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1316,
+      I0 => U0_xaui_inst_transmitter_tx_is_q_comb_0_1_1074,
+      I1 => U0_xaui_inst_transmitter_tx_is_q_comb_0_2_1075,
       O => U0_xaui_inst_transmitter_tx_is_q_comb(0)
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_1 : LUT6
@@ -8406,7 +6837,7 @@ begin
       I3 => xgmii_txd(0),
       I4 => xgmii_txc(1),
       I5 => xgmii_txc(2),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1317
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1076
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_2 : LUT6
     generic map(
@@ -8419,7 +6850,7 @@ begin
       I3 => xgmii_txd(24),
       I4 => xgmii_txd(17),
       I5 => xgmii_txd(18),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1318
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1077
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_3 : LUT6
     generic map(
@@ -8432,7 +6863,7 @@ begin
       I3 => xgmii_txd(5),
       I4 => xgmii_txd(6),
       I5 => xgmii_txc(0),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1319
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1078
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_4 : LUT6
     generic map(
@@ -8445,7 +6876,7 @@ begin
       I3 => xgmii_txd(31),
       I4 => xgmii_txd(30),
       I5 => xgmii_txd(29),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1320
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1079
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_5 : LUT6
     generic map(
@@ -8458,7 +6889,7 @@ begin
       I3 => xgmii_txd(22),
       I4 => xgmii_txd(21),
       I5 => xgmii_txd(20),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1321
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1080
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_6 : LUT6
     generic map(
@@ -8471,19 +6902,19 @@ begin
       I3 => xgmii_txd(13),
       I4 => xgmii_txd(12),
       I5 => xgmii_txd(11),
-      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1322
+      O => U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1081
     );
   U0_xaui_inst_transmitter_tx_is_idle_comb_0_7 : LUT6
     generic map(
       INIT => X"8000000000000000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1317,
-      I1 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1318,
-      I2 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1319,
-      I3 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1320,
-      I4 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1321,
-      I5 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1322,
+      I0 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_1_1076,
+      I1 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_2_1077,
+      I2 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_3_1078,
+      I3 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_4_1079,
+      I4 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_5_1080,
+      I5 => U0_xaui_inst_transmitter_tx_is_idle_comb_0_6_1081,
       O => U0_xaui_inst_transmitter_tx_is_idle_comb(0)
     );
   U0_xaui_inst_transmitter_is_terminate_1_1 : LUT6
@@ -8497,7 +6928,7 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(61),
       I4 => U0_xaui_inst_transmitter_txc_pipe(7),
       I5 => U0_xaui_inst_transmitter_txd_pipe(63),
-      O => U0_xaui_inst_transmitter_is_terminate_1_1_1323
+      O => U0_xaui_inst_transmitter_is_terminate_1_1_1082
     );
   U0_xaui_inst_transmitter_is_terminate_1_2 : LUT6
     generic map(
@@ -8510,7 +6941,7 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(53),
       I4 => U0_xaui_inst_transmitter_txc_pipe(6),
       I5 => U0_xaui_inst_transmitter_txd_pipe(55),
-      O => U0_xaui_inst_transmitter_is_terminate_1_2_1324
+      O => U0_xaui_inst_transmitter_is_terminate_1_2_1083
     );
   U0_xaui_inst_transmitter_is_terminate_1_3 : LUT3
     generic map(
@@ -8520,7 +6951,7 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(48),
       I1 => U0_xaui_inst_transmitter_txd_pipe(49),
       I2 => U0_xaui_inst_transmitter_txd_pipe(50),
-      O => U0_xaui_inst_transmitter_is_terminate_1_3_1325
+      O => U0_xaui_inst_transmitter_is_terminate_1_3_1084
     );
   U0_xaui_inst_transmitter_is_terminate_1_4 : LUT6
     generic map(
@@ -8530,10 +6961,10 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(56),
       I1 => U0_xaui_inst_transmitter_txd_pipe(57),
       I2 => U0_xaui_inst_transmitter_txd_pipe(58),
-      I3 => U0_xaui_inst_transmitter_is_terminate_1_3_1325,
-      I4 => U0_xaui_inst_transmitter_is_terminate_1_1_1323,
-      I5 => U0_xaui_inst_transmitter_is_terminate_1_2_1324,
-      O => U0_xaui_inst_transmitter_is_terminate_1_4_1326
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_3_1084,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_1_1082,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_2_1083,
+      O => U0_xaui_inst_transmitter_is_terminate_1_4_1085
     );
   U0_xaui_inst_transmitter_is_terminate_1_5 : LUT6
     generic map(
@@ -8546,18 +6977,18 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(37),
       I4 => U0_xaui_inst_transmitter_txc_pipe(4),
       I5 => U0_xaui_inst_transmitter_txd_pipe(39),
-      O => U0_xaui_inst_transmitter_is_terminate_1_5_1327
+      O => U0_xaui_inst_transmitter_is_terminate_1_5_1086
     );
   U0_xaui_inst_transmitter_is_terminate_1_6 : LUT4
     generic map(
-      INIT => X"4000"
+      INIT => X"2000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(33),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(32),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(34),
-      I3 => U0_xaui_inst_transmitter_is_terminate_1_5_1327,
-      O => U0_xaui_inst_transmitter_is_terminate_1_6_1328
+      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_5_1086,
+      O => U0_xaui_inst_transmitter_is_terminate_1_6_1087
     );
   U0_xaui_inst_transmitter_is_terminate_1_7 : LUT6
     generic map(
@@ -8570,20 +7001,7 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(45),
       I4 => U0_xaui_inst_transmitter_txc_pipe(5),
       I5 => U0_xaui_inst_transmitter_txd_pipe(47),
-      O => U0_xaui_inst_transmitter_is_terminate_1_7_1329
-    );
-  U0_xaui_inst_transmitter_is_terminate_1_8 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFF2000"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(41),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(40),
-      I3 => U0_xaui_inst_transmitter_is_terminate_1_7_1329,
-      I4 => U0_xaui_inst_transmitter_is_terminate_1_6_1328,
-      I5 => U0_xaui_inst_transmitter_is_terminate_1_4_1326,
-      O => U0_xaui_inst_transmitter_is_terminate(1)
+      O => U0_xaui_inst_transmitter_is_terminate_1_7_1088
     );
   U0_xaui_inst_transmitter_is_terminate_0_1 : LUT6
     generic map(
@@ -8596,7 +7014,7 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(29),
       I4 => U0_xaui_inst_transmitter_txc_pipe(3),
       I5 => U0_xaui_inst_transmitter_txd_pipe(31),
-      O => U0_xaui_inst_transmitter_is_terminate_0_1_1330
+      O => U0_xaui_inst_transmitter_is_terminate_0_1_1089
     );
   U0_xaui_inst_transmitter_is_terminate_0_2 : LUT6
     generic map(
@@ -8609,7 +7027,7 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(21),
       I4 => U0_xaui_inst_transmitter_txc_pipe(2),
       I5 => U0_xaui_inst_transmitter_txd_pipe(23),
-      O => U0_xaui_inst_transmitter_is_terminate_0_2_1331
+      O => U0_xaui_inst_transmitter_is_terminate_0_2_1090
     );
   U0_xaui_inst_transmitter_is_terminate_0_3 : LUT3
     generic map(
@@ -8619,7 +7037,7 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(16),
       I1 => U0_xaui_inst_transmitter_txd_pipe(17),
       I2 => U0_xaui_inst_transmitter_txd_pipe(18),
-      O => U0_xaui_inst_transmitter_is_terminate_0_3_1332
+      O => U0_xaui_inst_transmitter_is_terminate_0_3_1091
     );
   U0_xaui_inst_transmitter_is_terminate_0_4 : LUT6
     generic map(
@@ -8629,10 +7047,10 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(24),
       I1 => U0_xaui_inst_transmitter_txd_pipe(25),
       I2 => U0_xaui_inst_transmitter_txd_pipe(26),
-      I3 => U0_xaui_inst_transmitter_is_terminate_0_3_1332,
-      I4 => U0_xaui_inst_transmitter_is_terminate_0_1_1330,
-      I5 => U0_xaui_inst_transmitter_is_terminate_0_2_1331,
-      O => U0_xaui_inst_transmitter_is_terminate_0_4_1333
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_3_1091,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_1_1089,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_2_1090,
+      O => U0_xaui_inst_transmitter_is_terminate_0_4_1092
     );
   U0_xaui_inst_transmitter_is_terminate_0_5 : LUT6
     generic map(
@@ -8645,18 +7063,18 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(5),
       I4 => U0_xaui_inst_transmitter_txc_pipe(0),
       I5 => U0_xaui_inst_transmitter_txd_pipe(7),
-      O => U0_xaui_inst_transmitter_is_terminate_0_5_1334
+      O => U0_xaui_inst_transmitter_is_terminate_0_5_1093
     );
   U0_xaui_inst_transmitter_is_terminate_0_6 : LUT4
     generic map(
-      INIT => X"4000"
+      INIT => X"2000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(1),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(0),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(2),
-      I3 => U0_xaui_inst_transmitter_is_terminate_0_5_1334,
-      O => U0_xaui_inst_transmitter_is_terminate_0_6_1335
+      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_5_1093,
+      O => U0_xaui_inst_transmitter_is_terminate_0_6_1094
     );
   U0_xaui_inst_transmitter_is_terminate_0_7 : LUT6
     generic map(
@@ -8669,72 +7087,59 @@ begin
       I3 => U0_xaui_inst_transmitter_txd_pipe(13),
       I4 => U0_xaui_inst_transmitter_txc_pipe(1),
       I5 => U0_xaui_inst_transmitter_txd_pipe(15),
-      O => U0_xaui_inst_transmitter_is_terminate_0_7_1336
-    );
-  U0_xaui_inst_transmitter_is_terminate_0_8 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFF2000"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(10),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(9),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(8),
-      I3 => U0_xaui_inst_transmitter_is_terminate_0_7_1336,
-      I4 => U0_xaui_inst_transmitter_is_terminate_0_6_1335,
-      I5 => U0_xaui_inst_transmitter_is_terminate_0_4_1333,
-      O => U0_xaui_inst_transmitter_is_terminate(0)
+      O => U0_xaui_inst_transmitter_is_terminate_0_7_1095
     );
   U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1 : LUT6
     generic map(
       INIT => X"4000000000000000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_436,
-      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_445,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_418,
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_427,
       I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_Q,
       I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_Q,
       I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_Q,
       I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_Q,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1340
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1099
     );
   U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2 : LUT6
     generic map(
       INIT => X"0000000000000001"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_418,
-      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_427,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_400,
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_409,
       I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_Q,
       I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_Q,
       I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_Q,
       I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_Q,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1341
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1100
     );
   U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1 : LUT6
     generic map(
       INIT => X"4000000000000000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_400,
-      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_409,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_382,
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_391,
       I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_Q,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_Q,
       I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_Q,
       I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_Q,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101
     );
   U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2 : LUT6
     generic map(
       INIT => X"0000000000000001"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_382,
-      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_391,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_364,
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_373,
       I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_Q,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_Q,
       I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_Q,
       I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_Q,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102
     );
   U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW0 : LUT3
     generic map(
@@ -8752,35 +7157,83 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_align_count(0),
-      I1 => U0_xaui_inst_transmitter_align_extra_a_675,
+      I1 => U0_xaui_inst_transmitter_align_extra_a_659,
       I2 => U0_xaui_inst_transmitter_align_count(1),
       I3 => N16,
-      I4 => U0_xaui_inst_transmitter_tx_code_a(1),
-      I5 => U0_xaui_inst_transmitter_tx_code_a(0),
+      I4 => U0_xaui_inst_transmitter_tx_code_a(0),
+      I5 => U0_xaui_inst_transmitter_tx_code_a(1),
       O => U0_xaui_inst_transmitter_a_due(0)
+    );
+  U0_xaui_inst_transmitter_align_Mmux_a_cnt2_SW0 : LUT3
+    generic map(
+      INIT => X"EF"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_align_count(0),
+      I1 => U0_xaui_inst_transmitter_align_count(1),
+      I2 => U0_xaui_inst_transmitter_align_extra_a_659,
+      O => N18
+    );
+  U0_xaui_inst_transmitter_align_Mmux_a_cnt2 : LUT6
+    generic map(
+      INIT => X"0000000000000111"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_align_count(4),
+      I1 => U0_xaui_inst_transmitter_align_count(3),
+      I2 => U0_xaui_inst_transmitter_align_count(2),
+      I3 => N18,
+      I4 => U0_xaui_inst_transmitter_tx_code_a(0),
+      I5 => U0_xaui_inst_transmitter_tx_code_a(1),
+      O => U0_xaui_inst_transmitter_a_due(1)
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_state_1_2_PWR_15_o_wide_mux_20_OUT2_SW0 : LUT3
     generic map(
-      INIT => X"F2"
+      INIT => X"CE"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_tx_is_q(1),
-      I1 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
-      O => N20
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
+      I2 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
+      O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_2
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_state_1_2_PWR_15_o_wide_mux_20_OUT2 : LUT6
     generic map(
-      INIT => X"00F000F0EECC0000"
+      INIT => X"0000F0F0EE00CC00"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_702,
+      I0 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_686,
       I1 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
-      I2 => N20,
-      I3 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
-      I4 => U0_xaui_inst_transmitter_a_due(1),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_2,
+      I3 => U0_xaui_inst_transmitter_a_due(1),
+      I4 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
       I5 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1),
       O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_1_Q
+    );
+  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1 : LUT5
+    generic map(
+      INIT => X"11111F11"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_tx_is_idle(1),
+      I1 => U0_xaui_inst_transmitter_tx_is_q(1),
+      I2 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(7),
+      I3 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
+      I4 => U0_xaui_inst_transmitter_a_due(1),
+      O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_Q
+    );
+  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_3 : LUT6
+    generic map(
+      INIT => X"FFFF44F4FFFF0000"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(7),
+      I1 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_2,
+      I3 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
+      I4 => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_Q,
+      I5 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1),
+      O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_680
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41 : LUT5
     generic map(
@@ -8790,7 +7243,7 @@ begin
       I0 => U0_xaui_inst_transmitter_tx_is_idle(0),
       I1 => U0_xaui_inst_transmitter_tx_is_q(0),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I3 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_702,
+      I3 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_686,
       I4 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       O => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp4
     );
@@ -8799,11 +7252,11 @@ begin
       INIT => X"A8EC"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
+      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
       I1 => U0_xaui_inst_transmitter_tx_is_q(0),
       I2 => U0_xaui_inst_transmitter_tx_is_idle(0),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      O => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1347
+      O => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1108
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp43 : LUT5
     generic map(
@@ -8812,22 +7265,22 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1347,
+      I2 => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp41_1108,
       I3 => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp4,
       I4 => U0_xaui_inst_transmitter_a_due(0),
       O => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1)
     );
   U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp21 : LUT6
     generic map(
-      INIT => X"20222020AA22AA20"
+      INIT => X"5500DDFC00000000"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I1 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
+      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
+      I2 => U0_xaui_inst_transmitter_tx_is_q(0),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I4 => U0_xaui_inst_transmitter_tx_is_q(0),
-      I5 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
+      I4 => U0_xaui_inst_transmitter_state_machine_state_1(0),
+      I5 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       O => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp2
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8838,19 +7291,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(62),
       I1 => U0_xaui_inst_transmitter_txd_pipe(63),
       I2 => U0_xaui_inst_transmitter_txd_pipe(61),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1349
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1110
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(58),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(59),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(56),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(57),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1349,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(57),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(56),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(59),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o1_1110,
       O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8861,19 +7314,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(54),
       I1 => U0_xaui_inst_transmitter_txd_pipe(55),
       I2 => U0_xaui_inst_transmitter_txd_pipe(53),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1350
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1111
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(50),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(51),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(48),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(49),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1350,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(49),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(48),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(51),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(50),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o1_1111,
       O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8884,19 +7337,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(46),
       I1 => U0_xaui_inst_transmitter_txd_pipe(47),
       I2 => U0_xaui_inst_transmitter_txd_pipe(45),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1351
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1112
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"FDFFFFFF95FF7FFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(41),
       I2 => U0_xaui_inst_transmitter_txd_pipe(40),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(41),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1351,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o1_1112,
       O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8907,19 +7360,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(38),
       I1 => U0_xaui_inst_transmitter_txd_pipe(39),
       I2 => U0_xaui_inst_transmitter_txd_pipe(37),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1352
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1113
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(35),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(32),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(33),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1352,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(35),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o1_1113,
       O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8930,19 +7383,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(30),
       I1 => U0_xaui_inst_transmitter_txd_pipe(31),
       I2 => U0_xaui_inst_transmitter_txd_pipe(29),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1353
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1114
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(26),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(27),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(24),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(25),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1353,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(25),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(24),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(27),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o1_1114,
       O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8953,19 +7406,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(22),
       I1 => U0_xaui_inst_transmitter_txd_pipe(23),
       I2 => U0_xaui_inst_transmitter_txd_pipe(21),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1354
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1115
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(18),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(19),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(16),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(17),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1354,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(17),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(16),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(19),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(18),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o1_1115,
       O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8976,19 +7429,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(14),
       I1 => U0_xaui_inst_transmitter_txd_pipe(15),
       I2 => U0_xaui_inst_transmitter_txd_pipe(13),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1355
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1116
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"FDFFFFFF95FF7FFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(10),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(9),
       I2 => U0_xaui_inst_transmitter_txd_pipe(8),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(9),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1355,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(10),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o1_1116,
       O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1 : LUT3
@@ -8999,19 +7452,19 @@ begin
       I0 => U0_xaui_inst_transmitter_txd_pipe(6),
       I1 => U0_xaui_inst_transmitter_txd_pipe(7),
       I2 => U0_xaui_inst_transmitter_txd_pipe(5),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1356
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1117
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o2 : LUT6
     generic map(
-      INIT => X"FFF79777FFFFFFFF"
+      INIT => X"EFFFFFFF877FFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(3),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(0),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(1),
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1356,
-      I5 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(3),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o1_1117,
       O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o
     );
   U0_xaui_inst_receiver_code_error_7_1 : LUT3
@@ -9022,7 +7475,7 @@ begin
       I0 => mgt_rxdata(62),
       I1 => mgt_rxdata(63),
       I2 => mgt_rxdata(61),
-      O => U0_xaui_inst_receiver_code_error_7_1_1357
+      O => U0_xaui_inst_receiver_code_error_7_1_1118
     );
   U0_xaui_inst_receiver_code_error_7_2 : LUT6
     generic map(
@@ -9033,9 +7486,9 @@ begin
       I1 => mgt_rxdata(59),
       I2 => mgt_rxdata(56),
       I3 => mgt_rxdata(57),
-      I4 => U0_xaui_inst_receiver_code_error_7_1_1357,
+      I4 => U0_xaui_inst_receiver_code_error_7_1_1118,
       I5 => mgt_rxdata(60),
-      O => U0_xaui_inst_receiver_code_error_7_2_1358
+      O => U0_xaui_inst_receiver_code_error_7_2_1119
     );
   U0_xaui_inst_receiver_code_error_7_3 : LUT3
     generic map(
@@ -9043,7 +7496,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(7),
-      I1 => U0_xaui_inst_receiver_code_error_7_2_1358,
+      I1 => U0_xaui_inst_receiver_code_error_7_2_1119,
       I2 => mgt_rxcharisk(7),
       O => U0_xaui_inst_receiver_code_error(7)
     );
@@ -9055,7 +7508,7 @@ begin
       I0 => mgt_rxdata(46),
       I1 => mgt_rxdata(47),
       I2 => mgt_rxdata(45),
-      O => U0_xaui_inst_receiver_code_error_6_1_1359
+      O => U0_xaui_inst_receiver_code_error_6_1_1120
     );
   U0_xaui_inst_receiver_code_error_6_2 : LUT6
     generic map(
@@ -9066,9 +7519,9 @@ begin
       I1 => mgt_rxdata(43),
       I2 => mgt_rxdata(40),
       I3 => mgt_rxdata(41),
-      I4 => U0_xaui_inst_receiver_code_error_6_1_1359,
+      I4 => U0_xaui_inst_receiver_code_error_6_1_1120,
       I5 => mgt_rxdata(44),
-      O => U0_xaui_inst_receiver_code_error_6_2_1360
+      O => U0_xaui_inst_receiver_code_error_6_2_1121
     );
   U0_xaui_inst_receiver_code_error_6_3 : LUT3
     generic map(
@@ -9076,7 +7529,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(5),
-      I1 => U0_xaui_inst_receiver_code_error_6_2_1360,
+      I1 => U0_xaui_inst_receiver_code_error_6_2_1121,
       I2 => mgt_rxcharisk(5),
       O => U0_xaui_inst_receiver_code_error(6)
     );
@@ -9088,7 +7541,7 @@ begin
       I0 => mgt_rxdata(30),
       I1 => mgt_rxdata(31),
       I2 => mgt_rxdata(29),
-      O => U0_xaui_inst_receiver_code_error_5_1_1361
+      O => U0_xaui_inst_receiver_code_error_5_1_1122
     );
   U0_xaui_inst_receiver_code_error_5_2 : LUT6
     generic map(
@@ -9099,9 +7552,9 @@ begin
       I1 => mgt_rxdata(27),
       I2 => mgt_rxdata(24),
       I3 => mgt_rxdata(25),
-      I4 => U0_xaui_inst_receiver_code_error_5_1_1361,
+      I4 => U0_xaui_inst_receiver_code_error_5_1_1122,
       I5 => mgt_rxdata(28),
-      O => U0_xaui_inst_receiver_code_error_5_2_1362
+      O => U0_xaui_inst_receiver_code_error_5_2_1123
     );
   U0_xaui_inst_receiver_code_error_5_3 : LUT3
     generic map(
@@ -9109,7 +7562,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(3),
-      I1 => U0_xaui_inst_receiver_code_error_5_2_1362,
+      I1 => U0_xaui_inst_receiver_code_error_5_2_1123,
       I2 => mgt_rxcharisk(3),
       O => U0_xaui_inst_receiver_code_error(5)
     );
@@ -9121,7 +7574,7 @@ begin
       I0 => mgt_rxdata(14),
       I1 => mgt_rxdata(15),
       I2 => mgt_rxdata(13),
-      O => U0_xaui_inst_receiver_code_error_4_1_1363
+      O => U0_xaui_inst_receiver_code_error_4_1_1124
     );
   U0_xaui_inst_receiver_code_error_4_2 : LUT6
     generic map(
@@ -9132,9 +7585,9 @@ begin
       I1 => mgt_rxdata(11),
       I2 => mgt_rxdata(8),
       I3 => mgt_rxdata(9),
-      I4 => U0_xaui_inst_receiver_code_error_4_1_1363,
+      I4 => U0_xaui_inst_receiver_code_error_4_1_1124,
       I5 => mgt_rxdata(12),
-      O => U0_xaui_inst_receiver_code_error_4_2_1364
+      O => U0_xaui_inst_receiver_code_error_4_2_1125
     );
   U0_xaui_inst_receiver_code_error_4_3 : LUT3
     generic map(
@@ -9142,7 +7595,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(1),
-      I1 => U0_xaui_inst_receiver_code_error_4_2_1364,
+      I1 => U0_xaui_inst_receiver_code_error_4_2_1125,
       I2 => mgt_rxcharisk(1),
       O => U0_xaui_inst_receiver_code_error(4)
     );
@@ -9154,7 +7607,7 @@ begin
       I0 => mgt_rxdata(54),
       I1 => mgt_rxdata(55),
       I2 => mgt_rxdata(53),
-      O => U0_xaui_inst_receiver_code_error_3_1_1365
+      O => U0_xaui_inst_receiver_code_error_3_1_1126
     );
   U0_xaui_inst_receiver_code_error_3_2 : LUT6
     generic map(
@@ -9165,9 +7618,9 @@ begin
       I1 => mgt_rxdata(51),
       I2 => mgt_rxdata(48),
       I3 => mgt_rxdata(49),
-      I4 => U0_xaui_inst_receiver_code_error_3_1_1365,
+      I4 => U0_xaui_inst_receiver_code_error_3_1_1126,
       I5 => mgt_rxdata(52),
-      O => U0_xaui_inst_receiver_code_error_3_2_1366
+      O => U0_xaui_inst_receiver_code_error_3_2_1127
     );
   U0_xaui_inst_receiver_code_error_3_3 : LUT3
     generic map(
@@ -9175,7 +7628,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(6),
-      I1 => U0_xaui_inst_receiver_code_error_3_2_1366,
+      I1 => U0_xaui_inst_receiver_code_error_3_2_1127,
       I2 => mgt_rxcharisk(6),
       O => U0_xaui_inst_receiver_code_error(3)
     );
@@ -9187,7 +7640,7 @@ begin
       I0 => mgt_rxdata(38),
       I1 => mgt_rxdata(39),
       I2 => mgt_rxdata(37),
-      O => U0_xaui_inst_receiver_code_error_2_1_1367
+      O => U0_xaui_inst_receiver_code_error_2_1_1128
     );
   U0_xaui_inst_receiver_code_error_2_2 : LUT6
     generic map(
@@ -9198,9 +7651,9 @@ begin
       I1 => mgt_rxdata(35),
       I2 => mgt_rxdata(32),
       I3 => mgt_rxdata(33),
-      I4 => U0_xaui_inst_receiver_code_error_2_1_1367,
+      I4 => U0_xaui_inst_receiver_code_error_2_1_1128,
       I5 => mgt_rxdata(36),
-      O => U0_xaui_inst_receiver_code_error_2_2_1368
+      O => U0_xaui_inst_receiver_code_error_2_2_1129
     );
   U0_xaui_inst_receiver_code_error_2_3 : LUT3
     generic map(
@@ -9208,7 +7661,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(4),
-      I1 => U0_xaui_inst_receiver_code_error_2_2_1368,
+      I1 => U0_xaui_inst_receiver_code_error_2_2_1129,
       I2 => mgt_rxcharisk(4),
       O => U0_xaui_inst_receiver_code_error(2)
     );
@@ -9220,7 +7673,7 @@ begin
       I0 => mgt_rxdata(22),
       I1 => mgt_rxdata(23),
       I2 => mgt_rxdata(21),
-      O => U0_xaui_inst_receiver_code_error_1_1_1369
+      O => U0_xaui_inst_receiver_code_error_1_1_1130
     );
   U0_xaui_inst_receiver_code_error_1_2 : LUT6
     generic map(
@@ -9231,9 +7684,9 @@ begin
       I1 => mgt_rxdata(19),
       I2 => mgt_rxdata(16),
       I3 => mgt_rxdata(17),
-      I4 => U0_xaui_inst_receiver_code_error_1_1_1369,
+      I4 => U0_xaui_inst_receiver_code_error_1_1_1130,
       I5 => mgt_rxdata(20),
-      O => U0_xaui_inst_receiver_code_error_1_2_1370
+      O => U0_xaui_inst_receiver_code_error_1_2_1131
     );
   U0_xaui_inst_receiver_code_error_1_3 : LUT3
     generic map(
@@ -9241,7 +7694,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(2),
-      I1 => U0_xaui_inst_receiver_code_error_1_2_1370,
+      I1 => U0_xaui_inst_receiver_code_error_1_2_1131,
       I2 => mgt_rxcharisk(2),
       O => U0_xaui_inst_receiver_code_error(1)
     );
@@ -9253,7 +7706,7 @@ begin
       I0 => mgt_rxdata(6),
       I1 => mgt_rxdata(7),
       I2 => mgt_rxdata(5),
-      O => U0_xaui_inst_receiver_code_error_0_1_1371
+      O => U0_xaui_inst_receiver_code_error_0_1_1132
     );
   U0_xaui_inst_receiver_code_error_0_2 : LUT6
     generic map(
@@ -9264,9 +7717,9 @@ begin
       I1 => mgt_rxdata(3),
       I2 => mgt_rxdata(0),
       I3 => mgt_rxdata(1),
-      I4 => U0_xaui_inst_receiver_code_error_0_1_1371,
+      I4 => U0_xaui_inst_receiver_code_error_0_1_1132,
       I5 => mgt_rxdata(4),
-      O => U0_xaui_inst_receiver_code_error_0_2_1372
+      O => U0_xaui_inst_receiver_code_error_0_2_1133
     );
   U0_xaui_inst_receiver_code_error_0_3 : LUT3
     generic map(
@@ -9274,7 +7727,7 @@ begin
     )
     port map (
       I0 => mgt_codevalid(0),
-      I1 => U0_xaui_inst_receiver_code_error_0_2_1372,
+      I1 => U0_xaui_inst_receiver_code_error_0_2_1133,
       I2 => mgt_rxcharisk(0),
       O => U0_xaui_inst_receiver_code_error(0)
     );
@@ -9367,13 +7820,13 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a_4_Q : LUT6
     generic map(
-      INIT => X"0002000000000000"
+      INIT => X"0100000000000000"
     )
     port map (
-      I0 => mgt_rxdata(14),
-      I1 => mgt_rxdata(9),
-      I2 => mgt_rxdata(8),
-      I3 => mgt_rxdata(15),
+      I0 => mgt_rxdata(9),
+      I1 => mgt_rxdata(8),
+      I2 => mgt_rxdata(15),
+      I3 => mgt_rxdata(14),
       I4 => mgt_rxdata(13),
       I5 => N46,
       O => U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a(4)
@@ -9478,31 +7931,6 @@ begin
       I5 => mgt_rxdata(6),
       O => U0_xaui_inst_receiver_G_SYNC_deskew_state_got_a(0)
     );
-  U0_xaui_inst_receiver_recoder_error_lane_0_0_1 : LUT5
-    generic map(
-      INIT => X"FFD7FFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(5),
-      I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(7),
-      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(6),
-      I3 => U0_xaui_inst_receiver_recoder_code_error_pipe(0),
-      I4 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_110_o1,
-      O => U0_xaui_inst_receiver_recoder_error_lane_0_0_Q
-    );
-  U0_xaui_inst_receiver_recoder_error_lane_0_0_2 : LUT6
-    generic map(
-      INIT => X"AAAAFFFEAAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_0_898,
-      I1 => U0_xaui_inst_receiver_recoder_lane_term_pipe(1),
-      I2 => U0_xaui_inst_receiver_recoder_lane_term_pipe(3),
-      I3 => U0_xaui_inst_receiver_recoder_lane_term_pipe(2),
-      I4 => U0_xaui_inst_receiver_recoder_lane_term_pipe(0),
-      I5 => U0_xaui_inst_receiver_recoder_error_lane_0_0_Q,
-      O => U0_xaui_inst_receiver_recoder_error_lane_0_Q
-    );
   U0_xaui_inst_receiver_recoder_error_lane_2_2_1 : LUT6
     generic map(
       INIT => X"EEEEEEEEEEEFEEEE"
@@ -9521,12 +7949,12 @@ begin
       INIT => X"FEAAFEFE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_2_900,
+      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_2_892,
       I1 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
       I2 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
       I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(22),
       I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(23),
-      O => U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1383
+      O => U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1143
     );
   U0_xaui_inst_receiver_recoder_error_lane_2_2_3 : LUT6
     generic map(
@@ -9539,7 +7967,7 @@ begin
       I3 => U0_xaui_inst_receiver_recoder_lane_term_pipe(1),
       I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(23),
       I5 => U0_xaui_inst_receiver_recoder_rxd_pipe(22),
-      O => U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1384
+      O => U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1144
     );
   U0_xaui_inst_receiver_recoder_error_lane_2_2_4 : LUT6
     generic map(
@@ -9548,8 +7976,8 @@ begin
     port map (
       I0 => U0_xaui_inst_receiver_recoder_code_error_pipe(2),
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(21),
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1383,
-      I3 => U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1384,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_2_2_1_1143,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_2_2_2_1144,
       I4 => U0_xaui_inst_receiver_recoder_error_lane_2_2_Q,
       I5 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_114_o1,
       O => U0_xaui_inst_receiver_recoder_error_lane_2_Q
@@ -9576,7 +8004,7 @@ begin
       I1 => U0_xaui_inst_receiver_recoder_lane_term_pipe(0),
       I2 => U0_xaui_inst_receiver_recoder_lane_term_pipe(2),
       I3 => U0_xaui_inst_receiver_recoder_lane_term_pipe(3),
-      O => U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1386
+      O => U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1146
     );
   U0_xaui_inst_receiver_recoder_error_lane_1_1_3 : LUT6
     generic map(
@@ -9587,9 +8015,9 @@ begin
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(14),
       I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(15),
       I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(13),
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1386,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_1_1146,
       I5 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_112_o1,
-      O => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387
+      O => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147
     );
   U0_xaui_inst_receiver_recoder_error_lane_3_3_SW0 : LUT4
     generic map(
@@ -9607,7 +8035,7 @@ begin
       INIT => X"FFFEAAAAFFFEFFFE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_3_901,
+      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_3_893,
       I1 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
       I2 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
       I3 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
@@ -9616,19 +8044,6 @@ begin
       O => U0_xaui_inst_receiver_recoder_error_lane_3_Q
     );
   U0_xaui_inst_receiver_recoder_error_lane_6_6_1 : LUT6
-    generic map(
-      INIT => X"FFAAFEFFFEAAFEFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_pipe(2),
-      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
-      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(5),
-      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(54),
-      I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(55),
-      I5 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_mux_97_OUT(2),
-      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_Q
-    );
-  U0_xaui_inst_receiver_recoder_error_lane_6_6_2 : LUT6
     generic map(
       INIT => X"FFFFFFF7FFFFFFFF"
     )
@@ -9639,27 +8054,57 @@ begin
       I3 => U0_xaui_inst_receiver_recoder_code_error_pipe(6),
       I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(48),
       I5 => U0_xaui_inst_receiver_recoder_rxd_pipe(51),
-      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1390
+      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_Q
     );
-  U0_xaui_inst_receiver_recoder_error_lane_6_6_3 : LUT2
+  U0_xaui_inst_receiver_recoder_error_lane_6_6_2 : LUT2
     generic map(
       INIT => X"7"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxc_pipe(6),
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(50),
-      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1391
+      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1150
     );
-  U0_xaui_inst_receiver_recoder_error_lane_6_6_4 : LUT6
+  U0_xaui_inst_receiver_recoder_error_lane_6_6_3 : LUT2
     generic map(
-      INIT => X"FFFFFFFFFFEEF0E0"
+      INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(5),
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
+      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(5),
+      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1151
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_6_6_4 : LUT5
+    generic map(
+      INIT => X"FEAAFEFE"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_code_error_pipe(2),
       I1 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1391,
+      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(5),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(54),
+      I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(55),
+      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_3_1152
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_6_6_5 : LUT2
+    generic map(
+      INIT => X"9"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(54),
+      I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(55),
+      O => U0_xaui_inst_receiver_recoder_error_lane_6_6_4_1153
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_6_6_6 : LUT6
+    generic map(
+      INIT => X"FFFFFFF0FFFFEEA0"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1150,
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_6_6_4_1153,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_6_6_2_1151,
       I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_mux_97_OUT(2),
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_6_6_1_1390,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_6_6_3_1152,
       I5 => U0_xaui_inst_receiver_recoder_error_lane_6_6_Q,
       O => U0_xaui_inst_receiver_recoder_error_lane_6_Q
     );
@@ -9676,27 +8121,46 @@ begin
       I5 => U0_xaui_inst_receiver_recoder_rxd_pipe(43),
       O => U0_xaui_inst_receiver_recoder_error_lane_5_5_Q
     );
-  U0_xaui_inst_receiver_recoder_error_lane_5_5_2 : LUT3
+  U0_xaui_inst_receiver_recoder_error_lane_5_5_2 : LUT2
     generic map(
-      INIT => X"F7"
+      INIT => X"7"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxc_pipe(5),
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(42),
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_5_5_Q,
-      O => U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1393
+      O => U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1155
     );
-  U0_xaui_inst_receiver_recoder_error_lane_5_5_3 : LUT6
+  U0_xaui_inst_receiver_recoder_error_lane_5_5_3 : LUT4
     generic map(
-      INIT => X"FFFFFFF0FDF9FDF0"
+      INIT => X"FF8A"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(47),
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(46),
-      I2 => U0_xaui_inst_receiver_recoder_code_error_pipe(1),
-      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(47),
+      I3 => U0_xaui_inst_receiver_recoder_code_error_pipe(1),
+      O => U0_xaui_inst_receiver_recoder_error_lane_5_5_2_1156
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_5_5_4 : LUT2
+    generic map(
+      INIT => X"9"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(46),
+      I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(47),
+      O => U0_xaui_inst_receiver_recoder_error_lane_5_5_3_1157
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_5_5_5 : LUT6
+    generic map(
+      INIT => X"FFFFFFAAFFFCFF88"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1155,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_5_5_3_1157,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_5_5_2_1156,
       I4 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_mux_97_OUT(1),
-      I5 => U0_xaui_inst_receiver_recoder_error_lane_5_5_1_1393,
+      I5 => U0_xaui_inst_receiver_recoder_error_lane_5_5_Q,
       O => U0_xaui_inst_receiver_recoder_error_lane_5_Q
     );
   U0_xaui_inst_receiver_recoder_error_lane_7_7_1 : LUT6
@@ -9721,7 +8185,7 @@ begin
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(60),
       I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(58),
       I3 => U0_xaui_inst_receiver_recoder_rxc_pipe(7),
-      O => U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1395
+      O => U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1159
     );
   U0_xaui_inst_receiver_recoder_error_lane_7_7_3 : LUT6
     generic map(
@@ -9732,11 +8196,22 @@ begin
       I1 => U0_xaui_inst_receiver_recoder_code_error_pipe(3),
       I2 => U0_xaui_inst_receiver_recoder_lane_terminate(5),
       I3 => U0_xaui_inst_receiver_recoder_lane_terminate(4),
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1395,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_7_7_1_1159,
       I5 => U0_xaui_inst_receiver_recoder_error_lane_7_7_Q,
       O => U0_xaui_inst_receiver_recoder_error_lane_7_Q
     );
-  U0_xaui_inst_receiver_recoder_error_lane_4_4_1 : LUT6
+  U0_xaui_inst_receiver_recoder_error_lane_4_4_1 : LUT4
+    generic map(
+      INIT => X"00FE"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
+      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
+      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
+      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
+      O => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_4_4_2 : LUT6
     generic map(
       INIT => X"FFFFFFF9FFFFFFFF"
     )
@@ -9747,31 +8222,28 @@ begin
       I3 => U0_xaui_inst_receiver_recoder_code_error_pipe(4),
       I4 => U0_xaui_inst_receiver_recoder_rxd_pipe(32),
       I5 => U0_xaui_inst_receiver_recoder_rxd_pipe(37),
-      O => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q
+      O => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1161
     );
-  U0_xaui_inst_receiver_recoder_error_lane_4_4_2 : LUT5
+  U0_xaui_inst_receiver_recoder_error_lane_4_4_3 : LUT4
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"7FFF"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_pipe(35),
       I1 => U0_xaui_inst_receiver_recoder_rxd_pipe(36),
       I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(34),
       I3 => U0_xaui_inst_receiver_recoder_rxc_pipe(4),
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q,
-      O => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1397
+      O => U0_xaui_inst_receiver_recoder_error_lane_4_4_2_1162
     );
-  U0_xaui_inst_receiver_recoder_error_lane_4_4_3 : LUT6
+  U0_xaui_inst_receiver_recoder_error_lane_4_4_4 : LUT4
     generic map(
-      INIT => X"AAAAFFFEAAAAAAAA"
+      INIT => X"FAEA"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_code_error_pipe(0),
-      I1 => U0_xaui_inst_receiver_recoder_lane_terminate(3),
-      I2 => U0_xaui_inst_receiver_recoder_lane_terminate(2),
-      I3 => U0_xaui_inst_receiver_recoder_lane_terminate(1),
-      I4 => U0_xaui_inst_receiver_recoder_lane_terminate(0),
-      I5 => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1397,
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_4_4_2_1162,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1161,
       O => U0_xaui_inst_receiver_recoder_error_lane_4_Q
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_SW0 : LUT4
@@ -9787,16 +8259,16 @@ begin
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o : LUT6
     generic map(
-      INIT => X"0008080000000008"
+      INIT => X"0000000029000000"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(27),
-      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(28),
-      I2 => N58,
-      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(30),
-      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(31),
-      I5 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(29),
-      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_761
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(29),
+      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(31),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(30),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(28),
+      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(27),
+      I5 => N58,
+      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_108_o_753
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_SW0 : LUT4
     generic map(
@@ -9811,16 +8283,16 @@ begin
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o : LUT6
     generic map(
-      INIT => X"0008080000000008"
+      INIT => X"0000000029000000"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(19),
-      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(20),
-      I2 => N60,
-      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(22),
-      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(23),
-      I5 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(21),
-      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_762
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(21),
+      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(23),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(22),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(20),
+      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(19),
+      I5 => N60,
+      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_106_o_754
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_SW0 : LUT4
     generic map(
@@ -9844,7 +8316,7 @@ begin
       I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(12),
       I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(11),
       I5 => N62,
-      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763
+      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_SW0 : LUT4
     generic map(
@@ -9859,16 +8331,16 @@ begin
     );
   U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o : LUT6
     generic map(
-      INIT => X"0008080000000008"
+      INIT => X"0000000029000000"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(3),
-      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(4),
-      I2 => N64,
-      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(6),
-      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(7),
-      I5 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(5),
-      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_764
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(5),
+      I1 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(7),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(6),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(4),
+      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(3),
+      I5 => N64,
+      O => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_102_o_756
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o : LUT6
     generic map(
@@ -9881,7 +8353,7 @@ begin
       I3 => mgt_rxdata(60),
       I4 => mgt_rxdata(59),
       I5 => mgt_rxdata(63),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_848
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_840
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o : LUT6
     generic map(
@@ -9894,7 +8366,7 @@ begin
       I3 => mgt_rxdata(44),
       I4 => mgt_rxdata(43),
       I5 => mgt_rxdata(47),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_849
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_6_AND_202_o_841
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o : LUT6
     generic map(
@@ -9907,7 +8379,7 @@ begin
       I3 => mgt_rxdata(28),
       I4 => mgt_rxdata(27),
       I5 => mgt_rxdata(31),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_850
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_5_AND_200_o_842
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o : LUT6
     generic map(
@@ -9920,7 +8392,7 @@ begin
       I3 => mgt_rxdata(9),
       I4 => N72,
       I5 => mgt_rxdata(8),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_851
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_4_AND_198_o_843
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o : LUT6
     generic map(
@@ -9933,7 +8405,7 @@ begin
       I3 => mgt_rxdata(52),
       I4 => mgt_rxdata(51),
       I5 => mgt_rxdata(55),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_852
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_3_AND_196_o_844
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o : LUT6
     generic map(
@@ -9946,7 +8418,7 @@ begin
       I3 => mgt_rxdata(36),
       I4 => mgt_rxdata(35),
       I5 => mgt_rxdata(39),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_853
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_2_AND_194_o_845
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o : LUT6
     generic map(
@@ -9959,7 +8431,7 @@ begin
       I3 => mgt_rxdata(20),
       I4 => mgt_rxdata(19),
       I5 => mgt_rxdata(23),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_854
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_1_AND_192_o_846
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o : LUT6
     generic map(
@@ -9972,28 +8444,18 @@ begin
       I3 => mgt_rxdata(4),
       I4 => mgt_rxdata(3),
       I5 => mgt_rxdata(7),
-      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_855
-    );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
-      I1 => mgt_rxlock(3),
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      O => N82
+      O => U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_0_AND_190_o_847
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2 : LUT6
     generic map(
-      INIT => X"00000F1E0000F0F0"
+      INIT => X"000F010E0F000F00"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      I4 => N82,
+      I2 => N82,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_1_Q
     );
@@ -10004,7 +8466,7 @@ begin
     port map (
       I0 => mgt_rxlock(3),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       I3 => U0_xaui_inst_signal_detect_int(3),
       O => N84
     );
@@ -10035,28 +8497,28 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_21 : LUT6
     generic map(
-      INIT => X"0000000000008020"
+      INIT => X"0000000000008200"
     )
     port map (
       I0 => mgt_rxlock(3),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      I3 => U0_xaui_inst_signal_detect_int(3),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
+      I2 => U0_xaui_inst_signal_detect_int(3),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
       I5 => N86,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_22_SW0 : LUT6
     generic map(
-      INIT => X"AB55BBBB5511BB55"
+      INIT => X"C0C03C7FFCFC03FF"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       O => N88
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_22 : LUT5
@@ -10065,35 +8527,22 @@ begin
     )
     port map (
       I0 => mgt_rxlock(3),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       I2 => U0_xaui_inst_signal_detect_int(3),
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
       I4 => N88,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
-    generic map(
-      INIT => X"0000080000000000"
-    )
-    port map (
-      I0 => mgt_rxlock(3),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I4 => N90,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_27 : LUT6
     generic map(
-      INIT => X"AAAAAAAA11441164"
+      INIT => X"FFFF000000040FF0"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24
     );
@@ -10105,20 +8554,20 @@ begin
       I0 => mgt_rxlock(3),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
       I2 => U0_xaui_inst_signal_detect_int(3),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_3_1_SW0 : LUT5
     generic map(
-      INIT => X"97A95755"
+      INIT => X"917FE01F"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       O => N92
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_3_1 : LUT6
@@ -10130,30 +8579,20 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       I3 => U0_xaui_inst_signal_detect_int(3),
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       I5 => N92,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
-      I1 => mgt_rxlock(2),
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      O => N94
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2 : LUT6
     generic map(
-      INIT => X"00000F1E0000F0F0"
+      INIT => X"000F010E0F000F00"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      I4 => N94,
+      I2 => N94,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_1_Q
     );
@@ -10164,7 +8603,7 @@ begin
     port map (
       I0 => mgt_rxlock(2),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
       I3 => U0_xaui_inst_signal_detect_int(2),
       O => N96
     );
@@ -10195,14 +8634,14 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_21 : LUT6
     generic map(
-      INIT => X"0000000000800020"
+      INIT => X"0000000000008200"
     )
     port map (
       I0 => mgt_rxlock(2),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
-      I4 => U0_xaui_inst_signal_detect_int(2),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
+      I2 => U0_xaui_inst_signal_detect_int(2),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
       I5 => N98,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q
     );
@@ -10221,39 +8660,26 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_22 : LUT5
     generic map(
-      INIT => X"00000802"
+      INIT => X"00000082"
     )
     port map (
       I0 => mgt_rxlock(2),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(2),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
+      I2 => U0_xaui_inst_signal_detect_int(2),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
       I4 => N100,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
-    generic map(
-      INIT => X"0000080000000000"
-    )
-    port map (
-      I0 => mgt_rxlock(2),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I4 => N102,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_27 : LUT6
     generic map(
-      INIT => X"AAAAAAAA11441164"
+      INIT => X"FFFF000000040FF0"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_0_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_2_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24
     );
@@ -10265,7 +8691,7 @@ begin
       I0 => mgt_rxlock(2),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
       I2 => U0_xaui_inst_signal_detect_int(2),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q
     );
@@ -10290,30 +8716,20 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
       I3 => U0_xaui_inst_signal_detect_int(2),
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
       I5 => N104,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
-      I1 => mgt_rxlock(1),
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      O => N106
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2 : LUT6
     generic map(
-      INIT => X"00000F1E0000F0F0"
+      INIT => X"000F010E0F000F00"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      I4 => N106,
+      I2 => N106,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_1_Q
     );
@@ -10324,7 +8740,7 @@ begin
     port map (
       I0 => mgt_rxlock(1),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
       I3 => U0_xaui_inst_signal_detect_int(1),
       O => N108
     );
@@ -10355,14 +8771,14 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_21 : LUT6
     generic map(
-      INIT => X"0000000000800020"
+      INIT => X"0000000000008200"
     )
     port map (
       I0 => mgt_rxlock(1),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
-      I4 => U0_xaui_inst_signal_detect_int(1),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
+      I2 => U0_xaui_inst_signal_detect_int(1),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
       I5 => N110,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q
     );
@@ -10381,39 +8797,26 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_22 : LUT5
     generic map(
-      INIT => X"00000802"
+      INIT => X"00000082"
     )
     port map (
       I0 => mgt_rxlock(1),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(1),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
+      I2 => U0_xaui_inst_signal_detect_int(1),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
       I4 => N112,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
-    generic map(
-      INIT => X"0000080000000000"
-    )
-    port map (
-      I0 => mgt_rxlock(1),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I4 => N114,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_27 : LUT6
     generic map(
-      INIT => X"AAAAAAAA11441164"
+      INIT => X"FFFF000000040FF0"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_0_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_2_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24
     );
@@ -10425,7 +8828,7 @@ begin
       I0 => mgt_rxlock(1),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
       I2 => U0_xaui_inst_signal_detect_int(1),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q
     );
@@ -10450,30 +8853,20 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
       I3 => U0_xaui_inst_signal_detect_int(1),
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
       I5 => N116,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
-      I1 => mgt_rxlock(0),
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      O => N118
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2 : LUT6
     generic map(
-      INIT => X"00000F1E0000F0F0"
+      INIT => X"000F010E0F000F00"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      I4 => N118,
+      I2 => N118,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_1_Q
     );
@@ -10484,7 +8877,7 @@ begin
     port map (
       I0 => mgt_rxlock(0),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
       I3 => U0_xaui_inst_signal_detect_int(0),
       O => N120
     );
@@ -10515,14 +8908,14 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_21 : LUT6
     generic map(
-      INIT => X"0000000000800020"
+      INIT => X"0000000000008200"
     )
     port map (
       I0 => mgt_rxlock(0),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
-      I4 => U0_xaui_inst_signal_detect_int(0),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
+      I2 => U0_xaui_inst_signal_detect_int(0),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
       I5 => N122,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q
     );
@@ -10541,39 +8934,26 @@ begin
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_22 : LUT5
     generic map(
-      INIT => X"00000802"
+      INIT => X"00000082"
     )
     port map (
       I0 => mgt_rxlock(0),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(0),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
+      I2 => U0_xaui_inst_signal_detect_int(0),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
       I4 => N124,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q
     );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
-    generic map(
-      INIT => X"0000080000000000"
-    )
-    port map (
-      I0 => mgt_rxlock(0),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I4 => N126,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
-    );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_27 : LUT6
     generic map(
-      INIT => X"AAAAAAAA11441164"
+      INIT => X"FFFF000000040FF0"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_0_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_2_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24
     );
@@ -10585,7 +8965,7 @@ begin
       I0 => mgt_rxlock(0),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
       I2 => U0_xaui_inst_signal_detect_int(0),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q
     );
@@ -10610,692 +8990,121 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
       I3 => U0_xaui_inst_signal_detect_int(0),
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
       I5 => N128,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o1 : LUT6
-    generic map(
-      INIT => X"0000000100000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o1_1442
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o2 : LUT6
-    generic map(
-      INIT => X"0000000000000001"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o2_1443
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o3 : LUT5
-    generic map(
-      INIT => X"00000001"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o3_1444
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o4 : LUT4
-    generic map(
-      INIT => X"8000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o3_1444,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o2_1443,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o1_1442,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_SW0 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(7),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(14),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(9),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(13),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(15),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(11),
-      O => N132
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2 : LUT6
-    generic map(
-      INIT => X"0000000000000001"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      I5 => N132,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_2 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0(15),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_n0185
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_1_SW0 : LUT2
-    generic map(
-      INIT => X"1"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      O => N134
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_1 : LUT6
-    generic map(
-      INIT => X"0F0F00009FAF99AA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => N134,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_load_en,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count3
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In2 : LUT6
-    generic map(
-      INIT => X"4040404000000040"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In3_1451
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In1 : LUT4
-    generic map(
-      INIT => X"AA2A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In1_1452
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In2 : LUT2
-    generic map(
-      INIT => X"8"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In2_1453
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In3 : LUT6
-    generic map(
-      INIT => X"FFFFF800FFFF8800"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In2_1453,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In1_1452,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2_1147,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_In
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In1 : LUT5
-    generic map(
-      INIT => X"00041014"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In1_1454
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2 : LUT3
-    generic map(
-      INIT => X"F2"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In3_1455
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In3 : LUT6
-    generic map(
-      INIT => X"EEE6EE66EEE2EE62"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In3_1455,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In1_1454,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2_1147,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o5_SW0 : LUT6
-    generic map(
-      INIT => X"7FBFDFEFF7FBFDFE"
-    )
-    port map (
-      I0 => prtad(2),
-      I1 => prtad(1),
-      I2 => prtad(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(6),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(5),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(4),
-      O => N138
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o5 : LUT5
-    generic map(
-      INIT => X"00008421"
-    )
-    port map (
-      I0 => prtad(4),
-      I1 => prtad(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I4 => N138,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1 : LUT6
-    generic map(
-      INIT => X"00BB10FB00BB10BB"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I5 => N140,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_load_en
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o1 : LUT5
-    generic map(
-      INIT => X"00000100"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o1_1458
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT16 : LUT5
-    generic map(
-      INIT => X"80000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT12_1460
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT17 : LUT6
-    generic map(
-      INIT => X"0155015501110110"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I4 => NlwRenamedSig_OI_U0_mgt_loopback_keep,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT12_1460,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT13_1461
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT18 : LUT6
-    generic map(
-      INIT => X"0000001010000010"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I5 => U0_xaui_inst_type_sel_reg(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT14_1462
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT110 : LUT6
-    generic map(
-      INIT => X"F2F0FFF0F2F0F0F0"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT13_1461,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT1,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT15_1463,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_0_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT2_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_rx_local_fault_reg_1090,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      O => N142
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT34 : LUT6
-    generic map(
-      INIT => X"ECFCECECCCFCCCCC"
-    )
-    port map (
-      I0 => NlwRenamedSig_OI_U0_mgt_powerdown_keep,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT3,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT32,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_data_rd(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_11_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT4_SW0 : LUT3
-    generic map(
-      INIT => X"80"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_aligned_reg_1089,
-      O => N144
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT6_SW0 : LUT3
-    generic map(
-      INIT => X"80"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(1),
-      I1 => NlwRenamedSig_OI_U0_mgt_loopback_keep,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      O => N146
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT73 : LUT3
-    generic map(
-      INIT => X"54"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I1 => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT72
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT83 : LUT6
-    generic map(
-      INIT => X"A080A28220002202"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(1),
-      I4 => U0_xaui_inst_type_sel_reg(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT82
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT93 : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT92
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT95 : LUT6
-    generic map(
-      INIT => X"0000008400000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT94
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT96 : LUT3
-    generic map(
-      INIT => X"80"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT95_1473
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT113 : LUT3
-    generic map(
-      INIT => X"A2"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT113_1475
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT12_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_type_sel_reg(0),
-      O => N148
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT14_SW0 : LUT3
-    generic map(
-      INIT => X"A8"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_tx_local_fault_reg_1091,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_rx_local_fault_reg_1090,
-      O => N150
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1 : LUT6
-    generic map(
-      INIT => X"7FFFFFFFFFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2 : LUT6
-    generic map(
-      INIT => X"7FFFFFFFFFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3 : LUT5
-    generic map(
-      INIT => X"7FFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1 : LUT6
-    generic map(
-      INIT => X"7FFFFFFFFFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(9),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(7),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2 : LUT6
-    generic map(
-      INIT => X"7FFFFFFFFFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(15),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3 : LUT5
-    generic map(
-      INIT => X"7FFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(13),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(11),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o_SW0 : LUT4
-    generic map(
-      INIT => X"FF7F"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      O => N152
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o : LUT6
-    generic map(
-      INIT => X"0000000100000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      I4 => N152,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdc_rising_bit_count_4_AND_211_o_1262
     );
   U0_xaui_inst_aligned_sticky : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_aligned_sticky_glue_set_1485,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_aligned_sticky_350
+      D => U0_xaui_inst_aligned_sticky_glue_set_1207,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => NlwRenamedSig_OI_U0_status_vector_int_7_Q
     );
   U0_xaui_inst_rx_local_fault : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_rx_local_fault_glue_set_1486,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_rx_local_fault_351
+      D => U0_xaui_inst_rx_local_fault_glue_set_1208,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => NlwRenamedSig_OI_U0_status_vector_int_1_Q
     );
   U0_xaui_inst_tx_local_fault : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_tx_local_fault_glue_set_1487,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_tx_local_fault_352
-    );
-  U0_xaui_inst_type_sel_reg_done : FDR
-    port map (
-      C => usrclk,
-      D => N0,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_type_sel_reg_done_353
+      D => U0_xaui_inst_tx_local_fault_glue_set_1209,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => NlwRenamedSig_OI_U0_status_vector_int_0_Q
     );
   U0_xaui_inst_transmitter_recoder_txc_out_7 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1488,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1210,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(7)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_6 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1489,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1211,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(6)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_5 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1490,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1212,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(5)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_4 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1491,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1213,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(4)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_3 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1492,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1214,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(3)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_2 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1493,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1215,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(2)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_1 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1494,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1216,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(1)
     );
   U0_xaui_inst_transmitter_recoder_txc_out_0 : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1495,
+      D => U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1217,
       R => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       Q => U0_xaui_inst_transmitter_recoder_txc_out(0)
     );
   U0_xaui_inst_transmitter_align_extra_a : FDR
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_align_extra_a_glue_set_1496,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_transmitter_align_extra_a_675
+      D => U0_xaui_inst_transmitter_align_extra_a_glue_set_1218,
+      R => U0_xaui_inst_usrclk_reset_350,
+      Q => U0_xaui_inst_transmitter_align_extra_a_659
     );
   U0_xaui_inst_transmitter_state_machine_next_ifg_is_a : FDS
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1497,
-      S => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_702
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg_glue_set_1498,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_loopback_reg : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_loopback_reg_rstpot_1499,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => NlwRenamedSig_OI_U0_mgt_loopback_keep
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_powerdown_reg : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_powerdown_reg_rstpot_1500,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => NlwRenamedSig_OI_U0_mgt_powerdown_keep
+      D => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1219,
+      S => U0_xaui_inst_usrclk_reset_350,
+      Q => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_686
     );
   U0_xaui_inst_clear_aligned_edge : FD
     port map (
       C => usrclk,
-      D => U0_xaui_inst_clear_aligned_edge_rstpot_1501,
-      Q => U0_xaui_inst_clear_aligned_edge_356
+      D => U0_xaui_inst_clear_aligned_edge_rstpot_1220,
+      Q => U0_xaui_inst_clear_aligned_edge_345
     );
   U0_xaui_inst_clear_local_fault_edge : FD
     port map (
       C => usrclk,
-      D => U0_xaui_inst_clear_local_fault_edge_rstpot_1502,
-      Q => U0_xaui_inst_clear_local_fault_edge_358
+      D => U0_xaui_inst_clear_local_fault_edge_rstpot_1221,
+      Q => U0_xaui_inst_clear_local_fault_edge_347
+    );
+  U0_xaui_inst_usrclk_reset_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_usrclk_reset_pipe_351,
+      I1 => reset,
+      O => U0_xaui_inst_usrclk_reset_rstpot_1222
     );
   U0_xaui_inst_usrclk_reset : FD
     generic map(
@@ -11303,13 +9112,13 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_usrclk_reset_rstpot_1503,
-      Q => U0_xaui_inst_usrclk_reset_354
+      D => U0_xaui_inst_usrclk_reset_rstpot_1222,
+      Q => U0_xaui_inst_usrclk_reset_350
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync : FD
     port map (
       C => usrclk,
-      D => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1504,
+      D => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1223,
       Q => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_339
     );
   U0_xaui_inst_transmitter_tqmsg_capture_1_q_det : FD
@@ -11318,226 +9127,20 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1505,
-      Q => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_0_11_SW0 : LUT6
-    generic map(
-      INIT => X"AAAA2230AABA2230"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N154
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_0_11_SW1 : LUT6
-    generic map(
-      INIT => X"AAAA0030AABA0030"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N155
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_0_11_SW2 : LUT6
-    generic map(
-      INIT => X"AAAA2320ABAA3320"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N156
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_0_11 : LUT6
-    generic map(
-      INIT => X"227700FF27270F0F"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => N155,
-      I2 => N154,
-      I3 => N156,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2_1147,
-      I5 => N140,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0218_inv1 : LUT6
-    generic map(
-      INIT => X"8000000000000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(15),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o3_1444,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o2_1443,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o1_1442,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_n0218_inv
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_SW0 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFFFEFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(4),
-      I5 => U0_xaui_inst_type_sel_reg(1),
-      O => N160
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_SW1 : LUT3
-    generic map(
-      INIT => X"FB"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I2 => U0_xaui_inst_type_sel_reg(1),
-      O => N161
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0_SW0 : LUT5
-    generic map(
-      INIT => X"EFEFE76F"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(2),
-      I1 => U0_xaui_inst_type_sel_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(0),
-      I3 => U0_xaui_inst_type_sel_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(1),
-      O => N163
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0_SW1 : LUT5
-    generic map(
-      INIT => X"EFDFF0FF"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I4 => U0_xaui_inst_type_sel_reg(1),
-      O => N164
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0 : LUT6
-    generic map(
-      INIT => X"00000A0000002200"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => N163,
-      I2 => N164,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => N140
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o1_SW0 : LUT3
-    generic map(
-      INIT => X"F7"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1_1757,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1_1759,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N166
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_devad_match1_SW0 : LUT6
-    generic map(
-      INIT => X"EEEEEEEEEEEEFFF0"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_devad_reg(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I4 => N166,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1756,
-      O => N130
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1_SW0 : LUT4
-    generic map(
-      INIT => X"AAA8"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      O => N171
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1_SW1 : LUT4
-    generic map(
-      INIT => X"AA20"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N172
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In3 : LUT6
-    generic map(
-      INIT => X"2222FF220A0AFF0A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I1 => N172,
-      I2 => N171,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In3_1451,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0204_inv1_SW0 : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => NlwRenamedSig_OI_U0_mgt_powerdown_keep,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(11),
-      O => N176
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_powerdown_reg_rstpot : LUT6
-    generic map(
-      INIT => X"F0F0F0F0AAE2AAAA"
-    )
-    port map (
-      I0 => NlwRenamedSig_OI_U0_mgt_powerdown_keep,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I2 => N176,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_powerdown_reg_rstpot_1500
+      D => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1224,
+      Q => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"F7FFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(58),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(57),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(56),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(59),
-      O => N178
+      I0 => U0_xaui_inst_transmitter_txd_pipe(56),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(57),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(59),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I4 => U0_xaui_inst_transmitter_txc_pipe(7),
+      O => N130
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW0_SW0 : LUT5
     generic map(
@@ -11549,43 +9152,43 @@ begin
       I2 => U0_xaui_inst_transmitter_txd_pipe(48),
       I3 => U0_xaui_inst_transmitter_txc_pipe(6),
       I4 => U0_xaui_inst_transmitter_txd_pipe(51),
-      O => N180
+      O => N132
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"BFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(40),
       I2 => U0_xaui_inst_transmitter_txd_pipe(41),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(40),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(43),
-      O => N182
+      I3 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I4 => U0_xaui_inst_transmitter_txc_pipe(5),
+      O => N134
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"F7FFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(34),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(33),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(32),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(35),
-      O => N184
+      I0 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(35),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I4 => U0_xaui_inst_transmitter_txc_pipe(4),
+      O => N136
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"F7FFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(26),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(25),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(24),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(27),
-      O => N186
+      I0 => U0_xaui_inst_transmitter_txd_pipe(24),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(25),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(27),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I4 => U0_xaui_inst_transmitter_txc_pipe(3),
+      O => N138
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW0_SW0 : LUT5
     generic map(
@@ -11597,31 +9200,31 @@ begin
       I2 => U0_xaui_inst_transmitter_txd_pipe(16),
       I3 => U0_xaui_inst_transmitter_txc_pipe(2),
       I4 => U0_xaui_inst_transmitter_txd_pipe(19),
-      O => N188
+      O => N140
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"BFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(9),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I0 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(9),
       I3 => U0_xaui_inst_transmitter_txd_pipe(10),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(11),
-      O => N190
+      I4 => U0_xaui_inst_transmitter_txc_pipe(1),
+      O => N142
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW0_SW0 : LUT5
     generic map(
-      INIT => X"FFFF7FFF"
+      INIT => X"F7FFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(2),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(1),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(0),
-      I4 => U0_xaui_inst_transmitter_txd_pipe(3),
-      O => N192
+      I0 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(3),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I4 => U0_xaui_inst_transmitter_txc_pipe(0),
+      O => N144
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7 : FD
     generic map(
@@ -11629,7 +9232,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1526,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1233,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6 : FD
@@ -11638,7 +9241,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1527,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1234,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5 : FD
@@ -11647,7 +9250,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1528,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1235,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4 : FD
@@ -11656,7 +9259,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1529,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1236,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3 : FD
@@ -11665,7 +9268,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1530,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1237,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2 : FD
@@ -11674,7 +9277,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1531,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1238,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1 : FD
@@ -11683,7 +9286,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1532,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1239,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0 : FD
@@ -11692,7 +9295,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1533,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1240,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7 : FD
@@ -11701,7 +9304,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1534,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1241,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6 : FD
@@ -11710,7 +9313,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1535,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1242,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5 : FD
@@ -11719,7 +9322,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1536,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1243,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4 : FD
@@ -11728,7 +9331,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1537,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1244,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3 : FD
@@ -11737,7 +9340,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1538,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1245,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2 : FD
@@ -11746,7 +9349,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1539,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1246,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1 : FD
@@ -11755,7 +9358,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1540,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1247,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0 : FD
@@ -11764,7 +9367,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1541,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1248,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7 : FD
@@ -11773,7 +9376,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1542,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1249,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6 : FD
@@ -11782,7 +9385,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1543,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1250,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5 : FD
@@ -11791,7 +9394,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1544,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1251,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4 : FD
@@ -11800,7 +9403,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1545,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1252,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3 : FD
@@ -11809,7 +9412,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1546,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1253,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2 : FD
@@ -11818,7 +9421,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1547,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1254,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1 : FD
@@ -11827,7 +9430,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1548,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1255,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0 : FD
@@ -11836,7 +9439,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1549,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1256,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7 : FD
@@ -11845,7 +9448,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1550,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1257,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6 : FD
@@ -11854,7 +9457,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1551,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1258,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5 : FD
@@ -11863,7 +9466,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1552,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1259,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4 : FD
@@ -11872,7 +9475,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1553,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1260,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3 : FD
@@ -11881,7 +9484,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1554,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1261,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2 : FD
@@ -11890,7 +9493,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1555,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1262,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1 : FD
@@ -11899,7 +9502,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1556,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1263,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0 : FD
@@ -11908,7 +9511,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1557,
+      D => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1264,
       Q => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7 : FD
@@ -11917,7 +9520,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1558,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1265,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6 : FD
@@ -11926,7 +9529,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1559,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1266,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5 : FD
@@ -11935,7 +9538,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1560,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1267,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4 : FD
@@ -11944,7 +9547,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1561,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1268,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3 : FD
@@ -11953,7 +9556,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1562,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1269,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2 : FD
@@ -11962,7 +9565,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1563,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1270,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1 : FD
@@ -11971,7 +9574,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1564,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1271,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0 : FD
@@ -11980,7 +9583,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1565,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1272,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7 : FD
@@ -11989,7 +9592,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1566,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1273,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6 : FD
@@ -11998,7 +9601,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1567,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1274,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5 : FD
@@ -12007,7 +9610,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1568,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1275,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4 : FD
@@ -12016,7 +9619,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1569,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1276,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3 : FD
@@ -12025,7 +9628,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1570,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1277,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2 : FD
@@ -12034,7 +9637,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1571,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1278,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1 : FD
@@ -12043,7 +9646,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1572,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1279,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0 : FD
@@ -12052,7 +9655,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1573,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1280,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7 : FD
@@ -12061,7 +9664,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1574,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1281,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6 : FD
@@ -12070,7 +9673,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1575,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1282,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5 : FD
@@ -12079,7 +9682,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1576,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1283,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4 : FD
@@ -12088,7 +9691,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1577,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1284,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3 : FD
@@ -12097,7 +9700,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1578,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1285,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2 : FD
@@ -12106,7 +9709,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1579,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1286,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1 : FD
@@ -12115,7 +9718,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1580,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1287,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0 : FD
@@ -12124,7 +9727,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1581,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1288,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7 : FD
@@ -12133,7 +9736,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1582,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1289,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6 : FD
@@ -12142,7 +9745,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1583,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1290,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5 : FD
@@ -12151,7 +9754,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1584,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1291,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4 : FD
@@ -12160,7 +9763,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1585,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1292,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3 : FD
@@ -12169,7 +9772,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1586,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1293,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2 : FD
@@ -12178,7 +9781,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1587,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1294,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1 : FD
@@ -12187,7 +9790,7 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1588,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1295,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_Q
     );
   U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0 : FD
@@ -12196,96 +9799,197 @@ begin
     )
     port map (
       C => usrclk,
-      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1589,
+      D => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1296,
       Q => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_Q
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o1_SW1 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot : LUT4
     generic map(
-      INIT => X"00000000FE000000"
+      INIT => X"00EA"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N196
+      I0 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_694,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1234
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o1_SW2 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot : LUT4
     generic map(
-      INIT => X"FFFFFFFFFEFFFFFF"
+      INIT => X"00EA"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N197
+      I0 => U0_xaui_inst_transmitter_txd_pipe(57),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_694,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1239
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o1_SW3 : LUT3
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot : LUT4
     generic map(
-      INIT => X"20"
+      INIT => X"00EA"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1_1757,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      O => N198
+      I0 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_696,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1242
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot : LUT4
     generic map(
-      INIT => X"0F0F0F0F02520757"
+      INIT => X"00EA"
     )
     port map (
-      I0 => N161,
-      I1 => N198,
-      I2 => N160,
-      I3 => N197,
-      I4 => N196,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad
+      I0 => U0_xaui_inst_transmitter_txd_pipe(49),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_696,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1247
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT75 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot : LUT4
     generic map(
-      INIT => X"FAF0EAC0FAF0AA00"
+      INIT => X"00EA"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(14),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT72,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT17_1145,
-      I4 => N200,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd101,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_15_Q
+      I0 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_698,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1250
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT115 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot : LUT4
     generic map(
-      INIT => X"FAF0EAC0FAF0AA00"
+      INIT => X"00EA"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT113_1475,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT17_1145,
-      I4 => N204,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd101,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_4_Q
+      I0 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_698,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1255
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_700,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1258
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_700,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1263
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_702,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1266
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(25),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_702,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1271
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_704,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1274
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(17),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_704,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1279
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_706,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1282
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_706,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1287
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_708,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1290
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot : LUT4
+    generic map(
+      INIT => X"00EA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_708,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1295
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW0 : LUT6
     generic map(
-      INIT => X"3F3F7F7F0C3F337F"
+      INIT => X"3377FFFF0337CF3F"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
-      O => N206
+      O => N146
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW1 : LUT6
     generic map(
@@ -12298,7 +10002,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
-      O => N207
+      O => N147
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26 : LUT5
     generic map(
@@ -12306,24 +10010,24 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
       I2 => U0_xaui_inst_signal_detect_int(3),
-      I3 => N207,
-      I4 => N206,
+      I3 => N147,
+      I4 => N146,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW0 : LUT6
     generic map(
-      INIT => X"3A2F3AAF3F3F3FFF"
+      INIT => X"3377FFFF0337CF3F"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_1_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q,
-      O => N209
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
+      O => N149
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW1 : LUT6
     generic map(
@@ -12336,7 +10040,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
-      O => N210
+      O => N150
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26 : LUT5
     generic map(
@@ -12344,24 +10048,24 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
       I2 => U0_xaui_inst_signal_detect_int(2),
-      I3 => N210,
-      I4 => N209,
+      I3 => N150,
+      I4 => N149,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW0 : LUT6
     generic map(
-      INIT => X"3A2F3AAF3F3F3FFF"
+      INIT => X"3377FFFF0337CF3F"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_1_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q,
-      O => N212
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
+      O => N152
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW1 : LUT6
     generic map(
@@ -12374,7 +10078,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
-      O => N213
+      O => N153
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26 : LUT5
     generic map(
@@ -12382,24 +10086,24 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
       I2 => U0_xaui_inst_signal_detect_int(1),
-      I3 => N213,
-      I4 => N212,
+      I3 => N153,
+      I4 => N152,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW0 : LUT6
     generic map(
-      INIT => X"3A2F3AAF3F3F3FFF"
+      INIT => X"3377FFFF0337CF3F"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_1_Q,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_2_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q,
-      O => N215
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
+      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      O => N155
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26_SW1 : LUT6
     generic map(
@@ -12412,7 +10116,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_0_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
-      O => N216
+      O => N156
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_26 : LUT5
     generic map(
@@ -12420,263 +10124,34 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_0_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
       I2 => U0_xaui_inst_signal_detect_int(0),
-      I3 => N216,
-      I4 => N215,
+      I3 => N156,
+      I4 => N155,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n01881_SW0 : LUT2
-    generic map(
-      INIT => X"8"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(15),
-      O => N218
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg_glue_set : LUT6
-    generic map(
-      INIT => X"FFFFFFFFAAEAAAAA"
-    )
-    port map (
-      I0 => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I2 => N218,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_n0218_inv,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg_glue_set_1498
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o3 : LUT6
-    generic map(
-      INIT => X"0000005000001111"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(1),
-      I1 => N160,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o1_1458,
-      I3 => N164,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW1 : LUT4
-    generic map(
-      INIT => X"AFA2"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      O => N222
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW2 : LUT4
-    generic map(
-      INIT => X"FD10"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1_1759,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N223
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_2 : FD
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_2_rstpot_1639,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_2_rstpot : LUT5
-    generic map(
-      INIT => X"FFAAA9AA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_load_en,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count_2_rstpot_1639
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_0_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_0_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_1_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_1_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(1)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_2_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_2_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(2)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_3_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_3_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(3)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_4_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_4_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(4)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_5_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_5_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(5)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0198_inv1_SW0 : LUT4
-    generic map(
-      INIT => X"EA2A"
-    )
-    port map (
-      I0 => NlwRenamedSig_OI_U0_mgt_loopback_keep,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(14),
-      O => N225
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_n0198_inv1_SW1 : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => NlwRenamedSig_OI_U0_mgt_loopback_keep,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      O => N226
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_loopback_reg_rstpot : LUT6
-    generic map(
-      INIT => X"F3C0BB88E2E2AAAA"
-    )
-    port map (
-      I0 => NlwRenamedSig_OI_U0_mgt_loopback_keep,
-      I1 => U0_xaui_inst_type_sel_reg(1),
-      I2 => N225,
-      I3 => N226,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_mdio_we_AND_259_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_loopback_reg_rstpot_1499
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW0 : LUT4
     generic map(
-      INIT => X"BB60"
+      INIT => X"AF48"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N240
+      O => N170
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW1 : LUT5
     generic map(
-      INIT => X"F3F30C7F"
+      INIT => X"FF3307CF"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N241
+      O => N171
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT32 : LUT5
     generic map(
@@ -12686,8 +10161,8 @@ begin
       I0 => mgt_rxlock(3),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I3 => N240,
-      I4 => N241,
+      I3 => N170,
+      I4 => N171,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_2_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW0 : LUT4
@@ -12699,7 +10174,7 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N243
+      O => N173
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW1 : LUT5
     generic map(
@@ -12711,7 +10186,7 @@ begin
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N244
+      O => N174
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT32 : LUT5
     generic map(
@@ -12721,8 +10196,8 @@ begin
       I0 => mgt_rxlock(2),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I3 => N243,
-      I4 => N244,
+      I3 => N173,
+      I4 => N174,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_2_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW0 : LUT4
@@ -12734,7 +10209,7 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N246
+      O => N176
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW1 : LUT5
     generic map(
@@ -12746,7 +10221,7 @@ begin
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N247
+      O => N177
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT32 : LUT5
     generic map(
@@ -12756,8 +10231,8 @@ begin
       I0 => mgt_rxlock(1),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I3 => N246,
-      I4 => N247,
+      I3 => N176,
+      I4 => N177,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_2_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW0 : LUT4
@@ -12769,7 +10244,7 @@ begin
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N249
+      O => N179
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT31_SW1 : LUT5
     generic map(
@@ -12781,7 +10256,7 @@ begin
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N250
+      O => N180
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT32 : LUT5
     generic map(
@@ -12791,2084 +10266,226 @@ begin
       I0 => mgt_rxlock(0),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_4_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I3 => N249,
-      I4 => N250,
+      I3 => N179,
+      I4 => N180,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_2_Q
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT85_SW0 : LUT4
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW1 : LUT4
     generic map(
-      INIT => X"FFEF"
+      INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      O => N264
+      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(28),
+      O => N195
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT103_SW0 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027 : LUT6
     generic map(
-      INIT => X"FFFFFF7FFAFFFF7F"
+      INIT => X"1111111111110030"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I5 => U0_xaui_inst_type_sel_reg(1),
-      O => N266
+      I0 => N195,
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_702
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT75_SW0_SW0 : LUT3
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW3 : LUT4
     generic map(
-      INIT => X"FE"
+      INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      O => N268
+      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(20),
+      O => N198
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT75_SW0 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027 : LUT6
     generic map(
-      INIT => X"00000000000E0000"
+      INIT => X"1111111111110030"
     )
     port map (
-      I0 => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I3 => N268,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758,
-      O => N200
+      I0 => N198,
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_704
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd10411_SW0 : LUT4
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW5 : LUT4
     generic map(
-      INIT => X"FF27"
+      INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_sync_reg(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      O => N270
+      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(12),
+      O => N201
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT19 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027 : LUT6
     generic map(
-      INIT => X"FFFF004000000000"
+      INIT => X"1111111111110030"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I3 => N270,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT14_1462,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT15_1463
+      I0 => N201,
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_706
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In21_SW1 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW7 : LUT4
     generic map(
-      INIT => X"FFFFFFFFFFFFFEFF"
+      INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      O => N272
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In21 : LUT6
-    generic map(
-      INIT => X"0000030000001100"
-    )
-    port map (
-      I0 => N163,
-      I1 => N272,
-      I2 => N164,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In2_1147
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In11_SW0 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFF7BDE"
-    )
-    port map (
-      I0 => prtad(4),
-      I1 => prtad(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I5 => N138,
-      O => N274
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In11 : LUT6
-    generic map(
-      INIT => X"F0F0F0F3F0F0F0F5"
-    )
-    port map (
-      I0 => N163,
-      I1 => N164,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I3 => N274,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In1
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd11211_SW0 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      O => N276
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT33 : LUT6
-    generic map(
-      INIT => X"00000C0800000000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_tx_local_fault_reg_1091,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I4 => N276,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT32
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_13_o_15_1_SW0 : LUT4
-    generic map(
-      INIT => X"FFBF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      O => N278
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT115_SW0 : LUT6
-    generic map(
-      INIT => X"0000000000080000"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(0),
-      I1 => U0_xaui_inst_type_sel_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I3 => N278,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758,
+      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(4),
       O => N204
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In21_SW0_SW0 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027 : LUT6
     generic map(
-      INIT => X"FFFF7BDEFFFFFFFF"
+      INIT => X"1111111111110030"
     )
     port map (
-      I0 => prtad(4),
-      I1 => prtad(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      O => N280
+      I0 => N204,
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_708
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In21_SW0 : LUT6
-    generic map(
-      INIT => X"0000000000000001"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I4 => N138,
-      I5 => N280,
-      O => N174
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT51 : LUT6
-    generic map(
-      INIT => X"2AEAEAEA2AEA2A2A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(12),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I3 => N282,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_13_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT131 : LUT6
-    generic map(
-      INIT => X"2AEAEAEA2AEA2A2A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I3 => N282,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_6_Q
-    );
-  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_SW0 : LUT4
-    generic map(
-      INIT => X"A8FC"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(7),
-      I1 => U0_xaui_inst_transmitter_tx_is_idle(1),
-      I2 => U0_xaui_inst_transmitter_tx_is_q(1),
-      I3 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
-      O => N286
-    );
-  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_SW1 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_tx_is_q(1),
-      I1 => U0_xaui_inst_transmitter_tx_is_idle(1),
-      O => N287
-    );
-  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1_SW2 : LUT5
-    generic map(
-      INIT => X"00A8000C"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(7),
-      I1 => U0_xaui_inst_transmitter_tx_is_idle(1),
-      I2 => U0_xaui_inst_transmitter_tx_is_q(1),
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
-      I4 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(2),
-      O => N288
-    );
-  U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_2 : LUT6
-    generic map(
-      INIT => X"00FF0F0F44774477"
-    )
-    port map (
-      I0 => N287,
-      I1 => U0_xaui_inst_transmitter_a_due(1),
-      I2 => N288,
-      I3 => N286,
-      I4 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0),
-      I5 => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(1),
-      O => U0_xaui_inst_transmitter_state_machine_state_1_2_PWR_15_o_wide_mux_20_OUT_0_1
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW3 : LUT5
-    generic map(
-      INIT => X"55105530"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N290
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW4 : LUT4
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW1 : LUT4
     generic map(
       INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      O => N291
+      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(60),
+      O => N207
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW5 : LUT5
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027 : LUT6
     generic map(
-      INIT => X"5555044C"
+      INIT => X"1111111111110030"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      O => N292
+      I0 => N207,
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_694
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_4_1 : LUT5
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW3 : LUT4
     generic map(
-      INIT => X"44774747"
+      INIT => X"FFFE"
     )
     port map (
-      I0 => N291,
+      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(52),
+      O => N210
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027 : LUT6
+    generic map(
+      INIT => X"1111111111110030"
+    )
+    port map (
+      I0 => N210,
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_696
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW5 : LUT4
+    generic map(
+      INIT => X"FFFE"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(44),
+      O => N213
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027 : LUT6
+    generic map(
+      INIT => X"1111111111110030"
+    )
+    port map (
+      I0 => N213,
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_698
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW7 : LUT4
+    generic map(
+      INIT => X"FFFE"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(36),
+      O => N216
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027 : LUT6
+    generic map(
+      INIT => X"1111111111110030"
+    )
+    port map (
+      I0 => N216,
       I1 => N136,
-      I2 => N290,
-      I3 => N292,
-      I4 => N140,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count4
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0_SW3 : LUT6
-    generic map(
-      INIT => X"AAAAAAAA00AA082A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N223,
-      I3 => N222,
-      I4 => N163,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N295
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0_SW4 : LUT6
-    generic map(
-      INIT => X"AAAAAAAA00AA082A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N223,
-      I3 => N222,
-      I4 => N164,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N296
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv1 : LUT6
-    generic map(
-      INIT => X"CECECEC4C4CEC4C4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_prtad_4_shift_reg_8_equal_48_o,
-      I1 => N294,
-      I2 => N130,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I4 => N295,
-      I5 => N296,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0185_inv
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(36),
-      O => N298
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N298,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1550
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(36),
-      O => N300
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N300,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_rstpot_1551
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(36),
-      O => N302
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N302,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1552
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(36),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      O => N304
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I3 => N304,
-      I4 => N184,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1553
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(36),
-      O => N306
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(35),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N306,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1554
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N306,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1555
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(38),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(36),
-      O => N310
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(33),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N310,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_rstpot_1556
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(32),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(4),
-      I2 => N310,
-      I3 => N184,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1557
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(44),
-      O => N314
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N314,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1542
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(44),
-      O => N316
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N316,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_rstpot_1543
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(44),
-      O => N318
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N318,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1544
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(44),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      O => N320
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I3 => N320,
-      I4 => N182,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1545
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(44),
-      O => N322
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(43),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N322,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1546
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N322,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1547
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(46),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(44),
-      O => N326
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(41),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N326,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_rstpot_1548
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(40),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(5),
-      I2 => N326,
-      I3 => N182,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1549
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(52),
-      O => N330
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N330,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1534
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(52),
-      O => N332
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N332,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_rstpot_1535
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(52),
-      O => N334
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N334,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1536
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(52),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      O => N336
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I3 => N336,
-      I4 => N180,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1537
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(52),
-      O => N338
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(51),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N338,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1538
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(50),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N338,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1539
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(54),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(52),
-      O => N342
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(49),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N342,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_rstpot_1540
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(48),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(6),
-      I2 => N342,
-      I3 => N180,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1541
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(60),
-      O => N346
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N346,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1526
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(60),
-      O => N348
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N348,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_rstpot_1527
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(60),
-      O => N350
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N350,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1528
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(60),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      O => N352
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I3 => N352,
-      I4 => N178,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1529
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(60),
-      O => N354
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(59),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N354,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1530
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(58),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N354,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1531
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(62),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(60),
-      O => N358
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(57),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N358,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_rstpot_1532
-    );
-  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(56),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(7),
-      I2 => N358,
-      I3 => N178,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(1),
-      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1533
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(4),
-      O => N362
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N362,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1582
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(4),
-      O => N364
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N364,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_rstpot_1583
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(4),
-      O => N366
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N366,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1584
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(4),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      O => N368
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I3 => N368,
-      I4 => N192,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1585
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(4),
-      O => N370
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(3),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N370,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1586
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N370,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1587
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(6),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(4),
-      O => N374
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(1),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N374,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_rstpot_1588
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(0),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(0),
-      I2 => N374,
-      I3 => N192,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1589
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(12),
-      O => N378
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N378,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1574
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(12),
-      O => N380
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N380,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_rstpot_1575
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(12),
-      O => N382
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N382,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1576
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(12),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      O => N384
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I3 => N384,
-      I4 => N190,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1577
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(12),
-      O => N386
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(11),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N386,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1578
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(10),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N386,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1579
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(14),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(12),
-      O => N390
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(9),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N390,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_rstpot_1580
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(1),
-      I2 => N390,
-      I3 => N190,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1581
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(20),
-      O => N394
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N394,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1566
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(20),
-      O => N396
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N396,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_rstpot_1567
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(20),
-      O => N398
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N398,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1568
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(20),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      O => N400
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I3 => N400,
-      I4 => N188,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1569
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(20),
-      O => N402
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(19),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N402,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1570
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(18),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N402,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1571
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(22),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(20),
-      O => N406
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(17),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N406,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_rstpot_1572
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(16),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(2),
-      I2 => N406,
-      I3 => N188,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1573
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW0 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(28),
-      O => N410
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N410,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1558
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW1 : LUT3
-    generic map(
-      INIT => X"FE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(28),
-      O => N412
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot : LUT6
-    generic map(
-      INIT => X"EEEAAAAAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N412,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_rstpot_1559
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW2 : LUT3
-    generic map(
-      INIT => X"01"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(28),
-      O => N414
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N414,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1560
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW3 : LUT2
-    generic map(
-      INIT => X"E"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(28),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      O => N416
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot : LUT6
-    generic map(
-      INIT => X"FF00FF01FF00FF00"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I3 => N416,
-      I4 => N186,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1561
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW4 : LUT4
-    generic map(
-      INIT => X"0001"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(28),
-      O => N418
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(27),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N418,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1562
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot : LUT6
-    generic map(
-      INIT => X"EEFEAAFAEEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(26),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N418,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1563
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW6 : LUT4
-    generic map(
-      INIT => X"FFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
-      I1 => U0_xaui_inst_transmitter_txd_pipe(30),
-      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
-      I3 => U0_xaui_inst_transmitter_txd_pipe(28),
-      O => N422
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot : LUT6
-    generic map(
-      INIT => X"EEE0AAA0EEEEAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(25),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N422,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_rstpot_1564
-    );
-  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot : LUT6
-    generic map(
-      INIT => X"2220AAA02222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_txd_pipe(24),
-      I1 => U0_xaui_inst_transmitter_txc_pipe(3),
-      I2 => N422,
-      I3 => N186,
-      I4 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
-      I5 => U0_xaui_inst_transmitter_is_terminate(0),
-      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1565
-    );
-  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW2 : LUT4
-    generic map(
-      INIT => X"444F"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
-      I1 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I2 => U0_xaui_inst_transmitter_tx_is_q(0),
-      I3 => U0_xaui_inst_transmitter_tx_is_idle(0),
-      O => N427
-    );
-  U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp22 : LUT6
-    generic map(
-      INIT => X"FFFFFF01FFFFFE00"
-    )
-    port map (
-      I0 => N16,
-      I1 => U0_xaui_inst_transmitter_tx_code_a(1),
-      I2 => U0_xaui_inst_transmitter_tx_code_a(0),
-      I3 => N427,
-      I4 => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp2,
-      I5 => N426,
-      O => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_15_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int15,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_15_dpot_1618
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_15_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(15),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int15,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_15_dpot_1635
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_14_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int14,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_14_dpot_1617
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_14_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(14),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int14,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_14_dpot_1634
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_13_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int13,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_13_dpot_1616
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_13_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(13),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int13,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_13_dpot_1633
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_12_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int12,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_12_dpot_1615
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_12_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int12,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_12_dpot_1632
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_11_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_11_dpot_1614
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_11_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(11),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_11_dpot_1631
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_10_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int10,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_10_dpot_1613
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_10_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int10,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_10_dpot_1630
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_data_rd_13_1_SW2 : LUT5
-    generic map(
-      INIT => X"FFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      O => N429
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_data_rd_13_1 : LUT6
-    generic map(
-      INIT => X"0101010100FF0000"
-    )
-    port map (
-      I0 => N430,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0(15),
-      I3 => N429,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_data_rd(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_devad_match1_SW4 : LUT4
-    generic map(
-      INIT => X"FF54"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      O => N432
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_devad_match1_SW5 : LUT5
-    generic map(
-      INIT => X"FF543F14"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => N163,
-      O => N433
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_devad_match1_SW6 : LUT5
-    generic map(
-      INIT => X"FF543F14"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => N164,
-      O => N434
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_111 : LUT6
-    generic map(
-      INIT => X"555511DD55551D1D"
-    )
-    port map (
-      I0 => N432,
-      I1 => N174,
-      I2 => N433,
-      I3 => N434,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_11
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot : LUT6
-    generic map(
-      INIT => X"FFFFFFAFFFFFEEEE"
-    )
-    port map (
-      I0 => U0_xaui_inst_type_sel_reg(1),
-      I1 => N160,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_type_sel_1_devad_match_AND_219_o1_1458,
-      I3 => N164,
-      I4 => N130,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4_cepot_1619
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_SW1 : LUT6
-    generic map(
-      INIT => X"FFFFFFFEFFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      O => N438
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o_15_1 : LUT6
-    generic map(
-      INIT => X"0000000000000001"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I4 => N132,
-      I5 => N438,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_SW2 : LUT5
-    generic map(
-      INIT => X"FFFEFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      O => N440
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd10411 : LUT6
-    generic map(
-      INIT => X"0000000000000100"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I4 => N132,
-      I5 => N440,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW6 : LUT4
-    generic map(
-      INIT => X"2002"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      O => N442
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW7 : LUT6
-    generic map(
-      INIT => X"9999999999999099"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N443
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW8 : LUT6
-    generic map(
-      INIT => X"0909000000090000"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N444
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_1_11 : LUT6
-    generic map(
-      INIT => X"FF55FF55FA50EE44"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I1 => N442,
-      I2 => N444,
-      I3 => N443,
-      I4 => N140,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_3_11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count1
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_61,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_41,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_700
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW0 : LUT6
     generic map(
-      INIT => X"CCFFFF33FF3388A0"
+      INIT => X"CCFFFF33FF8833A0"
     )
     port map (
       I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q,
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
       I2 => U0_xaui_inst_signal_detect_int(3),
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N446
-    );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT4
-    generic map(
-      INIT => X"FCCB"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N447
+      O => N218
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14 : LUT6
     generic map(
-      INIT => X"808A8A8A80808A80"
+      INIT => X"808A8A8A808A8080"
     )
     port map (
       I0 => mgt_rxlock(3),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I4 => N447,
-      I5 => N446,
+      I3 => N219,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
+      I5 => N218,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_0_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW0 : LUT6
@@ -14882,30 +10499,19 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N449
-    );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT4
-    generic map(
-      INIT => X"FCCB"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_1_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N450
+      O => N221
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14 : LUT6
     generic map(
-      INIT => X"808A8A8A80808A80"
+      INIT => X"808A8A8A808A8080"
     )
     port map (
       I0 => mgt_rxlock(2),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I4 => N450,
-      I5 => N449,
+      I3 => N222,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
+      I5 => N221,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_0_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW0 : LUT6
@@ -14919,30 +10525,19 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N452
-    );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT4
-    generic map(
-      INIT => X"FCCB"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_1_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N453
+      O => N224
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14 : LUT6
     generic map(
-      INIT => X"808A8A8A80808A80"
+      INIT => X"808A8A8A808A8080"
     )
     port map (
       I0 => mgt_rxlock(1),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I4 => N453,
-      I5 => N452,
+      I3 => N225,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
+      I5 => N224,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_0_Q
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW0 : LUT6
@@ -14956,91 +10551,31 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N455
-    );
-  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT4
-    generic map(
-      INIT => X"FCCB"
-    )
-    port map (
-      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_1_Q,
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N456
+      O => N227
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14 : LUT6
     generic map(
-      INIT => X"808A8A8A80808A80"
+      INIT => X"808A8A8A808A8080"
     )
     port map (
       I0 => mgt_rxlock(0),
       I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_4_Q,
-      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
-      I4 => N456,
-      I5 => N455,
+      I3 => N228,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
+      I5 => N227,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_0_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT106_SW0 : LUT3
-    generic map(
-      INIT => X"EF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I1 => N266,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => N458
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT106 : LUT6
-    generic map(
-      INIT => X"2A2A2AEAEA2AEAEA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I4 => N458,
-      I5 => N459,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_3_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT88 : LUT6
-    generic map(
-      INIT => X"2AEA2A2AEAEAEA2A"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I4 => N461,
-      I5 => N462,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_1_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT14 : LUT6
-    generic map(
-      INIT => X"2222AAAAF222AAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(6),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N150,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_7_Q
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_8_GND_19_o_MUX_231_o11 : LUT5
     generic map(
-      INIT => X"01010100"
+      INIT => X"00000032"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(8),
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(8),
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_8_GND_19_o_MUX_231_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_10_PWR_20_o_MUX_229_o11 : LUT4
@@ -15048,10 +10583,10 @@ begin
       INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(10),
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(10),
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_10_PWR_20_o_MUX_229_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxc_half_pipe_1_PWR_20_o_MUX_233_o11 : LUT4
@@ -15059,10 +10594,10 @@ begin
       INIT => X"FFFE"
     )
     port map (
-      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I1 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I0 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(1),
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
       I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_rxc_half_pipe(1),
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxc_half_pipe_1_PWR_20_o_MUX_233_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_9_PWR_20_o_MUX_230_o11 : LUT5
@@ -15071,316 +10606,71 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(9),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
-      I4 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_9_PWR_20_o_MUX_230_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_11_PWR_20_o_MUX_228_o11 : LUT5
     generic map(
-      INIT => X"FFFFFCFE"
+      INIT => X"FFFFFFCE"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(11),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_11_PWR_20_o_MUX_228_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_12_PWR_20_o_MUX_227_o11 : LUT5
     generic map(
-      INIT => X"FFFFFCFE"
+      INIT => X"FFFFFFCE"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(12),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_12_PWR_20_o_MUX_227_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_13_PWR_20_o_MUX_226_o11 : LUT5
     generic map(
-      INIT => X"FFFFFCFE"
+      INIT => X"FFFFFFCE"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(13),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_13_PWR_20_o_MUX_226_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_14_PWR_20_o_MUX_225_o11 : LUT5
     generic map(
-      INIT => X"FFFFFCFE"
+      INIT => X"FFFFFFCE"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(14),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_14_PWR_20_o_MUX_225_o
     );
   U0_xaui_inst_receiver_recoder_Mmux_rxd_half_pipe_15_PWR_20_o_MUX_224_o11 : LUT5
     generic map(
-      INIT => X"FFFFFCFE"
+      INIT => X"FFFFFFCE"
     )
     port map (
       I0 => U0_xaui_inst_receiver_recoder_rxd_half_pipe(15),
-      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_899,
-      I2 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
-      I3 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_763,
-      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1387,
+      I1 => U0_xaui_inst_receiver_recoder_code_error_delay_1_891,
+      I2 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_104_o_755,
+      I3 => U0_xaui_inst_receiver_recoder_error_lane_1_1_Q,
+      I4 => U0_xaui_inst_receiver_recoder_error_lane_1_1_2_1147,
       O => U0_xaui_inst_receiver_recoder_rxd_half_pipe_15_PWR_20_o_MUX_224_o
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_0_dpot : LUT6
-    generic map(
-      INIT => X"CCCCCCCAAAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_0_dpot_1603
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_0_dpot : LUT6
-    generic map(
-      INIT => X"CCCCCCCAAAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_0_dpot_1620
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT13 : LUT6
-    generic map(
-      INIT => X"AAAAAAAAAA2AAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_mdio_in_reg_1267,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT1
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT31 : LUT6
-    generic map(
-      INIT => X"AAAAAAAAAA2AAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(10),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT3
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_data_rd_13_1_SW0 : LUT6
-    generic map(
-      INIT => X"FFFFFFFFFFFFFFFE"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0(15),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448,
-      O => N282
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_6_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(5),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_6_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(5),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(6)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_7_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_7_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(6),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(7)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_8_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_8_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(8)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_9_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_9_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(9)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_10_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(9),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_10_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(9),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(10),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(10)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_11_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(10),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_11_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(10),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(11),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(11)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_12_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(11),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_12_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(11),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(12),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(12)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_13_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(12),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_13_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(12),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(13),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(13)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_14_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(13),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(14)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_14_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(13),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(14),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(14)
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT29111 : LUT6
     generic map(
@@ -15389,9 +10679,9 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(2),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
+      I2 => configuration_vector(4),
+      I3 => configuration_vector(5),
+      I4 => configuration_vector(6),
       I5 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2911
     );
@@ -15402,545 +10692,1624 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
+      I2 => configuration_vector(4),
+      I3 => configuration_vector(5),
+      I4 => configuration_vector(6),
       I5 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT131
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_data_rd_13_1_SW3 : LUT4
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0_SW0 : LUT2
     generic map(
-      INIT => X"FFFE"
+      INIT => X"7"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      O => N430
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_1_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int1,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_1_dpot_1604
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_1_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int1,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_1_dpot_1621
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_2_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int2,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_2_dpot_1605
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_2_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int2,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_2_dpot_1622
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_3_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int3,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_3_dpot_1606
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_3_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int3,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_3_dpot_1623
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_4_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int4,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_4_dpot_1607
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_4_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int4,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_4_dpot_1624
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_5_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int5,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_5_dpot_1608
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_5_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(5),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int5,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_5_dpot_1625
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_6_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(6),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int6,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_6_dpot_1609
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_6_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(6),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int6,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_6_dpot_1626
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_9_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(9),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int9,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_9_dpot_1612
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_9_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(9),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int9,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_9_dpot_1629
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_8_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(8),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int8,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_8_dpot_1611
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_8_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(8),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int8,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_8_dpot_1628
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_7_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(7),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv3_1480,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv2_1479,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0225_inv1_1478,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int7,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int_7_dpot_1610
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_7_dpot : LUT6
-    generic map(
-      INIT => X"FFFE0002AAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(7),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv4,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv3_1482,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv1_1481,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int7,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_n0208_inv2_1146,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int_7_dpot_1627
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT2 : LUT6
-    generic map(
-      INIT => X"22AA2FAA22AA22AA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(9),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N142,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1121,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_10_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT4 : LUT6
-    generic map(
-      INIT => X"22AAF2AA22AA22AA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(11),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N144,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1121,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_12_Q
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT6 : LUT6
-    generic map(
-      INIT => X"22AAF2AA22AA22AA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(13),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N146,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_8_o,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_14_Q
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
+      I1 => mgt_rxlock(3),
+      O => N232
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0 : LUT6
     generic map(
-      INIT => X"FFFFF7FDFFFFFFFF"
+      INIT => X"FFFFFFFFFFFFFFF6"
     )
     port map (
-      I0 => mgt_rxlock(3),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_1003,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
+      I1 => U0_xaui_inst_signal_detect_int(3),
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(3),
-      I4 => N88,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I3 => N232,
+      I4 => N86,
+      I5 => N88,
       O => N90
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0_SW0 : LUT2
+    generic map(
+      INIT => X"7"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      I1 => mgt_rxlock(2),
+      O => N234
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0 : LUT6
     generic map(
-      INIT => X"FFFFF7FDFFFFFFFF"
+      INIT => X"FFFFFFFFFFFFFFF6"
     )
     port map (
-      I0 => mgt_rxlock(2),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1025,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
+      I1 => U0_xaui_inst_signal_detect_int(2),
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(2),
-      I4 => N100,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I3 => N234,
+      I4 => N98,
+      I5 => N100,
       O => N102
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0_SW0 : LUT2
+    generic map(
+      INIT => X"7"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      I1 => mgt_rxlock(1),
+      O => N236
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0 : LUT6
     generic map(
-      INIT => X"FFFFF7FDFFFFFFFF"
+      INIT => X"FFFFFFFFFFFFFFF6"
     )
     port map (
-      I0 => mgt_rxlock(1),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1047,
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
+      I1 => U0_xaui_inst_signal_detect_int(1),
       I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
-      I3 => U0_xaui_inst_signal_detect_int(1),
-      I4 => N112,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
+      I3 => N236,
+      I4 => N110,
+      I5 => N112,
       O => N114
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0_SW0 : LUT2
+    generic map(
+      INIT => X"7"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
+      I1 => mgt_rxlock(0),
+      O => N238
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5_SW0 : LUT6
     generic map(
-      INIT => X"FFFFF7FDFFFFFFFF"
+      INIT => X"FFFFFFFFFFFFFFF6"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
+      I1 => U0_xaui_inst_signal_detect_int(0),
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      I3 => N238,
+      I4 => N122,
+      I5 => N124,
+      O => N126
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_4_1_SW1 : LUT3
+    generic map(
+      INIT => X"80"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_2_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N240
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT6
+    generic map(
+      INIT => X"77F7777777777777"
+    )
+    port map (
+      I0 => mgt_rxlock(3),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
+      I4 => N240,
+      I5 => N84,
+      O => N82
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_4_1_SW1 : LUT3
+    generic map(
+      INIT => X"80"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_2_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N242
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT6
+    generic map(
+      INIT => X"77F7777777777777"
+    )
+    port map (
+      I0 => mgt_rxlock(2),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
+      I4 => N242,
+      I5 => N96,
+      O => N94
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_4_1_SW1 : LUT3
+    generic map(
+      INIT => X"80"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_2_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N244
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT6
+    generic map(
+      INIT => X"77F7777777777777"
+    )
+    port map (
+      I0 => mgt_rxlock(1),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
+      I4 => N244,
+      I5 => N108,
+      O => N106
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_4_1_SW1 : LUT3
+    generic map(
+      INIT => X"80"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_2_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N246
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT2_SW0 : LUT6
+    generic map(
+      INIT => X"77F7777777777777"
     )
     port map (
       I0 => mgt_rxlock(0),
-      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1069,
-      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_3_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      I4 => N246,
+      I5 => N120,
+      O => N118
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_0_0_1_SW0 : LUT3
+    generic map(
+      INIT => X"FE"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_lane_term_pipe(3),
+      I1 => U0_xaui_inst_receiver_recoder_lane_term_pipe(2),
+      I2 => U0_xaui_inst_receiver_recoder_lane_term_pipe(1),
+      O => N248
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_0_0_1_SW1 : LUT6
+    generic map(
+      INIT => X"FCCFFCCFFCCFA88A"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_lane_term_pipe(3),
+      I1 => U0_xaui_inst_receiver_recoder_code_error_pipe(0),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(7),
+      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(6),
+      I4 => U0_xaui_inst_receiver_recoder_lane_term_pipe(2),
+      I5 => U0_xaui_inst_receiver_recoder_lane_term_pipe(1),
+      O => N249
+    );
+  U0_xaui_inst_receiver_recoder_error_lane_0_0_2 : LUT6
+    generic map(
+      INIT => X"BBBAABAABBAABBAA"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_recoder_code_error_delay_0_890,
+      I1 => U0_xaui_inst_receiver_recoder_lane_term_pipe(0),
+      I2 => U0_xaui_inst_receiver_recoder_rxd_pipe(5),
+      I3 => N248,
+      I4 => N249,
+      I5 => U0_xaui_inst_receiver_recoder_GND_19_o_GND_19_o_OR_110_o1,
+      O => U0_xaui_inst_receiver_recoder_error_lane_0_Q
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I1 => N136,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      O => N251
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N252,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N251,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_rstpot_1257
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I1 => N136,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      O => N254
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N255,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N254,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_rstpot_1259
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(35),
+      I1 => N136,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      O => N261
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N262,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N261,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_3_rstpot_1261
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I1 => N136,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      O => N264
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N265,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N264,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_rstpot_1262
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I1 => N136,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N215,
+      O => N267
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => N268,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N267,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_rstpot_1264
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      O => N270
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N271,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N270,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_rstpot_1249
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      O => N273
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N274,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N273,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_rstpot_1251
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      O => N280
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N281,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N280,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_rstpot_1253
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      O => N283
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N284,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N283,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_rstpot_1254
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(40),
+      I1 => N134,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N212,
+      O => N286
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => N287,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N286,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_rstpot_1256
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      O => N289
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N290,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N289,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_rstpot_1241
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      O => N292
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N293,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N292,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_rstpot_1243
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(51),
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      O => N299
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N300,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N299,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_rstpot_1245
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(50),
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      O => N302
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N303,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N302,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_rstpot_1246
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(48),
+      I1 => N132,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N209,
+      O => N305
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => N306,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N305,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_rstpot_1248
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      O => N308
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N309,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N308,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_rstpot_1233
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      O => N311
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N312,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N311,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_rstpot_1235
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(59),
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      O => N318
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N319,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N318,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_rstpot_1237
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      O => N321
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N322,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N321,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_rstpot_1238
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(56),
+      I1 => N130,
+      I2 => U0_xaui_inst_transmitter_is_terminate_1_7_1088,
+      I3 => N206,
+      O => N324
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => N325,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_6_1087,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_4_1085,
+      I5 => N324,
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_rstpot_1240
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      O => N327
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N328,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N327,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_rstpot_1289
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      O => N330
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N331,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N330,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_rstpot_1291
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(3),
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      O => N337
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N338,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N337,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_3_rstpot_1293
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      O => N340
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N341,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N340,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_2_rstpot_1294
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I1 => N144,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N203,
+      O => N343
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => N344,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N343,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_rstpot_1296
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      O => N346
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N347,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N346,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_rstpot_1281
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      O => N349
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N350,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N349,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_rstpot_1283
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      O => N356
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N357,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N356,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_rstpot_1285
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(10),
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      O => N359
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N360,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N359,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_rstpot_1286
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => N142,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N200,
+      O => N362
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => N363,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N362,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_rstpot_1288
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      O => N365
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N366,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N365,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_rstpot_1273
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      O => N368
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N369,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N368,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_rstpot_1275
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(19),
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      O => N375
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N376,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N375,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_rstpot_1277
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(18),
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      O => N378
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N379,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N378,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_rstpot_1278
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(16),
+      I1 => N140,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N197,
+      O => N381
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => N382,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N381,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_rstpot_1280
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW0 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      O => N384
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N385,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N384,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_rstpot_1265
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW2 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      O => N387
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N388,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N387,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_rstpot_1267
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW7 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(27),
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      O => N394
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N395,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N394,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_rstpot_1269
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW9 : LUT4
+    generic map(
+      INIT => X"AABA"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      O => N397
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot : LUT6
+    generic map(
+      INIT => X"F8F8F8FFF8F8F888"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I2 => N398,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N397,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_rstpot_1270
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW11 : LUT4
+    generic map(
+      INIT => X"5575"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(24),
+      I1 => N138,
+      I2 => U0_xaui_inst_transmitter_is_terminate_0_7_1095,
+      I3 => N194,
+      O => N400
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot : LUT6
+    generic map(
+      INIT => X"131313001313135F"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => N401,
+      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_GND_15_o_reduce_nor_14_o,
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_6_1094,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_4_1092,
+      I5 => N400,
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_rstpot_1272
+    );
+  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW2 : LUT4
+    generic map(
+      INIT => X"5703"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
+      I1 => U0_xaui_inst_transmitter_tx_is_idle(0),
+      I2 => U0_xaui_inst_transmitter_tx_is_q(0),
+      I3 => U0_xaui_inst_transmitter_state_machine_state_1(2),
+      O => N404
+    );
+  U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp22 : LUT6
+    generic map(
+      INIT => X"FFFFCCCDFFFFCCC8"
+    )
+    port map (
+      I0 => N16,
+      I1 => N404,
+      I2 => U0_xaui_inst_transmitter_tx_code_a(0),
+      I3 => U0_xaui_inst_transmitter_tx_code_a(1),
+      I4 => U0_xaui_inst_transmitter_state_machine_Mmux_p_state_comb_state_temp2,
+      I5 => N403,
+      O => U0_xaui_inst_transmitter_state_machine_p_state_comb_state_temp(0)
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
+    generic map(
+      INIT => X"000000000A000800"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_4_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
+      I5 => N90,
+      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
+    generic map(
+      INIT => X"000000000A000800"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_4_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
+      I5 => N102,
+      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
+    generic map(
+      INIT => X"000000000A000800"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_4_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
+      I5 => N114,
+      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT5 : LUT6
+    generic map(
+      INIT => X"000000000A000800"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_24,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_4_Q,
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_3_Q,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_p_state_comb_state_temp_0_23,
+      I5 => N126,
+      O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_4_Q
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW0 : LUT5
+    generic map(
+      INIT => X"7FDFFFFF"
+    )
+    port map (
+      I0 => mgt_rxlock(3),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
+      I3 => U0_xaui_inst_signal_detect_int(3),
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
+      O => N414
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW1 : LUT5
+    generic map(
+      INIT => X"80208822"
+    )
+    port map (
+      I0 => mgt_rxlock(3),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_signal_detect_last_995,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_0_Q,
+      I3 => U0_xaui_inst_signal_detect_int(3),
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_Q,
+      O => N415
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT6
+    generic map(
+      INIT => X"BCBCCCBBCCBBFCB8"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_comma_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => N414,
+      I3 => N415,
+      I4 => N92,
+      I5 => N88,
+      O => N219
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW0 : LUT5
+    generic map(
+      INIT => X"7FDFFFFF"
+    )
+    port map (
+      I0 => mgt_rxlock(2),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      I3 => U0_xaui_inst_signal_detect_int(2),
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
+      O => N417
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW1 : LUT5
+    generic map(
+      INIT => X"A00A2002"
+    )
+    port map (
+      I0 => mgt_rxlock(2),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_Q,
+      I2 => U0_xaui_inst_signal_detect_int(2),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_signal_detect_last_1017,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N418
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT6
+    generic map(
+      INIT => X"BCBCCCBBCCBBFCB8"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_comma_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => N417,
+      I3 => N418,
+      I4 => N104,
+      I5 => N100,
+      O => N222
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW0 : LUT5
+    generic map(
+      INIT => X"7FDFFFFF"
+    )
+    port map (
+      I0 => mgt_rxlock(1),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      I3 => U0_xaui_inst_signal_detect_int(1),
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
+      O => N420
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW1 : LUT5
+    generic map(
+      INIT => X"A00A2002"
+    )
+    port map (
+      I0 => mgt_rxlock(1),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_Q,
+      I2 => U0_xaui_inst_signal_detect_int(1),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_signal_detect_last_1039,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N421
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT6
+    generic map(
+      INIT => X"BCBCCCBBCCBBFCB8"
+    )
+    port map (
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_comma_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => N420,
+      I3 => N421,
+      I4 => N116,
+      I5 => N112,
+      O => N225
+    );
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW0 : LUT5
+    generic map(
+      INIT => X"7FDFFFFF"
+    )
+    port map (
+      I0 => mgt_rxlock(0),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
+      I2 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
       I3 => U0_xaui_inst_signal_detect_int(0),
-      I4 => N124,
-      I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      O => N126
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      O => N423
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_bit_count_load_en1_SW0_SW2 : LUT6
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1_SW1 : LUT5
     generic map(
-      INIT => X"AAAAAAAA220022A2"
+      INIT => X"A00A2002"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd1_1266,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1756,
-      O => N294
+      I0 => mgt_rxlock(0),
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_Q,
+      I2 => U0_xaui_inst_signal_detect_int(0),
+      I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_signal_detect_last_1061,
+      I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_0_Q,
+      O => N424
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT106_SW1 : LUT6
+  U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT14_SW1 : LUT6
     generic map(
-      INIT => X"FFFFFFFFFDFDBFFF"
+      INIT => X"BCBCCCBBCCBBFCB8"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185,
-      O => N459
+      I0 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_comma_pipe_1_Q,
+      I1 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
+      I2 => N423,
+      I3 => N424,
+      I4 => N128,
+      I5 => N124,
+      O => N228
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT88_SW1 : LUT6
+  U0_xaui_inst_transmitter_tqmsg_capture_1_n0024_inv1 : LUT4
     generic map(
-      INIT => X"FFFFFFFFFDFDBDFD"
+      INIT => X"F888"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(3),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_signal_detect_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185,
-      O => N462
+      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1100,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1099,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
+      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_n0024_inv
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT88_SW0 : LUT6
-    generic map(
-      INIT => X"115F005F00000000"
-    )
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW0 : MUXF7
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I2 => U0_xaui_inst_type_sel_reg(1),
-      I3 => N264,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT82,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      O => N461
+      I0 => N426,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(31),
+      O => N194
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_13_o_15_1_SW1 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW0_F : LUT6
     generic map(
       INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(2),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(4),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(3),
-      I3 => N148,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      O => N466
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(10),
+      O => N426
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT12 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW2 : MUXF7
+    port map (
+      I0 => N428,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(23),
+      O => N197
+    );
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW2_F : LUT6
     generic map(
-      INIT => X"2222AAAA2F22AAAA"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I2 => N466,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_reset_reg_select_21_OUT_15_2_1077,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_GND_21_o_bit_count_4_AND_215_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_5_Q
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(10),
+      O => N428
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT171 : LUT5
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW4 : MUXF7
+    port map (
+      I0 => N430,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(15),
+      O => N200
+    );
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW4_F : LUT6
     generic map(
-      INIT => X"FFFFF7FF"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT17_1145
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(10),
+      O => N430
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT15 : LUT5
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW6 : MUXF7
+    port map (
+      I0 => N432,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(7),
+      O => N203
+    );
+  U0_xaui_inst_transmitter_is_terminate_0_8_SW6_F : LUT6
     generic map(
-      INIT => X"00000800"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(10),
+      O => N432
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1011 : LUT5
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW0 : MUXF7
+    port map (
+      I0 => N434,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(63),
+      O => N206
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW0_F : LUT6
     generic map(
-      INIT => X"00010000"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_15_1_1448,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_n0185_0(15),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd101
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(40),
+      O => N434
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT97 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW2 : MUXF7
+    port map (
+      I0 => N436,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(55),
+      O => N209
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW2_F : LUT6
     generic map(
-      INIT => X"FCFCFCFCFCFCAC0C"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT95_1473,
-      I1 => N468,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT101,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd101,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT94,
-      I5 => N469,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_2_Q
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(40),
+      O => N436
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT97_SW0_SW0 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW4 : MUXF7
+    port map (
+      I0 => N438,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(47),
+      O => N212
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW4_F : LUT6
     generic map(
-      INIT => X"AAAAAAAAAA2AAAAA"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => N468
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(40),
+      O => N438
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT97_SW0_SW1 : LUT6
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW6 : MUXF7
+    port map (
+      I0 => N440,
+      I1 => N0,
+      S => U0_xaui_inst_transmitter_txd_pipe(39),
+      O => N215
+    );
+  U0_xaui_inst_transmitter_is_terminate_1_8_SW6_F : LUT6
     generic map(
-      INIT => X"F0F0F0F0FEFAFCF0"
+      INIT => X"FFFFFFFDFFFFFFFF"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_aligned_sticky_reg_1088,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT92,
-      I2 => N468,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_data_rd1041,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_GND_20_o_addr_15_equal_9_o,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => N469
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I5 => U0_xaui_inst_transmitter_txd_pipe(40),
+      O => N440
     );
   U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW1 : MUXF7
     port map (
-      I0 => N473,
-      I1 => N474,
-      S => U0_xaui_inst_transmitter_tx_is_q(0),
-      O => N426
+      I0 => N442,
+      I1 => N443,
+      S => U0_xaui_inst_transmitter_state_machine_state_1(2),
+      O => N403
     );
-  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW1_F : LUT6
+  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW1_F : LUT2
     generic map(
-      INIT => X"02000000FFFFFFFF"
+      INIT => X"1"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_align_count(0),
-      I1 => U0_xaui_inst_transmitter_align_extra_a_675,
-      I2 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
-      I3 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I4 => U0_xaui_inst_transmitter_align_count(1),
-      I5 => U0_xaui_inst_transmitter_tx_is_idle(0),
-      O => N473
+      I0 => U0_xaui_inst_transmitter_tx_is_q(0),
+      I1 => U0_xaui_inst_transmitter_tx_is_idle(0),
+      O => N442
     );
-  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW1_G : LUT5
+  U0_xaui_inst_transmitter_align_Mmux_a_cnt1_SW1_G : LUT6
     generic map(
-      INIT => X"04000000"
+      INIT => X"040404FF000000FF"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_k_r_prbs_i_prbs(8),
       I1 => U0_xaui_inst_transmitter_align_count(0),
-      I2 => U0_xaui_inst_transmitter_align_extra_a_675,
-      I3 => U0_xaui_inst_transmitter_align_count(1),
-      I4 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      O => N474
+      I2 => U0_xaui_inst_transmitter_align_extra_a_659,
+      I3 => U0_xaui_inst_transmitter_tx_is_idle(0),
+      I4 => U0_xaui_inst_transmitter_tx_is_q(0),
+      I5 => U0_xaui_inst_transmitter_align_count(1),
+      O => N443
     );
   U0_xaui_inst_tx_local_fault_glue_set : LUT6
     generic map(
       INIT => X"FFFFFFFFFEFFFEFE"
     )
     port map (
-      I0 => mgt_tx_reset(2),
-      I1 => mgt_tx_reset(3),
-      I2 => mgt_tx_reset(1),
-      I3 => U0_xaui_inst_clear_local_fault_edge_358,
-      I4 => U0_xaui_inst_tx_local_fault_352,
-      I5 => mgt_tx_reset(0),
-      O => U0_xaui_inst_tx_local_fault_glue_set_1487
+      I0 => mgt_tx_reset(1),
+      I1 => mgt_tx_reset(2),
+      I2 => mgt_tx_reset(0),
+      I3 => U0_xaui_inst_clear_local_fault_edge_347,
+      I4 => NlwRenamedSig_OI_U0_status_vector_int_0_Q,
+      I5 => mgt_tx_reset(3),
+      O => U0_xaui_inst_tx_local_fault_glue_set_1209
     );
   U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_SW0 : LUT3
     generic map(
@@ -15950,7 +12319,7 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(2),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      O => N475
+      O => N444
     );
   U0_xaui_inst_rx_local_fault_glue_set_SW0 : LUT2
     generic map(
@@ -15959,40 +12328,40 @@ begin
     port map (
       I0 => mgt_rx_reset(2),
       I1 => mgt_rx_reset(3),
-      O => N477
+      O => N446
     );
   U0_xaui_inst_rx_local_fault_glue_set : LUT6
     generic map(
-      INIT => X"FEFFFEFEFFFFFFFF"
+      INIT => X"FFFFFFF2FFFFFFFF"
     )
     port map (
-      I0 => mgt_rx_reset(1),
-      I1 => N477,
-      I2 => mgt_rx_reset(0),
-      I3 => U0_xaui_inst_clear_local_fault_edge_358,
-      I4 => U0_xaui_inst_rx_local_fault_351,
-      I5 => NlwRenamedSig_OI_U0_xaui_inst_align_status_int,
-      O => U0_xaui_inst_rx_local_fault_glue_set_1486
+      I0 => NlwRenamedSig_OI_U0_status_vector_int_1_Q,
+      I1 => U0_xaui_inst_clear_local_fault_edge_347,
+      I2 => N446,
+      I3 => mgt_rx_reset(0),
+      I4 => mgt_rx_reset(1),
+      I5 => NlwRenamedSig_OI_U0_status_vector_int_6_Q,
+      O => U0_xaui_inst_rx_local_fault_glue_set_1208
     );
   U0_xaui_inst_clear_aligned_edge_rstpot : LUT3
     generic map(
       INIT => X"04"
     )
     port map (
-      I0 => U0_xaui_inst_p_clear_aligned_edge_last_value_355,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_clear_aligned_362,
-      I2 => U0_xaui_inst_usrclk_reset_354,
-      O => U0_xaui_inst_clear_aligned_edge_rstpot_1501
+      I0 => U0_xaui_inst_p_clear_aligned_edge_last_value_344,
+      I1 => U0_xaui_inst_clear_aligned_348,
+      I2 => U0_xaui_inst_usrclk_reset_350,
+      O => U0_xaui_inst_clear_aligned_edge_rstpot_1220
     );
   U0_xaui_inst_clear_local_fault_edge_rstpot : LUT3
     generic map(
       INIT => X"04"
     )
     port map (
-      I0 => U0_xaui_inst_p_clear_local_fault_edge_last_value_357,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_clear_local_fault_363,
-      I2 => U0_xaui_inst_usrclk_reset_354,
-      O => U0_xaui_inst_clear_local_fault_edge_rstpot_1502
+      I0 => U0_xaui_inst_p_clear_local_fault_edge_last_value_346,
+      I1 => U0_xaui_inst_clear_local_fault_349,
+      I2 => U0_xaui_inst_usrclk_reset_350,
+      O => U0_xaui_inst_clear_local_fault_edge_rstpot_1221
     );
   U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot : LUT4
     generic map(
@@ -16002,29 +12371,46 @@ begin
       I0 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(1),
       I1 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(0),
       I2 => U0_xaui_inst_receiver_G_SYNC_deskew_state_state_1(2),
-      I3 => U0_xaui_inst_receiver_sync_status_726,
-      O => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1504
+      I3 => U0_xaui_inst_receiver_sync_status_718,
+      O => U0_xaui_inst_receiver_G_SYNC_deskew_state_enchansync_rstpot_1223
     );
-  U0_xaui_inst_transmitter_tqmsg_capture_1_n0024_inv1 : LUT4
+  U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot : LUT6
     generic map(
-      INIT => X"F888"
+      INIT => X"FFFF88F888F888F8"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1341,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1340,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_n0024_inv
+      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1099,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1100,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_447,
+      I3 => N448,
+      I4 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I5 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
+      O => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1224
     );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1_SW1 : LUT3
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT28_SW1 : LUT5
     generic map(
-      INIT => X"EF"
+      INIT => X"04FF0404"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(2),
-      I2 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_Q,
-      O => N479
+      I0 => U0_xaui_inst_transmitter_state_machine_state_1(1),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_1(2),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
+      I3 => configuration_vector(5),
+      I4 => configuration_vector(4),
+      O => N450
+    );
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT28 : LUT6
+    generic map(
+      INIT => X"FFFFFFFEFEFFFEFE"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_tx_code_k(1),
+      I1 => N450,
+      I2 => U0_xaui_inst_transmitter_tx_code_a(1),
+      I3 => U0_xaui_inst_transmitter_tx_code_q(1),
+      I4 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_Q,
+      I5 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(7),
+      O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_34_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1231 : LUT5
     generic map(
@@ -16032,10 +12418,10 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I1 => configuration_vector(5),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_0(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
+      I4 => configuration_vector(4),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT123
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2611 : LUT6
@@ -16045,19 +12431,19 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
+      I2 => configuration_vector(5),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(6),
       I5 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568
+      O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT3021 : LUT5
     generic map(
       INIT => X"2FFF2F2F"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I0 => configuration_vector(4),
+      I1 => configuration_vector(5),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I4 => U0_xaui_inst_transmitter_state_machine_state_1(2),
@@ -16070,8 +12456,8 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I2 => configuration_vector(4),
+      I3 => configuration_vector(5),
       I4 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1511
     );
@@ -16083,8 +12469,8 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT161
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT5111 : LUT5
@@ -16095,8 +12481,8 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT511
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT3311 : LUT5
@@ -16107,8 +12493,8 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(2),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT331
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT3111 : LUT5
@@ -16119,8 +12505,8 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT311
     );
   U0_xaui_inst_transmitter_align_n0020_inv1 : LUT4
@@ -16133,6 +12519,19 @@ begin
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       O => U0_xaui_inst_transmitter_align_n0020_inv
+    );
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1 : LUT6
+    generic map(
+      INIT => X"FFFFFFFF02000000"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_0(2),
+      I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_0_Q,
+      I4 => N452,
+      I5 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
+      O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_0_Q
     );
   U0_xaui_inst_transmitter_align_mux1111 : LUT6
     generic map(
@@ -16160,46 +12559,14 @@ begin
       I5 => U0_xaui_inst_transmitter_align_prbs(1),
       O => U0_xaui_inst_transmitter_align_count_4_PWR_11_o_mux_9_OUT_0_Q
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut_15_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(14),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(15),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_int_lut(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut_15_Q : LUT3
-    generic map(
-      INIT => X"E4"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(14),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_pma_int(15),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_addr_pma_int_lut(15)
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mcount_bit_count_xor_4_1_SW0 : LUT5
-    generic map(
-      INIT => X"55555556"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      O => N136
-    );
   U0_xaui_inst_transmitter_tqmsg_capture_1_Mmux_last_qmsg_31_txd_in_63_mux_5_OUT28 : LUT4
     generic map(
       INIT => X"EA2A"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_2_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_2_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_10_Q
     );
@@ -16209,8 +12576,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_3_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_3_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_11_Q
     );
@@ -16220,8 +12587,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_12_Q
     );
@@ -16231,8 +12598,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_5_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_5_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_13_Q
     );
@@ -16242,8 +12609,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_6_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_6_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_14_Q
     );
@@ -16253,8 +12620,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_7_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_7_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_15_Q
     );
@@ -16264,8 +12631,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_16_Q
     );
@@ -16275,8 +12642,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_1_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_17_Q
     );
@@ -16286,8 +12653,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_2_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_18_Q
     );
@@ -16297,8 +12664,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_3_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_3_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_19_Q
     );
@@ -16308,8 +12675,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_20_Q
     );
@@ -16319,8 +12686,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_5_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_5_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_21_Q
     );
@@ -16330,8 +12697,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_6_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_6_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_22_Q
     );
@@ -16341,8 +12708,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_7_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_7_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_23_Q
     );
@@ -16352,8 +12719,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_24_Q
     );
@@ -16363,8 +12730,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_1_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_25_Q
     );
@@ -16374,8 +12741,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_2_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_2_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_26_Q
     );
@@ -16385,8 +12752,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_3_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_3_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_27_Q
     );
@@ -16396,8 +12763,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_28_Q
     );
@@ -16407,8 +12774,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_5_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_5_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_29_Q
     );
@@ -16418,8 +12785,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_6_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_6_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_30_Q
     );
@@ -16429,8 +12796,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_7_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_7_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_31_Q
     );
@@ -16440,8 +12807,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_7_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_7_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_7_Q
     );
@@ -16451,8 +12818,8 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_8_Q
     );
@@ -16462,77 +12829,376 @@ begin
     )
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_Q,
-      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
+      I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1101,
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1102,
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_Q,
       O => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg_31_txd_in_63_mux_5_OUT_9_Q
     );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT63_SW0 : LUT6
+  U0_xaui_inst_receiver_recoder_Mmux_rxc_pipe_0_PWR_20_o_MUX_287_o11 : LUT5
     generic map(
-      INIT => X"15D5FFFF15D515D5"
+      INIT => X"FFFFFFA8"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(8),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      O => N10
+      I0 => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q,
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1161,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_4_4_2_1162,
+      I3 => U0_xaui_inst_receiver_recoder_rxc_pipe(0),
+      I4 => U0_xaui_inst_receiver_recoder_code_error_pipe(0),
+      O => U0_xaui_inst_receiver_recoder_rxc_pipe_0_PWR_20_o_MUX_287_o
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT151 : LUT6
+  U0_xaui_inst_receiver_recoder_Mmux_rxd_pipe_2_PWR_20_o_MUX_283_o11 : LUT5
     generic map(
-      INIT => X"AAAAAA2AAAAAAAAA"
+      INIT => X"FFFFFFA8"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(7),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_8_Q
+      I0 => U0_xaui_inst_receiver_recoder_error_lane_4_4_Q,
+      I1 => U0_xaui_inst_receiver_recoder_error_lane_4_4_1_1161,
+      I2 => U0_xaui_inst_receiver_recoder_error_lane_4_4_2_1162,
+      I3 => U0_xaui_inst_receiver_recoder_rxd_pipe(2),
+      I4 => U0_xaui_inst_receiver_recoder_code_error_pipe(0),
+      O => U0_xaui_inst_receiver_recoder_rxd_pipe_2_PWR_20_o_MUX_283_o
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_Mmux_shift_reg_14_data_in_15_mux_39_OUT161 : LUT6
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT8_SW0 : LUT6
     generic map(
-      INIT => X"AAAAAA2AAAAAAAAA"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(8),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1264,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1265,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_1263,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_opcode(1),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg_14_data_in_15_mux_39_OUT_9_Q
-    );
-  U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_glue_rst_SW0 : LUT4
-    generic map(
-      INIT => X"F888"
+      INIT => X"F7F700F780800080"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      O => N464
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(16),
+      I3 => configuration_vector(6),
+      I4 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT631,
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_Q,
+      O => N4
     );
-  U0_xaui_inst_usrclk_reset_rstpot : LUT3
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT17_SW0 : LUT6
     generic map(
-      INIT => X"FE"
+      INIT => X"F7F700F780800080"
     )
     port map (
-      I0 => U0_xaui_inst_usrclk_reset_pipe_359,
-      I1 => reset,
-      I2 => NlwRenamedSig_OI_U0_xaui_inst_G_HAS_MDIO_management_1_reset_reg,
-      O => U0_xaui_inst_usrclk_reset_rstpot_1503
+      I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(24),
+      I3 => configuration_vector(6),
+      I4 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT631,
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_Q,
+      O => N6
+    );
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT63_SW0 : LUT6
+    generic map(
+      INIT => X"F7F700F780800080"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
+      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(8),
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
+      I5 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_0_Q,
+      O => N10
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I4 => N136,
+      O => N252
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I4 => N136,
+      O => N255
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(35),
+      I5 => N216,
+      O => N268
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I4 => N134,
+      O => N271
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I4 => N134,
+      O => N274
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(40),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(41),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I5 => N213,
+      O => N287
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I4 => N132,
+      O => N290
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I4 => N132,
+      O => N293
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(48),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(49),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(50),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(51),
+      I5 => N210,
+      O => N306
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I4 => N130,
+      O => N309
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I4 => N130,
+      O => N312
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(56),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(57),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(59),
+      I5 => N207,
+      O => N325
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I4 => N144,
+      O => N328
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I4 => N144,
+      O => N331
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(3),
+      I5 => N204,
+      O => N344
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I4 => N142,
+      O => N347
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I4 => N142,
+      O => N350
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(8),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(9),
+      I2 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(10),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I5 => N201,
+      O => N363
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I4 => N140,
+      O => N366
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I4 => N140,
+      O => N369
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(16),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(17),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(18),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(19),
+      I5 => N198,
+      O => N382
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW1 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I4 => N138,
+      O => N385
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW3 : LUT5
+    generic map(
+      INIT => X"AAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I4 => N138,
+      O => N388
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW12 : LUT6
+    generic map(
+      INIT => X"555555555555D555"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(24),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(25),
+      I3 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(27),
+      I5 => N195,
+      O => N401
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261 : LUT5
     generic map(
       INIT => X"FFFF0888"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_0_Q,
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
@@ -16544,7 +13210,7 @@ begin
       INIT => X"FFFFFFFFA8880888"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_0_Q,
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
@@ -16557,7 +13223,7 @@ begin
       INIT => X"FFFFFFFFA8880888"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_0_Q,
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
@@ -16570,7 +13236,7 @@ begin
       INIT => X"FFFFFFFFA8880888"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_0_Q,
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
@@ -16607,7 +13273,7 @@ begin
       INIT => X"2220202000202020"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_1_Q,
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
@@ -16620,7 +13286,7 @@ begin
       INIT => X"2220202000202020"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_1_Q,
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
@@ -16633,7 +13299,7 @@ begin
       INIT => X"2220202000202020"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
+      I0 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
       I1 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT635,
       I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_1_Q,
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
@@ -16648,10 +13314,10 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_1_Q,
       I1 => U0_xaui_inst_transmitter_tx_code_q(1),
-      I2 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_568,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
+      I2 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT261_552,
+      I3 => configuration_vector(4),
+      I4 => configuration_vector(5),
+      I5 => configuration_vector(6),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_33_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT571 : LUT5
@@ -16738,31 +13404,213 @@ begin
       I4 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT302,
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_36_Q
     );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT8_SW0 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW8 : LUT6
     generic map(
-      INIT => X"15D5FFFF15D515D5"
+      INIT => X"AAAAAAAAAAAAAAAB"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(16),
-      I4 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT631,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      O => N4
+      I0 => U0_xaui_inst_transmitter_txd_pipe(35),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I5 => N136,
+      O => N262
     );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT17_SW0 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_n0027_SW10 : LUT6
     generic map(
-      INIT => X"15D5FFFF15D515D5"
+      INIT => X"AAAAAAAAAAAAAAAB"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_0_Q,
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(24),
-      I4 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT631,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      O => N6
+      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(36),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(37),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(38),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(39),
+      I5 => N136,
+      O => N265
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(43),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I5 => N134,
+      O => N281
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(42),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(44),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(45),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(46),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(47),
+      I5 => N134,
+      O => N284
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(51),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I5 => N132,
+      O => N300
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(50),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(52),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(53),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(54),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(55),
+      I5 => N132,
+      O => N303
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(59),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I5 => N130,
+      O => N319
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(60),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(61),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(62),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(63),
+      I5 => N130,
+      O => N322
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(3),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I5 => N144,
+      O => N338
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(4),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(5),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(6),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(7),
+      I5 => N144,
+      O => N341
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(11),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I5 => N142,
+      O => N357
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(10),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(12),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(13),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(14),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(15),
+      I5 => N142,
+      O => N360
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(19),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I5 => N140,
+      O => N376
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(18),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(20),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(21),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(22),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(23),
+      I5 => N140,
+      O => N379
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW8 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(27),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I5 => N138,
+      O => N395
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_n0027_SW10 : LUT6
+    generic map(
+      INIT => X"AAAAAAAAAAAAAAAB"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(28),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(29),
+      I3 => U0_xaui_inst_transmitter_txd_pipe(30),
+      I4 => U0_xaui_inst_transmitter_txd_pipe(31),
+      I5 => N138,
+      O => N398
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT210 : LUT6
     generic map(
@@ -16990,96 +13838,96 @@ begin
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_382,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txc_out_364,
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2911,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1488
+      O => U0_xaui_inst_transmitter_recoder_txc_out_7_glue_set_1210
     );
   U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set : LUT5
     generic map(
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_391,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txc_out_373,
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2911,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1489
+      O => U0_xaui_inst_transmitter_recoder_txc_out_6_glue_set_1211
     );
   U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set : LUT5
     generic map(
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_400,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txc_out_382,
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2911,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1490
+      O => U0_xaui_inst_transmitter_recoder_txc_out_5_glue_set_1212
     );
   U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set : LUT5
     generic map(
       INIT => X"FFFFFFEA"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_409,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txc_out_391,
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT2911,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1491
+      O => U0_xaui_inst_transmitter_recoder_txc_out_4_glue_set_1213
     );
   U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set : LUT5
     generic map(
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_418,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txc_out_400,
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT131,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1492
+      O => U0_xaui_inst_transmitter_recoder_txc_out_3_glue_set_1214
     );
   U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set : LUT5
     generic map(
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_427,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txc_out_409,
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT131,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1493
+      O => U0_xaui_inst_transmitter_recoder_txc_out_2_glue_set_1215
     );
   U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set : LUT5
     generic map(
       INIT => X"FFFFFF2A"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_436,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txc_out_418,
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT131,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1494
+      O => U0_xaui_inst_transmitter_recoder_txc_out_1_glue_set_1216
     );
   U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set : LUT5
     generic map(
       INIT => X"FFFFFFEA"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_445,
+      I0 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txc_out_427,
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT131,
       I4 => U0_xaui_inst_transmitter_recoder_test_pattern_en_GND_10_o_AND_7_o,
-      O => U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1495
+      O => U0_xaui_inst_transmitter_recoder_txc_out_0_glue_set_1217
     );
   U0_xaui_inst_receiver_recoder_PWR_20_o_code_error_7_AND_204_o_SW0 : LUT6
     generic map(
@@ -17090,7 +13938,7 @@ begin
       I1 => mgt_rxcharisk(7),
       I2 => mgt_rxdata(58),
       I3 => mgt_rxdata(56),
-      I4 => U0_xaui_inst_receiver_code_error_7_2_1358,
+      I4 => U0_xaui_inst_receiver_code_error_7_2_1119,
       I5 => mgt_rxdata(57),
       O => N66
     );
@@ -17103,7 +13951,7 @@ begin
       I1 => mgt_rxcharisk(5),
       I2 => mgt_rxdata(42),
       I3 => mgt_rxdata(40),
-      I4 => U0_xaui_inst_receiver_code_error_6_2_1360,
+      I4 => U0_xaui_inst_receiver_code_error_6_2_1121,
       I5 => mgt_rxdata(41),
       O => N68
     );
@@ -17116,7 +13964,7 @@ begin
       I1 => mgt_rxcharisk(3),
       I2 => mgt_rxdata(26),
       I3 => mgt_rxdata(24),
-      I4 => U0_xaui_inst_receiver_code_error_5_2_1362,
+      I4 => U0_xaui_inst_receiver_code_error_5_2_1123,
       I5 => mgt_rxdata(25),
       O => N70
     );
@@ -17129,7 +13977,7 @@ begin
       I1 => mgt_rxdata(11),
       I2 => mgt_rxdata(10),
       I3 => mgt_rxcharisk(1),
-      I4 => U0_xaui_inst_receiver_code_error_4_2_1364,
+      I4 => U0_xaui_inst_receiver_code_error_4_2_1125,
       I5 => mgt_codevalid(1),
       O => N72
     );
@@ -17142,7 +13990,7 @@ begin
       I1 => mgt_rxcharisk(6),
       I2 => mgt_rxdata(50),
       I3 => mgt_rxdata(48),
-      I4 => U0_xaui_inst_receiver_code_error_3_2_1366,
+      I4 => U0_xaui_inst_receiver_code_error_3_2_1127,
       I5 => mgt_rxdata(49),
       O => N74
     );
@@ -17155,7 +14003,7 @@ begin
       I1 => mgt_rxcharisk(4),
       I2 => mgt_rxdata(34),
       I3 => mgt_rxdata(32),
-      I4 => U0_xaui_inst_receiver_code_error_2_2_1368,
+      I4 => U0_xaui_inst_receiver_code_error_2_2_1129,
       I5 => mgt_rxdata(33),
       O => N76
     );
@@ -17168,7 +14016,7 @@ begin
       I1 => mgt_rxcharisk(2),
       I2 => mgt_rxdata(18),
       I3 => mgt_rxdata(16),
-      I4 => U0_xaui_inst_receiver_code_error_1_2_1370,
+      I4 => U0_xaui_inst_receiver_code_error_1_2_1131,
       I5 => mgt_rxdata(17),
       O => N78
     );
@@ -17181,35 +14029,81 @@ begin
       I1 => mgt_rxcharisk(0),
       I2 => mgt_rxdata(2),
       I3 => mgt_rxdata(0),
-      I4 => U0_xaui_inst_receiver_code_error_0_2_1372,
+      I4 => U0_xaui_inst_receiver_code_error_0_2_1133,
       I5 => mgt_rxdata(1),
       O => N80
     );
-  U0_xaui_inst_transmitter_align_Mmux_a_cnt2 : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot : LUT2
     generic map(
-      INIT => X"00000000000F020F"
+      INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_align_extra_a_675,
-      I1 => U0_xaui_inst_transmitter_align_count(0),
-      I2 => U0_xaui_inst_transmitter_align_count(3),
-      I3 => U0_xaui_inst_transmitter_align_count(2),
-      I4 => U0_xaui_inst_transmitter_align_count(1),
-      I5 => N481,
-      O => U0_xaui_inst_transmitter_a_due(1)
+      I0 => U0_xaui_inst_transmitter_txc_pipe(4),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(36),
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_4_rstpot_1260
     );
-  U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot : LUT6
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot : LUT2
     generic map(
-      INIT => X"FFFFF222F222F222"
+      INIT => X"E"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_464,
-      I1 => N464,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o1_1340,
-      I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_6_o2_1341,
-      I4 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o2_1343,
-      I5 => U0_xaui_inst_transmitter_tqmsg_capture_1_PWR_9_o_GND_9_o_AND_5_o1_1342,
-      O => U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_1505
+      I0 => U0_xaui_inst_transmitter_txc_pipe(5),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(44),
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_5_filter_txd_out_4_rstpot_1252
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(6),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(52),
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_6_filter_txd_out_4_rstpot_1244
+    );
+  U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(7),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(60),
+      O => U0_xaui_inst_transmitter_G_FILTER_HIGH_7_filter_txd_out_4_rstpot_1236
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(0),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(4),
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_4_rstpot_1292
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(1),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(12),
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_4_rstpot_1284
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(2),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(20),
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_4_rstpot_1276
+    );
+  U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot : LUT2
+    generic map(
+      INIT => X"E"
+    )
+    port map (
+      I0 => U0_xaui_inst_transmitter_txc_pipe(3),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(28),
+      O => U0_xaui_inst_transmitter_G_FILTER_LOW_3_filter_txd_out_4_rstpot_1268
     );
   U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_SW1 : LUT4
     generic map(
@@ -17219,30 +14113,30 @@ begin
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I3 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_702,
-      O => N483
+      I3 => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_686,
+      O => N454
     );
   U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst : LUT6
     generic map(
       INIT => X"CCCCCCCF8880888A"
     )
     port map (
-      I0 => N475,
-      I1 => N483,
+      I0 => N444,
+      I1 => N454,
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I3 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I4 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I5 => U0_xaui_inst_usrclk_reset_354,
-      O => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1497
+      I5 => U0_xaui_inst_usrclk_reset_350,
+      O => U0_xaui_inst_transmitter_state_machine_next_ifg_is_a_glue_rst_1219
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT10_SW1 : LUT2
     generic map(
       INIT => X"4"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      O => N485
+      I0 => configuration_vector(5),
+      I1 => configuration_vector(4),
+      O => N456
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT10 : LUT6
     generic map(
@@ -17253,7 +14147,7 @@ begin
       I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_2_filter_txd_out_2_Q,
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I3 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(18),
-      I4 => N485,
+      I4 => N456,
       I5 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_18_Q
     );
@@ -17264,22 +14158,10 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I2 => configuration_vector(4),
+      I3 => configuration_vector(5),
       I4 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       O => U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT3211
-    );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1 : LUT5
-    generic map(
-      INIT => X"220222F2"
-    )
-    port map (
-      I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I1 => N479,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_0_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT221 : LUT6
     generic map(
@@ -17361,20 +14243,20 @@ begin
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT121 : LUT6
     generic map(
-      INIT => X"0400040000000400"
+      INIT => X"1000100000001000"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_0(2),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_0(2),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_1_Q,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I4 => configuration_vector(4),
+      I5 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_1_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT17 : LUT6
     generic map(
-      INIT => X"FFFFFFFF10100110"
+      INIT => X"FFFFFFFF40400440"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_tx_code_r(0),
@@ -17387,7 +14269,7 @@ begin
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT63 : LUT6
     generic map(
-      INIT => X"FFFFFFFF10100110"
+      INIT => X"FFFFFFFF40400440"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_tx_code_r(0),
@@ -17403,22 +14285,31 @@ begin
       INIT => X"A8"
     )
     port map (
-      I0 => NlwRenamedSig_OI_U0_xaui_inst_align_status_int,
-      I1 => U0_xaui_inst_aligned_sticky_350,
-      I2 => U0_xaui_inst_clear_aligned_edge_356,
-      O => U0_xaui_inst_aligned_sticky_glue_set_1485
+      I0 => NlwRenamedSig_OI_U0_status_vector_int_6_Q,
+      I1 => U0_xaui_inst_clear_aligned_edge_345,
+      I2 => NlwRenamedSig_OI_U0_status_vector_int_7_Q,
+      O => U0_xaui_inst_aligned_sticky_glue_set_1207
     );
-  U0_xaui_inst_transmitter_align_Mmux_a_cnt2_SW1 : LUT5
+  U0_xaui_inst_transmitter_tqmsg_capture_1_q_det_rstpot_SW0 : LUT4
     generic map(
-      INIT => X"AEAEFFAE"
+      INIT => X"F888"
     )
     port map (
-      I0 => U0_xaui_inst_transmitter_align_count(4),
-      I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
+      I0 => U0_xaui_inst_transmitter_state_machine_state_0(1),
+      I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
+      I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I4 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      O => N481
+      O => N448
+    );
+  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT1_SW1 : LUT3
+    generic map(
+      INIT => X"F7"
+    )
+    port map (
+      I0 => configuration_vector(6),
+      I1 => configuration_vector(4),
+      I2 => configuration_vector(5),
+      O => N452
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT561 : LUT6
     generic map(
@@ -17429,8 +14320,8 @@ begin
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_5_Q,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I4 => configuration_vector(4),
+      I5 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_5_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT312 : LUT6
@@ -17442,13 +14333,13 @@ begin
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(2),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_5_Q,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I4 => configuration_vector(4),
+      I5 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_37_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT8 : LUT5
     generic map(
-      INIT => X"FFFF2022"
+      INIT => X"FFFF8088"
     )
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
@@ -17467,20 +14358,20 @@ begin
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I3 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      I4 => U0_xaui_inst_transmitter_align_extra_a_675,
-      O => U0_xaui_inst_transmitter_align_extra_a_glue_set_1496
+      I4 => U0_xaui_inst_transmitter_align_extra_a_659,
+      O => U0_xaui_inst_transmitter_align_extra_a_glue_set_1218
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT611 : LUT6
     generic map(
       INIT => X"0C0C3C0C04041404"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
+      I0 => configuration_vector(4),
       I1 => U0_xaui_inst_transmitter_state_machine_state_0(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I3 => U0_xaui_inst_transmitter_G_FILTER_LOW_0_filter_txd_out_6_Q,
       I4 => U0_xaui_inst_transmitter_state_machine_state_0(2),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I5 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_6_Q
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT321 : LUT6
@@ -17488,112 +14379,66 @@ begin
       INIT => X"0C0C3C0C04041404"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
+      I0 => configuration_vector(4),
       I1 => U0_xaui_inst_transmitter_state_machine_state_1(1),
       I2 => U0_xaui_inst_transmitter_state_machine_state_1(0),
       I3 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_6_Q,
       I4 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I5 => configuration_vector(5),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_38_Q
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_dpot : LUT6
+  U0_xaui_inst_transmitter_is_terminate_1_4_1 : LUT6
     generic map(
-      INIT => X"FF00FF00DF80FF00"
+      INIT => X"FF20FF0020200000"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(2),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_dpot_1753
+      I0 => U0_xaui_inst_transmitter_txd_pipe(56),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(57),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(58),
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_3_1084,
+      I4 => U0_xaui_inst_transmitter_is_terminate_1_1_1082,
+      I5 => U0_xaui_inst_transmitter_is_terminate_1_2_1083,
+      O => U0_xaui_inst_transmitter_is_terminate_1_41
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_0_dpot : LUT6
+  U0_xaui_inst_transmitter_is_terminate_1_6_1 : LUT4
     generic map(
-      INIT => X"FF00FF00DF80FF00"
+      INIT => X"2000"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_0_dpot_1754
+      I0 => U0_xaui_inst_transmitter_txd_pipe(34),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(33),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(32),
+      I3 => U0_xaui_inst_transmitter_is_terminate_1_5_1086,
+      O => U0_xaui_inst_transmitter_is_terminate_1_61
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_1_dpot : LUT6
+  U0_xaui_inst_transmitter_is_terminate_0_4_1 : LUT6
     generic map(
-      INIT => X"F0F0F0F0D8F0F0F0"
+      INIT => X"FF20FF0020200000"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_we_1106,
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_shift_reg(1),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_addr_int(0),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdc_rising_1094,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_is_pma_devad,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg_1_dpot_1755
+      I0 => U0_xaui_inst_transmitter_txd_pipe(24),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(25),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(26),
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_3_1091,
+      I4 => U0_xaui_inst_transmitter_is_terminate_0_1_1089,
+      I5 => U0_xaui_inst_transmitter_is_terminate_0_2_1090,
+      O => U0_xaui_inst_transmitter_is_terminate_0_41
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1 : LUT5
+  U0_xaui_inst_transmitter_is_terminate_0_6_1 : LUT4
     generic map(
-      INIT => X"FFFFFFFE"
+      INIT => X"2000"
     )
     port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(4),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(0),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(1),
-      I3 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(2),
-      I4 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_bit_count(3),
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In111_1756
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd3_1_1757
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1 : LUT6
-    generic map(
-      INIT => X"0F0F0F0F02520757"
-    )
-    port map (
-      I0 => N161,
-      I1 => N198,
-      I2 => N160,
-      I3 => N197,
-      I4 => N196,
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd4_In11,
-      O => U0_xaui_inst_G_HAS_MDIO_management_1_Mmux_is_pma_devad11_1758
-    );
-  U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1 : FDR
-    generic map(
-      INIT => '0'
-    )
-    port map (
-      C => usrclk,
-      D => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_In,
-      R => U0_xaui_inst_usrclk_reset_354,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_interface_1_state_FSM_FFd2_1_1759
-    );
-  U0_xaui_inst_align_status_int_inv1_INV_0 : INV
-    port map (
-      I => NlwRenamedSig_OI_U0_xaui_inst_align_status_int,
-      O => U0_xaui_inst_align_status_int_inv
-    );
-  U0_xaui_inst_type_sel_reg_done_inv1_INV_0 : INV
-    port map (
-      I => U0_xaui_inst_type_sel_reg_done_353,
-      O => U0_xaui_inst_type_sel_reg_done_inv
+      I0 => U0_xaui_inst_transmitter_txd_pipe(2),
+      I1 => U0_xaui_inst_transmitter_txd_pipe(1),
+      I2 => U0_xaui_inst_transmitter_txd_pipe(0),
+      I3 => U0_xaui_inst_transmitter_is_terminate_0_5_1093,
+      O => U0_xaui_inst_transmitter_is_terminate_0_61
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT64 : MUXF7
     port map (
-      I0 => N487,
-      I1 => N488,
+      I0 => N458,
+      I1 => N459,
       S => U0_xaui_inst_transmitter_tx_code_q(0),
       O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_9_Q
     );
@@ -17604,11 +14449,11 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I1 => U0_xaui_inst_transmitter_G_FILTER_LOW_1_filter_txd_out_1_Q,
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I2 => configuration_vector(5),
       I3 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I4 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      O => N487
+      I5 => configuration_vector(4),
+      O => N458
     );
   U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT64_G : LUT6
     generic map(
@@ -17617,49 +14462,16 @@ begin
     port map (
       I0 => U0_xaui_inst_transmitter_state_machine_state_0(0),
       I1 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(9),
-      I2 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
+      I2 => configuration_vector(5),
       I3 => U0_xaui_inst_transmitter_state_machine_state_0(2),
       I4 => U0_xaui_inst_transmitter_state_machine_state_0(1),
-      I5 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      O => N488
-    );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT28 : MUXF7
-    port map (
-      I0 => N489,
-      I1 => N490,
-      S => U0_xaui_inst_transmitter_tx_code_q(1),
-      O => U0_xaui_inst_transmitter_recoder_code_sel_9_PWR_10_o_mux_78_OUT_34_Q
-    );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT28_F : LUT6
-    generic map(
-      INIT => X"F4FFF4F4FFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I2 => U0_xaui_inst_transmitter_G_FILTER_HIGH_4_filter_txd_out_2_Q,
-      I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I4 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I5 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      O => N489
-    );
-  U0_xaui_inst_transmitter_recoder_Mmux_code_sel_9_PWR_10_o_mux_78_OUT28_G : LUT6
-    generic map(
-      INIT => X"F4FFF4F4FFFFFFFF"
-    )
-    port map (
-      I0 => U0_xaui_inst_G_HAS_MDIO_management_1_test_sel_reg(0),
-      I1 => U0_xaui_inst_G_HAS_MDIO_management_1_test_en_reg_361,
-      I2 => U0_xaui_inst_transmitter_tqmsg_capture_1_last_qmsg(7),
-      I3 => U0_xaui_inst_transmitter_state_machine_state_1(1),
-      I4 => U0_xaui_inst_transmitter_state_machine_state_1(2),
-      I5 => U0_xaui_inst_transmitter_state_machine_state_1(0),
-      O => N490
+      I5 => configuration_vector(4),
+      O => N459
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42 : MUXF7
     port map (
-      I0 => N491,
-      I1 => N492,
+      I0 => N460,
+      I1 => N461,
       S => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_3_Q
     );
@@ -17674,7 +14486,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N491
+      O => N460
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42_G : LUT6
     generic map(
@@ -17687,12 +14499,12 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_3_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      O => N492
+      O => N461
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42 : MUXF7
     port map (
-      I0 => N493,
-      I1 => N494,
+      I0 => N462,
+      I1 => N463,
       S => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_3_Q
     );
@@ -17707,7 +14519,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N493
+      O => N462
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42_G : LUT6
     generic map(
@@ -17720,12 +14532,12 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_2_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      O => N494
+      O => N463
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42 : MUXF7
     port map (
-      I0 => N495,
-      I1 => N496,
+      I0 => N464,
+      I1 => N465,
       S => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_3_Q
     );
@@ -17740,7 +14552,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N495
+      O => N464
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42_G : LUT6
     generic map(
@@ -17753,12 +14565,12 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_1_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      O => N496
+      O => N465
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42 : MUXF7
     port map (
-      I0 => N497,
-      I1 => N498,
+      I0 => N466,
+      I1 => N467,
       S => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_0_Q,
       O => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_state_1_4_GND_17_o_mux_46_OUT_3_Q
     );
@@ -17773,7 +14585,7 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
-      O => N497
+      O => N466
     );
   U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_Mmux_state_1_4_GND_17_o_mux_46_OUT42_G : LUT6
     generic map(
@@ -17786,22 +14598,12 @@ begin
       I3 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_2_Q,
       I4 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_code_valid_pipe_1_Q,
       I5 => U0_xaui_inst_receiver_G_SYNC_G_PCS_SYNC_STATE_0_pcs_sync_state_p_state_comb_state_temp_1_Q,
-      O => N498
+      O => N467
     );
-  U0_xaui_inst_G_HAS_MDIO_management_1_Mshreg_mdio_in_reg3 : SRLC16E
-    generic map(
-      INIT => X"0007"
-    )
+  U0_xaui_inst_align_status_int_inv1_INV_0 : INV
     port map (
-      A0 => N1,
-      A1 => N0,
-      A2 => N1,
-      A3 => N1,
-      CE => N0,
-      CLK => usrclk,
-      D => mdio_in,
-      Q => U0_xaui_inst_G_HAS_MDIO_management_1_mdio_in_reg3,
-      Q15 => NLW_U0_xaui_inst_G_HAS_MDIO_management_1_Mshreg_mdio_in_reg3_Q15_UNCONNECTED
+      I => NlwRenamedSig_OI_U0_status_vector_int_6_Q,
+      O => U0_xaui_inst_align_status_int_inv
     );
 
 end STRUCTURE;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <spirit:design xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xilinx="http://www.xilinx.com" >
    <spirit:vendor>xilinx.com</spirit:vendor>
-   <spirit:library>CoreGen</spirit:library>
+   <spirit:library>project</spirit:library>
    <spirit:name>coregen</spirit:name>
    <spirit:version>1.0</spirit:version>
    <spirit:componentInstances>
@@ -11,16 +11,16 @@
          <spirit:configurableElementValues>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.COMPONENT_NAME">xaui_v10_4</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.802_3AE_STATE_MACHINES">true</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.MDIO_MANAGEMENT">true</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.MDIO_MANAGEMENT">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.DATA_RATE">TenGbps</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_FAMILY">virtex6</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_COMPONENT_NAME">xaui_v10_4</spirit:configurableElementValue>
-            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_MDIO">true</spirit:configurableElementValue>
+            <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_HAS_MDIO">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_USE_MGT_STATE">false</spirit:configurableElementValue>
             <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.C_IS_DXAUI">false</spirit:configurableElementValue>
          </spirit:configurableElementValues>
          <spirit:vendorExtensions>
-            <xilinx:instanceProperties>
+            <xilinx:instanceProperties xmlns:xilinx="http://www.xilinx.com">
                <xilinx:projectOptions>
                   <xilinx:projectName>coregen</xilinx:projectName>
                   <xilinx:outputDirectory>./</xilinx:outputDirectory>
@@ -45,7 +45,7 @@
                   <xilinx:formalVerification>false</xilinx:formalVerification>
                </xilinx:flowOptions>
                <xilinx:simulationOptions>
-                  <xilinx:simulationModel>Behavioral</xilinx:simulationModel>
+                  <xilinx:simulationModel>Structural</xilinx:simulationModel>
                   <xilinx:simulationLanguage>VHDL</xilinx:simulationLanguage>
                   <xilinx:foundationSym>false</xilinx:foundationSym>
                </xilinx:simulationOptions>
@@ -54,9 +54,6 @@
                </xilinx:packageInfo>
             </xilinx:instanceProperties>
             <xilinx:generationHistory>
-               <xilinx:fileSet>
-                  <xilinx:name>apply_current_project_options_generator</xilinx:name>
-               </xilinx:fileSet>
                <xilinx:fileSet>
                   <xilinx:name>customization_generator</xilinx:name>
                </xilinx:fileSet>
@@ -68,8 +65,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.xco</xilinx:name>
                      <xilinx:userFileType>xco</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:23 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x2EC3E3B6</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x02B19548</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -90,15 +87,15 @@
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_block.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x891E618C</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x6CCF92C5</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_chanbond_monitor.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xD0715E70</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -106,31 +103,31 @@
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_example_design.ucf</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>ucf</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x28ED45B1</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x336C350D</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_example_design.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x1999685E</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x2EC76C03</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_example_design.xdc</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xdc</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0xCE325578</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x9068863B</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_gtx_wrapper.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xA4B7FB35</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -138,7 +135,7 @@
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_gtx_wrapper_gtx.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x4D2E72F0</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -146,7 +143,7 @@
                      <xilinx:name>./xaui_v10_4/example_design/xaui_v10_4_tx_sync.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xB06C338C</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -154,7 +151,7 @@
                      <xilinx:name>./xaui_v10_4/implement/implement.bat</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x691C32F2</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -162,7 +159,7 @@
                      <xilinx:name>./xaui_v10_4/implement/implement.sh</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xFB3F7800</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -170,7 +167,7 @@
                      <xilinx:name>./xaui_v10_4/implement/xst.prj</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x4965B9A5</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -178,7 +175,7 @@
                      <xilinx:name>./xaui_v10_4/implement/xst.scr</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xF91598EA</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -186,7 +183,7 @@
                      <xilinx:name>./xaui_v10_4/implement/xst.xcf</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xEB638294</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -194,15 +191,15 @@
                      <xilinx:name>./xaui_v10_4/simulation/demo_tb.vhd</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x57BAA158</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x38034BC8</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/simulation/functional/simulate_mti.do</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x4F152094</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -210,7 +207,7 @@
                      <xilinx:name>./xaui_v10_4/simulation/functional/simulate_ncsim.sh</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xACCD8B4E</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -218,16 +215,16 @@
                      <xilinx:name>./xaui_v10_4/simulation/functional/wave_mti.do</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0xC7F3048B</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0xB052E9ED</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4/simulation/functional/wave_ncsim.sv</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>unknown</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:55:24 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0xB9413BD6</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:27:37 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0xFD326671</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -236,8 +233,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.ngc</xilinx:name>
                      <xilinx:userFileType>ngc</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:02 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x9F8D72B4</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:14 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x4807366D</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -252,8 +249,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.vho</xilinx:name>
                      <xilinx:userFileType>vho</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:02 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x56B835A5</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:14 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x0033BE37</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -262,8 +259,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.vhd</xilinx:name>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:03 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x8407F32F</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:16 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0xEBC62B91</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -278,8 +275,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.vhd</xilinx:name>
                      <xilinx:userFileType>vhdl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:05 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0xCCE5C561</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:17 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x5BD0384B</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -300,8 +297,8 @@
                   <xilinx:file>
                      <xilinx:name>./xaui_v10_4.asy</xilinx:name>
                      <xilinx:userFileType>asy</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:06 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0xBE3588EB</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:18 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0x2E03E83D</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -311,7 +308,7 @@
                      <xilinx:name>./xaui_v10_4_xmdf.tcl</xilinx:name>
                      <xilinx:userFileType>tclXmdf</xilinx:userFileType>
                      <xilinx:userFileType>tcl</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:06 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:18 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x4D7D679C</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -322,7 +319,7 @@
                      <xilinx:name>./xaui_v10_4.gise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>gise</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:09 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:21 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x2C051E7D</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -330,8 +327,8 @@
                      <xilinx:name>./xaui_v10_4.xise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xise</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:09 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x565F9D57</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:21 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0xA3E765C9</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -341,7 +338,7 @@
                      <xilinx:name>./xaui_v10_4.gise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>gise</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:13 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:24 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0xD6C89BD4</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
@@ -349,8 +346,8 @@
                      <xilinx:name>./xaui_v10_4.xise</xilinx:name>
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>xise</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:13 GMT 2014</xilinx:timeStamp>
-                     <xilinx:checkSum>0x550DED9E</xilinx:checkSum>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:24 GMT 2014</xilinx:timeStamp>
+                     <xilinx:checkSum>0xEE8F32F1</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>
                </xilinx:fileSet>
@@ -364,7 +361,7 @@
                      <xilinx:userFileType>ignore</xilinx:userFileType>
                      <xilinx:userFileType>txtFlist</xilinx:userFileType>
                      <xilinx:userFileType>txt</xilinx:userFileType>
-                     <xilinx:timeStamp>Thu Aug 28 08:56:13 GMT 2014</xilinx:timeStamp>
+                     <xilinx:timeStamp>Tue Sep 16 09:28:24 GMT 2014</xilinx:timeStamp>
                      <xilinx:checkSum>0x5EDC7FCF</xilinx:checkSum>
                      <xilinx:generationId>generationID_1879581046</xilinx:generationId>
                   </xilinx:file>

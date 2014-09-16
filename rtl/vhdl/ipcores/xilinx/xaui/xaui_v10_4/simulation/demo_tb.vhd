@@ -105,12 +105,8 @@ architecture behav of testbench is
       align_status     : out std_logic;
       sync_status      : out std_logic_vector(3 downto 0);
       mgt_tx_ready     : out  std_logic;
-      mdc              : in  std_logic;
-      mdio_in          : in  std_logic;
-      mdio_out         : out std_logic;
-      mdio_tri         : out std_logic;
-      prtad            : in  std_logic_vector(4 downto 0);
-      type_sel         : in  std_logic_vector(1 downto 0));
+      configuration_vector : in  std_logic_vector(6 downto 0);
+      status_vector        : out std_logic_vector(7 downto 0));
    end component;
 
   ----------------------------------------------------------------------------
@@ -713,12 +709,8 @@ architecture behav of testbench is
    signal signal_detect        : std_logic_vector(3 downto 0);
    signal align_status         : std_logic;
    signal sync_status          : std_logic_vector(3 downto 0);
-   signal mdc, mdio_in         : std_logic;
-   signal mdio_out, mdio_tri   : std_logic;
-   signal mdio_data            : std_logic_vector(15 downto 0) := X"0000";
-   signal prtad                : std_logic_vector(4 downto 0)  := "00000";
-   signal devad                : std_logic_vector(4 downto 0)  := "00101"; -- XGXS
-   signal type_sel             : std_logic_vector(1 downto 0);
+   signal configuration_vector : std_logic_vector(6 downto 0);
+   signal status_vector        : std_logic_vector(7 downto 0);
 
    signal xaui_tx_bitclock : std_logic;
    signal xaui_recclk0     : std_logic := '0';
@@ -922,13 +914,9 @@ begin  -- behav
          sync_status     => sync_status,
          mgt_tx_ready    => mgt_tx_ready,
          -------------------------------------------------------------
-         -- mdio interface
-         mdc             => mdc,
-         mdio_in         => mdio_in,
-         mdio_out        => mdio_out,
-         mdio_tri        => mdio_tri,
-         prtad           => prtad,
-         type_sel        => type_sel);
+         -- Configuration and status vectors
+         configuration_vector => configuration_vector,
+         status_vector => status_vector);
 
    signal_detect <= "1111";
 
@@ -954,13 +942,6 @@ begin  -- behav
       wait for 10 ns;
    end process gen_dclk;
 
-   p_mdc : process
-   begin
-      mdc <= '0';
-      wait for 200 ns;
-      mdc <= '1';
-      wait for 200 ns;
-   end process p_mdc;
 
 -------------------------------------------------------------------------------
 -- using the defined stimulus in the frame_data array, stimulate the xgmii
@@ -1499,108 +1480,26 @@ begin  -- behav
       wait;
    end process p_xgmii_rx_monitor;
 
-  ------------------------------------------------------------------------------
-  -- Simulate the MDIO - read from the MDIO I/F until Local Faults are cleared
-  ------------------------------------------------------------------------------
-  p_mdio : process
-  procedure send_preamble is
-  begin
-    for i in 0 to 31 loop
-      wait until mdc'event and mdc = '1';
-      mdio_in <= '1';
-    end loop;
-  end send_preamble;
-
-  procedure send_stcode is
-  begin
-    for i in 0 to 1 loop
-      wait until mdc'event and mdc = '1';
-      mdio_in <= '0';
-    end loop;
-  end send_stcode;
-
-  procedure send_prtad is
-  begin
-    for i in 4 downto 0 loop
-      wait until mdc'event and mdc = '1';
-      mdio_in <= prtad(i);
-    end loop;
-  end send_prtad;
-
-  procedure send_devad is
-  begin
-    for i in 4 downto 0 loop
-      wait until mdc'event and mdc = '1';
-      mdio_in <= devad(i);
-    end loop;
-  end send_devad;
-
-  -- Procedure send_ta
-  -- Drives the MDIO Turnaround bits "10"
-  procedure send_ta is
-  begin
-    wait until mdc'event and mdc = '1';
-    mdio_in <= '1';
-    wait until mdc'event and mdc = '1';
-    mdio_in <= '0';
-  end send_ta;
-
-  procedure mdio_read is
-  begin
-    send_preamble;
-    send_stcode;
-    for i in 0 to 1 loop -- Read OP
-      wait until mdc'event and mdc = '1';
-      mdio_in <= '1';
-    end loop;
-    send_prtad;
-    send_devad;
-    send_ta;
-    mdio_data <= X"0000";
-    for i in 15 downto 0 loop -- Data
-      wait until mdc'event and mdc = '1';
-      mdio_data(i) <= mdio_out;
-    end loop;
-  end mdio_read;
-
-  procedure mdio_address is
-  begin
-    send_preamble;
-    send_stcode;
-    for i in 0 to 1 loop -- Address OP
-      wait until mdc'event and mdc = '1';
-      mdio_in <= '0';
-    end loop;
-    send_prtad;
-    send_devad;
-    send_ta;
-    mdio_data <= X"0008";
-    for i in 15 downto 0 loop
-      wait until mdc'event and mdc = '1';
-      mdio_in <= mdio_data(i);
-    end loop;
-    mdio_in <= '0';
-  end mdio_address;
-  
-  -- Read the MDIO Status register until no faults are
+  -- Read the status_vector until no faults are
   -- reported then signal the DUT is ready to the rest of the
-  -- Testbench. This process can take a while, as MDIO is
-  -- a single bit interface running at 2.5MHz  
-  begin
-    mdio_in  <= '0';
-    prtad    <= "00000";
-    type_sel <= "10";    
-    wait for 10 us;
-    assert false report "MDIO - Addressing" severity note;    
-    mdio_address;
-    while (mdio_data /= X"8000") loop
-      assert false report "MDIO - Reading Status Register" severity note;        
-      mdio_read;
-    end loop;
-    assert false report "DUT Ready" severity note;     
-    dut_ready <= '1';
-    wait;
-  end process p_mdio;
+  -- Testbench.
+   p_config_status_vector : process
+   begin
+     configuration_vector <= (others => '0');      
+     wait for 1 us;
+     assert false report "Clearing status vector outputs" severity note;          
+     while status_vector /= "11111100" loop
+       wait until clk156 = '1';     
+       configuration_vector(2) <= '1';
+       configuration_vector(3) <= '1';
+       wait until clk156 = '0';
+       wait until clk156 = '1';
+       configuration_vector <= (others => '0');        
+     end loop;
+     assert false report "DUT Ready" severity note;               
+     dut_ready <= '1';
+     wait;     
+   end process p_config_status_vector;
 
    p_reset : process
    begin

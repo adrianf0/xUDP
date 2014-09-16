@@ -88,12 +88,8 @@ entity xaui_v10_4_example_design is
       align_status     : out std_logic;
       sync_status      : out std_logic_vector(3 downto 0);
       mgt_tx_ready     : out std_logic;
-      mdc              : in  std_logic;
-      mdio_in          : in  std_logic;
-      mdio_out         : out std_logic;
-      mdio_tri         : out std_logic;
-      prtad            : in  std_logic_vector(4 downto 0);
-      type_sel         : in  std_logic_vector(1 downto 0)
+      configuration_vector : in  std_logic_vector(6 downto 0);
+      status_vector        : out std_logic_vector(7 downto 0)
 );
 end xaui_v10_4_example_design;
 
@@ -151,12 +147,8 @@ architecture wrapper of xaui_v10_4_example_design is
       drp_rdy          : out std_logic_vector(3 downto 0);
       drp_we           : in  std_logic_vector(3 downto 0);
       mgt_tx_ready     : out std_logic;
-      mdc              : in  std_logic;
-      mdio_in          : in  std_logic;
-      mdio_out         : out std_logic;
-      mdio_tri         : out std_logic;
-      prtad            : in  std_logic_vector(4 downto 0);
-      type_sel         : in  std_logic_vector(1 downto 0)
+      configuration_vector : in  std_logic_vector(6 downto 0);
+      status_vector        : out std_logic_vector(7 downto 0)
 );
 end component;
 
@@ -225,12 +217,8 @@ begin
       drp_rdy          => open,
       drp_we           => (others => '0'),
       mgt_tx_ready     => mgt_tx_ready,
-      mdc              => mdc,
-      mdio_in          => mdio_in,
-      mdio_out         => mdio_out,
-      mdio_tri         => mdio_tri,
-      prtad            => prtad,
-      type_sel         => type_sel);
+      configuration_vector => configuration_vector,
+      status_vector        => status_vector);
 
 -----------------------------------------------------------------------------------------------------------------------
 -- Clock management logic

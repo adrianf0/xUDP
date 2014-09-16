@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.7
-# Date: Thu Aug 28 08:55:23 2014
+# Date: Tue Sep 16 09:27:37 2014
 #
 ##############################################################
 #
@@ -30,7 +30,7 @@ SET foundationsym = false
 SET implementationfiletype = Ngc
 SET package = ff1156
 SET removerpms = false
-SET simulationfiles = Behavioral
+SET simulationfiles = Structural
 SET speedgrade = -2
 SET verilogsim = false
 SET vhdlsim = true
@@ -42,10 +42,10 @@ SELECT XAUI xilinx.com:ip:xaui:10.4
 CSET 802_3ae_state_machines=true
 CSET component_name=xaui_v10_4
 CSET data_rate=TenGbps
-CSET mdio_management=true
+CSET mdio_management=false
 # END Parameters
 # BEGIN Extra information
 MISC pkg_timestamp=2012-06-20T13:20:12Z
 # END Extra information
 GENERATE
-# CRC: 785bc43a
+# CRC: 36426034
