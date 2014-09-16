@@ -1,0 +1,32 @@
+# Select the part to be used in the implementation run
+CONFIG PART = xc6vlx130tff1156-2;
+
+#######################################################################
+# Clock frequencies and clock management                              #
+#######################################################################
+NET "txoutclk" TNM_NET="clk156_top";
+# Clock rate below is the 10-Gigabit Ethernet speed; change to
+# 159.375 MHz for 10-Gigabit Fibre Channel applications
+TIMESPEC "TS_clk156_top" = PERIOD "clk156_top" 156.25 MHz;
+NET "dclk" TNM_NET=DCLK_CLK;
+TIMESPEC TS_DCLK_CLK = PERIOD DCLK_CLK 50 MHz;
+
+# RocketIO Transceiver Placement
+# Where possible, RocketIO Transceivers should be adjacent to allow timing
+# constraints to be met easily.
+######################## Start of GTX Constraints ######################
+INST refclk_ibufds LOC=IBUFDS_GTXE1_X0Y0;
+INST xaui_block/gtx_wrapper_i/gtx0_xaui_v10_4_gtx_wrapper_i/gtxe1_i LOC=GTXE1_X0Y0;
+INST xaui_block/gtx_wrapper_i/gtx1_xaui_v10_4_gtx_wrapper_i/gtxe1_i LOC=GTXE1_X0Y1;
+INST xaui_block/gtx_wrapper_i/gtx2_xaui_v10_4_gtx_wrapper_i/gtxe1_i LOC=GTXE1_X0Y2;
+INST xaui_block/gtx_wrapper_i/gtx3_xaui_v10_4_gtx_wrapper_i/gtxe1_i LOC=GTXE1_X0Y3;
+######################### End of GTX Constraints #######################
+##################################################################
+# MDIO-related constraints                                       #
+##################################################################
+# Constrain the MDIO to 2.5MHz. If you wish to overclock the MDIO
+# port you must alter this
+NET "xaui_block/xaui_core/U0/xaui_inst/*management_1/mdc_rising*" TNM_NET = "xaui_mdc_grp";
+INST "xaui_block/xaui_core/U0/xaui_inst/type_sel_reg_1" TNM = FFS "xaui_mdc_grp";
+TIMESPEC "TS_XAUI_mdc" = FROM "xaui_mdc_grp" TO "xaui_mdc_grp" 400 ns;
+###################################################################
