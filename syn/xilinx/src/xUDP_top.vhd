@@ -1,8 +1,9 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library UNISIM;
-use UNISIM.Vcomponents.ALL;
+use UNISIM.Vcomponents.all;
 
 ENTITY xUDP is 
   port(
@@ -303,19 +304,30 @@ phy10g_refclk_ibufds : IBUFDS_GTXE1
     end if;
   end process p_xgmii_rx_reg;
 
---to be checked
-configuration_vector <= (others => '0');
+-- to be checked in simulation
+reset : process (clk156, status_vector)
+begin 
+  if ( status_vector /= "11111100" ) then
+    configuration_vector <= "0001100";    
+  elsif rising_edge(clk156) then
+    configuration_vector <= (others => '0');    
+  end if;     
+end process;
+
+dclk <= '1'; 	-- GTP transceiver DRP bus not used for the time being
+
+FPGA_LED(1) <= mgt_tx_ready and (not status_vector(0));									--! XAUI TX status
+FPGA_LED(2) <= sync_status(0) and sync_status(1) and sync_status(2) and sync_status(3) and (not status_vector(1));      --! XAUI RX status
+FPGA_LED(3) <= align_status;
 
 end block XAUI_MANAGMENT_BLOCK;
   
   
 -- Clock management logic
 brdclk_ibufds : IBUFDS
-	port map (	I => BRD_CLK_P,
-                        IB => BRD_CLK_N,
-                        O => clk100 );
-
-
+	port map ( I => BRD_CLK_P,
+                   IB => BRD_CLK_N,
+                   O => clk100 );
 					
 --Some IO Buffer
 fpga_prog_b_iobuf : IOBUF
@@ -332,6 +344,17 @@ mdio_iobuf : IOBUF
                 I => mdio_o,
                 T => mdio_t );
 
+heartbeat : process(clk156, reset)
+  variable hbCnt : unsigned(23 downto 0);
+begin
+  if reset = '1' then
+    hbCnt := (others => '0');
+  elsif rising_edge( clk156 ) then
+    hbCnt := hbCnt + 1;
+  end if;
+  --drive LED0 heartbeat
+  FPGA_LED(0) <= hbCnt(23);
+end process;
 
 --some temporary assignment
 mdio_i <= '0';
