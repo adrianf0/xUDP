@@ -149,15 +149,5 @@
       <obj_property name="ElementShortName">cfg</obj_property>
       <obj_property name="ObjectShortName">cfg</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
-      <wvobject fp_name="/arp_rx_tb/cfg.ip_address" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">.ip_address</obj_property>
-         <obj_property name="ObjectShortName">cfg.ip_address</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/arp_rx_tb/cfg.mac_address" type="array" db_ref_id="1">
-         <obj_property name="ElementShortName">.mac_address</obj_property>
-         <obj_property name="ObjectShortName">cfg.mac_address</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
    </wvobject>
 </wave_config>

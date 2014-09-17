@@ -41,7 +41,10 @@ ARCHITECTURE behavior OF arp_TX_tb IS
     -- Component Declaration for the Unit Under Test (UUT)
  
 COMPONENT arp_TX
-    PORT(
+    generic (
+        TIMEOUT_CLKS    : integer := 200    -- # time allowed to tx before abort
+      );
+    port (
         -- control signals
         send_I_have     : in  std_logic;    -- pulse will be latched
         arp_entry       : in  arp_entry_t;  -- arp target for I_have req (will be latched)
@@ -89,7 +92,11 @@ END COMPONENT;
 BEGIN
  
     -- Instantiate the Unit Under Test (UUT)
-    uut: arp_TX PORT MAP (
+    uut: arp_TX 
+    generic map (
+        TIMEOUT_CLKS    => 200
+    )
+    PORT MAP (
         -- control signals
         send_I_have     => send_I_have,
         arp_entry       => arp_entry,
@@ -262,6 +269,120 @@ begin
     assert data_out.tdata = x"0000000000000000" report "T2d - tdata incorrect" severity failure;
     wait for clk_period;
     assert mac_tx_req = '0'             report "T2d - mac_tx_req incorrect" severity failure;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    ---------------------
+    -- Tests for timeout
+    ---------------------
+
+    report "T3: timeout waiting for mac channel";
+    test <= T3;
+    data_out_ready <= '0';
+    mac_tx_granted <= '0';
+    ip_entry <= x"c0a80405";
+    send_who_has <= '1';
+    wait for clk_period;
+    ip_entry <= (others => '0');
+    send_who_has <= '0';
+    wait for clk_period;
+    assert mac_tx_req = '1'             report "T3a - mac_tx_req incorrect" severity failure;
+    wait for clk_period*180;
+    -- check not timed out yet
+    assert mac_tx_req = '1'             report "T3b - mac_tx_req incorrect" severity failure;
+    wait for clk_period*40;
+    -- should have timed out and released mac layer req
+    assert mac_tx_req = '0'             report "T3c - mac_tx_req incorrect" severity failure;
+    assert data_out.tvalid = '0'        report "T3c - tvalid incorrect" severity failure;
+    wait for clk_period*5;
+
+    report "T4: timeout waiting for data ready";
+    test <= T4;
+    data_out_ready <= '0';
+    mac_tx_granted <= '0';
+    ip_entry <= x"c0a80405";
+    send_who_has <= '1';
+    wait for clk_period;
+    ip_entry <= (others => '0');
+    send_who_has <= '0';
+    wait for clk_period;
+    assert mac_tx_req = '1'             report "T4a - mac_tx_req incorrect" severity failure;
+    wait for clk_period*20;
+    -- grant mac layer
+    mac_tx_granted <= '1';
+    wait for clk_period*20;
+    -- ensure has data ready
+    assert data_out.tvalid = '1'        report "T4b tvalid incorrect" severity failure;
+    wait for clk_period*190;
+    -- should have timed out and released mac layer req and data valid status
+    assert mac_tx_req = '0'             report "T4c - mac_tx_req incorrect" severity failure;
+    assert data_out.tvalid = '0'        report "T4c - tvalid incorrect" severity failure;
+    wait for clk_period*2;
+    mac_tx_granted <= '0';
+    wait for clk_period*5;
+
+    report "T5: check can send who has 192.168.4.5 after some timeouts and delays";
+    test <= T5;
+    mac_tx_granted <= '0';
+    data_out_ready <= '0';
+    ip_entry <= x"c0a80405";
+    send_who_has <= '1';
+    wait for clk_period;
+    ip_entry <= (others => '0');
+    send_who_has <= '0';
+    wait for clk_period*5;
+    assert mac_tx_req = '1'             report "T5a - mac_tx_req incorrect" severity failure;
+    assert data_out.tvalid = '0'        report "T5a - tvalid incorrect" severity failure;
+    -- delay for a bit
+    wait for clk_period*40;  
+    assert data_out.tvalid = '0'        report "T5b - tvalid incorrect" severity failure;
+    mac_tx_granted <= '1';
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5c d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5c d0 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"ffffffffffff0102" report "T5c d0 - tdata incorrect" severity failure;
+    -- delay for a bit more
+    wait for clk_period*40; 
+    -- ensure data still there
+    assert data_out.tvalid = '1'        report "T5ca d0 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5ca d0 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5ca d0 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"ffffffffffff0102" report "T5ca d0 - tdata incorrect" severity failure;
+    -- allow data to progress
+    data_out_ready <= '1';
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d1 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5c d1 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5c d1 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0304050608060001" report "T5c d1 - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d2 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5c d2 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5c d2 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0800060400010102" report "T5c d2 - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d3 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5c d3 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5c d3 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"03040506A0123859" report "T5c d3 - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d4 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5c d4 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5c d4 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"ffffffffffffC0A8" report "T5c d4 - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert data_out.tvalid = '1'        report "T5c d5 - tvalid incorrect" severity failure;
+    assert data_out.tlast = '1'         report "T5c d5 - tlast incorrect" severity failure;
+    assert data_out.tkeep = "11000000"  report "T5c d5 - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0405000000000000" report "T5c d5 - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert data_out.tvalid = '0'        report "T5d - tvalid incorrect" severity failure;
+    assert data_out.tlast = '0'         report "T5d - tlast incorrect" severity failure;
+    assert data_out.tkeep = "00000000"  report "T5d - tkeep incorrect" severity failure;
+    assert data_out.tdata = x"0000000000000000" report "T5d - tdata incorrect" severity failure;
+    wait for clk_period;
+    assert mac_tx_req = '0'             report "T5d - mac_tx_req incorrect" severity failure;
     mac_tx_granted <= '0';
     wait for clk_period*5;
 

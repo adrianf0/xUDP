@@ -43,8 +43,10 @@ package xUDP_Common_pkg is
   end record;
 
   type xUDP_CONIGURATION_T is record
-    ip_address  : STD_LOGIC_VECTOR(31 downto 0); -- xUDP IP address
-    mac_address : STD_LOGIC_VECTOR(47 downto 0); -- xUDP MAC address
+    ip_address  : STD_LOGIC_VECTOR(31 downto 0);    -- xUDP IP address
+    mac_address : STD_LOGIC_VECTOR(47 downto 0);    -- xUDP MAC address
+    nwk_gateway : std_logic_vector (31 downto 0);   -- IP address of default gateway
+    nwk_mask    : std_logic_vector (31 downto 0);   -- Net mask
   end record;
       
 
