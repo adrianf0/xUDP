@@ -112,7 +112,8 @@
 *.zip
 _xmsgs/*
 
-
-
-
-
+#Questa
+*~
+work
+transcript
+vsim.wlf

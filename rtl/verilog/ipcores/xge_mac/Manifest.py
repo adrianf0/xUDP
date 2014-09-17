@@ -1,5 +1,11 @@
+action = "simulation"
+
+#include_dirs = ["./include"]
 vlog_opt = '+incdir+' + \
-'./include/'
+"../../../../../rtl/verilog/ipcores/xge_mac/include"
+#__import__('os').path.dirname(__import__('os').path.abspath(__import__('inspect').getfile(__import__('inspect').currentframe())))
+#os.path.abspath(__import__('inspect').getfile(inspect.currentframe())))
+
 
 files = [ "./verilog/tx_dequeue.v",
           "./verilog/sync_clk_core.v",
@@ -24,10 +30,10 @@ files = [ "./verilog/tx_dequeue.v",
           "./verilog/generic_fifo_ctrl.v",
           "./verilog/sync_clk_xgmii_tx.v",
           "./verilog/tx_stats_fifo.v",
-          "./verilog/meta_sync.v"
+          "./verilog/meta_sync.v"]
 #          "./include/CRC32_D8.v",
 #          "./include/utils.v",
 #          "./include/defines.v",
 #          "./include/timescale.v",
 #          "./include/CRC32_D64.v" 
-]
+
