@@ -82,7 +82,6 @@
 *.sof
 *.stx
 *.summary
-*.sv
 *.sym
 *.syr
 *.tcl
