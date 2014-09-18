@@ -11,10 +11,10 @@ MODELSIM_INI_PATH := /opt/questa_sv_afv_10.3c_1/questasim//bin/..
 VCOM_FLAGS := -quiet -modelsimini modelsim.ini
 VSIM_FLAGS :=
 VLOG_FLAGS := -quiet -modelsimini modelsim.ini 
-VERILOG_SRC := src/genericTest.sv \
+VERILOG_SRC := src/RandomPacketsTest.sv \
 ../../../../../../../../../opt/Xilinx/14.6/ISE_DS/ISE/verilog/src/glbl.v \
 
-VERILOG_OBJ := work/genericTest/.genericTest_sv \
+VERILOG_OBJ := work/RandomPacketsTest/.RandomPacketsTest_sv \
 work/glbl/.glbl_v \
 
 VHDL_SRC := ../../../../../rtl/vhdl/ipcores/xilinx/xaui/xaui_v10_4/example_design/xaui_v10_4_chanbond_monitor.vhd \
@@ -59,8 +59,8 @@ clean:
 work/.work:
 	(vlib work && vmap -modelsimini modelsim.ini work && touch work/.work )|| rm -rf work 
 
-work/genericTest/.genericTest_sv: src/genericTest.sv
-		vlog -work work $(VLOG_FLAGS) -sv +incdir+../../environment+../../sequences+src +incdir+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv/mvc_base+/opt/questa_verification_ip_10.3b//include+/opt/questa_verification_ip_10.3b//examples/ethernet/common+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv/ethernet/  $<
+work/RandomPacketsTest/.RandomPacketsTest_sv: src/RandomPacketsTest.sv
+		vlog -work work $(VLOG_FLAGS) -sv +incdir+../../environment+../../sequences+../genericTest/src+src +incdir+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv/mvc_base+/opt/questa_verification_ip_10.3b//include+/opt/questa_verification_ip_10.3b//examples/ethernet/common+/opt/questa_verification_ip_10.3b//questa_mvc_src/sv/ethernet/  $<
 		@mkdir -p $(dir $@) && touch $@ 
 
 

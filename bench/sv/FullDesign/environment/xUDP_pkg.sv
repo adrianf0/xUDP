@@ -11,11 +11,11 @@
 `ifndef XUDP_PKG_SV
  `define XUDP_PKG_SV
 
-`include "mvc_macros.svh"
+`include <mvc_macros.svh>
 //Include VIP
-`include "questa_mvc_svapi.svh"
-`include "mvc_pkg.sv"
-`include "mgc_ethernet_v1_0_pkg.sv"
+`include <questa_mvc_svapi.svh>
+`include <mvc_pkg.sv>
+`include <mgc_ethernet_v1_0_pkg.sv>
 `include "clk_reset.sv"
 
 //Title: xUDP_pkg

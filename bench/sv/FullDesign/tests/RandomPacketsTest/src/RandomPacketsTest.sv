@@ -8,7 +8,7 @@
 // Update Count    : 0
 // Status          : Unknown, Use with caution!
 
-`include "generticTest.sv"
+`include "genericTest.sv"
 
 //Class: RandomPacketsRest
 //The test send random Ethernet packets
@@ -26,7 +26,7 @@ class RandomPacketsRest extends genericTest;
    //Task: start_xUDP_sequence
    //The task start  <ethernet_top_sequence_t> sending random Ethernet frames.
    virtual task start_xUDP_sequence();
-      ethernet_top_sequence_t seq =  ethernet_top_sequence_t::type_id::create("Ethernet top sequence");
+      ethernet_top_sequence seq =  ethernet_top_sequence::type_id::create("Ethernet top sequence");
 
       if( ! seq.randomize() )
 	`uvm_error("RAND_ERROR", "Randomisation failed");
