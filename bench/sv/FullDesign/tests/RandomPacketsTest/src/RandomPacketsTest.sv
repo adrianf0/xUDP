@@ -10,15 +10,15 @@
 
 `include "genericTest.sv"
 
-//Class: RandomPacketsRest
+//Class: RandomPacketsTest
 //The test send random Ethernet packets
-class RandomPacketsRest extends genericTest;
+class RandomPacketsTest extends genericTest;
    
-   `uvm_component_utils_begin(RandomPacketsRest)
+   `uvm_component_utils_begin(RandomPacketsTest)
    `uvm_component_utils_end
    
    //Function: new
-   //Creates a new <RandomPacketsRest> with the given ~name~ and ~parent~.
+   //Creates a new <RandomPacketsTest> with the given ~name~ and ~parent~.
    function new(string name="", uvm_component parent);
       super.new(name, parent);
    endfunction // new
@@ -26,7 +26,7 @@ class RandomPacketsRest extends genericTest;
    //Task: start_xUDP_sequence
    //The task start  <ethernet_top_sequence_t> sending random Ethernet frames.
    virtual task start_xUDP_sequence();
-      ethernet_top_sequence seq =  ethernet_top_sequence::type_id::create("Ethernet top sequence");
+      ethernet_top_sequence seq =  ethernet_top_sequence::type_id::create("EthernetTopSequence");
 
       if( ! seq.randomize() )
 	`uvm_error("RAND_ERROR", "Randomisation failed");
@@ -36,4 +36,4 @@ class RandomPacketsRest extends genericTest;
       
    endtask // start_xUDP_sequence
    
-endclass // RandomPacketsRest
+endclass // RandomPacketsTest

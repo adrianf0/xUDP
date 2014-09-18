@@ -14,11 +14,11 @@ class xUDP_env extends uvm_env;
 
    //Variable: xaui_sim_agent
    //The simulation (MAC) side of the interface
-   mvc_agent xaui_sim_agent;
+   ethernet_agent xaui_sim_agent;
 
    //Variable: xaui_rtl_agent
    //The RTL side of the interface (passive listener)
-   mvc_agent xaui_rtl_agent;
+   ethernet_agent xaui_rtl_agent;
 
    //Variable: cfg
    //It holds environment configuration
@@ -45,12 +45,12 @@ class xUDP_env extends uvm_env;
       end
 
       //Creates components
-      xaui_sim_agent = mvc_agent::type_id::create("xaui_sim_agent", this);
-      xaui_rtl_agent = mvc_agent::type_id::create("xaui_rtl_agent", this);
+      xaui_sim_agent = ethernet_agent::type_id::create("xaui_sim_agent", this);
+      xaui_rtl_agent = ethernet_agent::type_id::create("xaui_rtl_agent", this);
 
       //assign configuration
-      uvm_config_db #( uvm_object)::set( this, "*xaui_sim_agent", mvc_config_base_id, cfg.xaui_sim_cfg);
-      uvm_config_db #( uvm_object)::set( this, "*xaui_rtl_agent", mvc_config_base_id, cfg.xaui_rtl_cfg);
+      xaui_sim_agent.cfg = cfg.xaui_sim_cfg;
+      xaui_rtl_agent.cfg = cfg.xaui_rtl_cfg;
 
       super.build_phase(phase);
       

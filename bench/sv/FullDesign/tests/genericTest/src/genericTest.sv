@@ -16,6 +16,10 @@ timeprecision 1ps;
 import uvm_pkg::*;
 `include <uvm_macros.svh>
 
+localparam string s_env_config_id      = "tb_top_level_config";
+localparam string s_no_config_error_id = "no config error";
+localparam string s_config_type_error  = "config type error";
+
 `include "xUDP_pkg.sv"
 `include "FullTest_pkg.sv"
 
@@ -67,7 +71,7 @@ class genericTest extends uvm_test;
 
       //configure XAUI's agents
       xaui_sim_config(cfg.xaui_sim_cfg);
-      xaui_rtl_config(cfg.xaui_sim_cfg);
+      xaui_rtl_config(cfg.xaui_rtl_cfg);
 
       
       set_config_object( "env*", "xUDP_cfg", cfg, .clone(0) );
@@ -130,46 +134,65 @@ endclass // genericTest
 
 function void genericTest::xaui_sim_config(ethernet_vip_config cfg);
    xUDP_pkg::bfm_type bfm = cfg.m_bfm;
-   cfg.set_structural_index(0);
 
-   bfm.ethernet_set_device_abstraction_level(0, 0, 1);         // Device 0, TLM 
-   bfm.ethernet_set_device_abstraction_level(1, 1, 0);         // Device 1, RTL
+   if(!uvm_config_db #( bfm_type )::get( this , "", "xaui_interface" , bfm))
+     `uvm_error("Config Error" , "uvm_config_db #( bfm_type )::get cannot find resource ETH_10G_XAUI_IF" );
+   cfg.m_bfm = bfm;
 
-`ifdef USE_UVM_TLM_CLK
-   bfm.ethernet_set_clk_contr_abstraction_level(0, 1);         // Clock, TLM
-   bfm.ethernet_set_rst_contr_abstraction_level(0, 1);         // Reset, TLM
-`else
-   bfm.ethernet_set_clk_contr_abstraction_level(1, 0);         // Clock, RTL
-   bfm.ethernet_set_rst_contr_abstraction_level(1, 0);         // Reset, RTL
-`endif
+   // This configures the QVIP's Tx Agent for the following settings
+   // Active                 : 1
+   // Tx/Rx                  : 1 (Tx)
+   // Interface Type         : ETHERNET_10GBASE_X
+   // MDIO Type              : ETHERNET_MDIO_DISABLED
+   // Clock                  : Internal 
+   // Reset                  : Internal 
+   // Coverage               : Tx and Rx coverage disabled
+   // Listener               : Enabled for Data and Control Frames
+   
+   cfg.agent_cfg.is_active               = 1;
+   cfg.agent_cfg.is_tx                   = 1;
+   cfg.agent_cfg.if_type                 = ETHERNET_10GBASE_X;
+   cfg.agent_cfg.mdio_type               = ETHERNET_MDIO_DISABLED;
+   cfg.agent_cfg.ext_clock               = 0;
+   cfg.agent_cfg.ext_reset               = 0;
+   cfg.agent_cfg.en_cvg.tx               = 6'h00;
+   cfg.agent_cfg.en_cvg.rx               = 6'h00;
+   cfg.agent_cfg.en_txn_ltnr.data_frame  = 1;
+   cfg.agent_cfg.en_txn_ltnr.cntrl_frame = 1;
 
-   bfm.set_config_interface_type(ETH_10G_BASE_X);          // BASE-X Interface
-   bfm.set_config_pma_lane_count(4);
-   bfm.set_config_pma_lane_width(1);                       // Serial
-   bfm.set_config_autoneg_enable(1'b0);
-   bfm.set_config_mac_pause_transmission(1'b0);
+  // Specific configurations setting directly in BFM
+  bfm.config_mac_pause_transmission = 0;             // Disabling Pause Feature
+  bfm.config_enable_clock_recovery  = 1;             // Enabling Clock Recovery
+  bfm.config_enable_differential_signaling = 1;      // Enabling Differential Signaling
 
-   // Set this if the top level module has timescale in ps.
-   bfm.set_m_clk_factor_ps( QUESTA_MVC::questa_mvc_sv_convert_to_precision(1,QUESTA_MVC::QUESTA_MVC_TIME_PS) );
-
-   // Adding Data, Control and Fault Frame listeners
-   /* -----\/----- EXCLUDED -----\/-----
-    m_config.xaui_dev_0_cfg.set_analysis_component("data_frame_ap" , "data_frame_listener" ,
-    mvc_item_listener #( ethernet_device_data_frame )::type_id::get());
-    
-    m_config.xaui_dev_0_cfg.set_analysis_component("control_frame_ap" , "control_frame_listener" ,
-    mvc_item_listener #( ethernet_device_control_frame )::type_id::get());
-    
-    m_config.xaui_dev_0_cfg.set_analysis_component("fault_seq_ap" , "fault_seq_listener" ,
-    mvc_item_listener #( ethernet_device_fault_sequence )::type_id::get());
-    -----/\----- EXCLUDED -----/\----- */
 endfunction // xaui_sim_config
 
 function void genericTest::xaui_rtl_config(ethernet_vip_config cfg);
-   bfm_type bfm = cfg.m_bfm;
+   xUDP_pkg::bfm_type bfm = cfg.m_bfm;
    
-   cfg.set_structural_index(1);
+   if(!uvm_config_db #( bfm_type )::get( this , "", "xaui_interface" , bfm))
+     `uvm_error("Config Error" , "uvm_config_db #( bfm_type )::get cannot find resource ETH_10G_XAUI_IF" );
+   cfg.m_bfm = bfm;
 
-   //Configuring the PASIVE agent
-   cfg.m_active_passive=UVM_PASSIVE;
+   // This configures the QVIP's Tx Agent for the following settings
+   // Active                 : 0
+   // Tx/Rx                  : 0 (Rx)
+   // Interface Type         : ETHERNET_10GBASE_X
+   // MDIO Type              : ETHERNET_MDIO_DISABLED
+   // Clock                  : Internal 
+   // Reset                  : Internal 
+   // Coverage               : Tx and Rx coverage disabled
+   // Listener               : Enabled for Data and Control Frames
+   
+   cfg.agent_cfg.is_active               = 0;
+   cfg.agent_cfg.is_tx                   = 0;
+   cfg.agent_cfg.if_type                 = ETHERNET_10GBASE_X;
+   cfg.agent_cfg.mdio_type               = ETHERNET_MDIO_DISABLED;
+   cfg.agent_cfg.ext_clock               = 0;
+   cfg.agent_cfg.ext_reset               = 0;
+   cfg.agent_cfg.en_cvg.tx               = 6'h00;
+   cfg.agent_cfg.en_cvg.rx               = 6'h00;
+   cfg.agent_cfg.en_txn_ltnr.data_frame  = 1;
+   cfg.agent_cfg.en_txn_ltnr.cntrl_frame = 1;
+
 endfunction // xaui_rtl_config

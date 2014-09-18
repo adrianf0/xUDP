@@ -25,11 +25,9 @@ module automatic top;
       logic [3:0] tx;
       logic [3:0] rx; } xaui_lanes;
 
-   always_comb begin
-      for (int i=0; i<4; i++) begin
-	 xaui.lane_bit[0][i] = xaui_lanes.tx[i];
-	 xaui_lanes.rx[i] = xaui.lane_bit[1][i];
-      end
+   for (genvar i=0; i<4; i++) begin
+      assign xaui.lane_bit[1][i] = xaui_lanes.tx[i];
+      assign xaui_lanes.rx[i] = xaui.lane_bit[0][i];
    end
 
 `ifndef USE_UVM_TLM_CLK
@@ -45,12 +43,12 @@ module automatic top;
 
    //FPGA reset
    initial begin
-      reset <= 1;
-      #15ns reset <= 0;
+      reset <= 0;
+      #15ns reset <= 1;
    end
    
    xUDP xudp( .BRD_RESET_SW(reset),
-	      .BRD_CLK_P(clk), .BRD_CLK_N(!clk),
+	      .BRD_CLK_P(clk100), .BRD_CLK_N(!clk100),
 	      .FPGA_LED(), .FPGA_PROG_B(),
 	      .DIP_GPIO(),
 
@@ -66,7 +64,7 @@ module automatic top;
 	      .FXRX_P(xaui_lanes.rx), .FXRX_N(~xaui_lanes.rx) );
 
    initial begin
-      uvm_config_db #( xUDP_pkg::bfm_type ) :: set(null, "uvm_test_top", "xaui_interface", `get_interface(xaui) );
+      uvm_config_db #( xUDP_pkg::bfm_type ) :: set(null, "uvm_test_top", "xaui_interface", xaui );
       run_test();
    end
 
