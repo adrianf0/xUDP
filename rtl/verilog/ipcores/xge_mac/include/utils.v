@@ -35,6 +35,8 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 
+module utils;
+   
 
 function [63:0] reverse_64b;
   input [63:0]   data;
@@ -68,4 +70,5 @@ function [7:0] reverse_8b;
     end
 endfunction
 
+endmodule
 
