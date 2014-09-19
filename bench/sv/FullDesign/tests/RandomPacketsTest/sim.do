@@ -1,7 +1,7 @@
 quit -sim
 make
 #-solvefaildebug
-vsim  -classdebug -uvmcontrol=all -msgmode both -t ps -L unisims_ver -L xilinxcorelib_ver -L secureip -novopt work.top work.glbl +UVM_TESTNAME=RandomPacketsTest
+vsim  -voptargs="+acc" -classdebug -uvmcontrol=all -msgmode both -t ps -L unisims_ver -L xilinxcorelib_ver -L secureip -novopt work.top work.glbl +UVM_TESTNAME=RandomPacketsTest
 
 #Jumbo frames
 set SolveArrayResizeMax 9000
