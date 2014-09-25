@@ -15,6 +15,7 @@ module automatic top;
 
    logic reset = 1;
    logic clk100 = 0;
+   logic clk156 = 0;
    wire mdio;
 
    mgc_ethernet xaui( .iclk_0(1'bz), .iclk_1(1'bz), .ireset(1'bz), .iMDC(1'bz), .ian_clk_0(1'bz), .ian_clk_1(1'bz) );
@@ -37,10 +38,17 @@ module automatic top;
    //FPGA fabric clock
    initial
      forever begin
-	#0.5ns;
+	#5ns;
 	clk100 <= ! clk100;
      end
 
+   //XGMII clock
+   initial
+     forever begin
+	#3.2ns;
+	clk156 <= !clk156;
+     end 
+   
    //FPGA reset
    initial begin
       reset <= 0;
@@ -48,7 +56,7 @@ module automatic top;
    end
    
    xUDP xudp( .BRD_RESET_SW(reset),
-	      .BRD_CLK_P(clk100), .BRD_CLK_N(!clk100),
+	      .BRD_CLK_P(clk100), .BRD_CLK_N(~clk100),
 	      .FPGA_LED(), .FPGA_PROG_B(),
 	      .DIP_GPIO(),
 
@@ -57,7 +65,7 @@ module automatic top;
 	      //PHY
 	      .PHY_RSTN(),
 	      .PHY_LASI(), .PHY_INTA(),
-	      .PHY10G_RCK_P(xaui.clk_0), .PHY10G_RCK_N(!xaui.clk_0),
+	      .PHY10G_RCK_P(clk156), .PHY10G_RCK_N(~clk156),
 
 	      //XAUI
 	      .FXTX_P(xaui_lanes.tx), .FXTX_N(),

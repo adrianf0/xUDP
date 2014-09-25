@@ -14,7 +14,7 @@ add wave -noupdate -expand -group xaui /top/xaui/MDC
 add wave -noupdate -expand -group xaui /top/xaui/reset
 add wave -noupdate -expand -group xaui /top/xaui/XD
 add wave -noupdate -expand -group xaui /top/xaui/XC
-add wave -noupdate -expand -group xaui /top/xaui/lane_bit
+add wave -noupdate -expand -group xaui -subitemconfig {{/top/xaui/lane_bit[0]} -expand {/top/xaui/lane_bit[1]} -expand} /top/xaui/lane_bit
 add wave -noupdate -expand -group xaui /top/xaui/lane_bit_n
 add wave -noupdate -expand -group xaui /top/xaui/L_10b
 add wave -noupdate -expand -group xaui /top/xaui/XSBI_DATA_PARALLEL
@@ -194,10 +194,55 @@ add wave -noupdate -expand -group xaui /top/xaui/m_MDC
 add wave -noupdate -expand -group xaui /top/xaui/m_reset
 add wave -noupdate -expand -group xaui /top/xaui/m_MDIO_OUT
 add wave -noupdate -expand -group xaui /top/xaui/m_MDIO_IN
+add wave -noupdate /top/xudp/BRD_RESET_SW
+add wave -noupdate /top/xudp/BRD_CLK_P
+add wave -noupdate /top/xudp/BRD_CLK_N
+add wave -noupdate /top/xudp/FPGA_LED
+add wave -noupdate /top/xudp/FPGA_PROG_B
+add wave -noupdate /top/xudp/DIP_GPIO
+add wave -noupdate /top/xudp/MDIO_PAD
+add wave -noupdate /top/xudp/MDC
+add wave -noupdate /top/xudp/PHY_RSTN
+add wave -noupdate /top/xudp/PHY_LASI
+add wave -noupdate /top/xudp/PHY_INTA
+add wave -noupdate /top/xudp/PHY10G_RCK_P
+add wave -noupdate /top/xudp/PHY10G_RCK_N
+add wave -noupdate /top/xudp/FXTX_P
+add wave -noupdate /top/xudp/FXTX_N
+add wave -noupdate /top/xudp/FXRX_P
+add wave -noupdate /top/xudp/FXRX_N
+add wave -noupdate /top/xudp/reset
+add wave -noupdate /top/xudp/clk100
+add wave -noupdate /top/xudp/clk156
+add wave -noupdate /top/xudp/mdio_i
+add wave -noupdate /top/xudp/mdio_o
+add wave -noupdate /top/xudp/mdio_t
+add wave -noupdate /top/xudp/configuration_vector
+add wave -noupdate /top/xudp/status_vector
+add wave -noupdate /top/xudp/mgt_tx_ready
+add wave -noupdate /top/xudp/dclk
+add wave -noupdate /top/xudp/xgmii_txd
+add wave -noupdate /top/xudp/xgmii_txc
+add wave -noupdate /top/xudp/xgmii_rxd
+add wave -noupdate /top/xudp/xgmii_rxc
+add wave -noupdate /top/xudp/pkt_rx_ren
+add wave -noupdate /top/xudp/pkt_rx_val
+add wave -noupdate /top/xudp/pkt_rx_sop
+add wave -noupdate /top/xudp/pkt_rx_mod
+add wave -noupdate /top/xudp/pkt_rx_err
+add wave -noupdate /top/xudp/pkt_rx_eop
+add wave -noupdate /top/xudp/pkt_rx_data
+add wave -noupdate /top/xudp/pkt_rx_avail
+add wave -noupdate /top/xudp/pkt_tx_full
+add wave -noupdate /top/xudp/pkt_tx_val
+add wave -noupdate /top/xudp/pkt_tx_sop
+add wave -noupdate /top/xudp/pkt_tx_mod
+add wave -noupdate /top/xudp/pkt_tx_eop
+add wave -noupdate /top/xudp/pkt_tx_data
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {0 ps} 0}
-quietly wave cursor active 0
-configure wave -namecolwidth 150
+WaveRestoreCursors {{Cursor 1} {977 ps} 0}
+quietly wave cursor active 1
+configure wave -namecolwidth 271
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
@@ -211,4 +256,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {1 ns}
+WaveRestoreZoom {0 ps} {19413 ps}
