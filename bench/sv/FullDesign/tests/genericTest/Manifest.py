@@ -13,4 +13,5 @@ sim_tool = "vsim"
 
 files = ["src/genericTest.sv"]
 
-modules = { "local" : [ "../../../../../syn/xilinx/src" ] }
+modules = { "local" : [ "../../../../../syn/xilinx/src",
+                        "../../../../../rtl/verilog/ipcores/xge_mac/" ] }

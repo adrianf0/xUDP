@@ -14,8 +14,8 @@ add wave -noupdate -group xaui /top/xaui/MDC
 add wave -noupdate -group xaui /top/xaui/reset
 add wave -noupdate -group xaui /top/xaui/XD
 add wave -noupdate -group xaui /top/xaui/XC
-add wave -noupdate -group xaui -expand /top/xaui/lane_bit
-add wave -noupdate -group xaui -expand /top/xaui/lane_bit_n
+add wave -noupdate -group xaui /top/xaui/lane_bit
+add wave -noupdate -group xaui /top/xaui/lane_bit_n
 add wave -noupdate -group xaui /top/xaui/L_10b
 add wave -noupdate -group xaui /top/xaui/XSBI_DATA_PARALLEL
 add wave -noupdate -group xaui /top/xaui/pcs_baser_66b
@@ -239,10 +239,247 @@ add wave -noupdate /top/xudp/pkt_tx_sop
 add wave -noupdate /top/xudp/pkt_tx_mod
 add wave -noupdate /top/xudp/pkt_tx_eop
 add wave -noupdate /top/xudp/pkt_tx_data
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/dclk
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/clk156
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/refclk
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/reset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/reset156
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/txoutclk
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xgmii_txd
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xgmii_txc
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xgmii_rxd
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xgmii_rxc
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l0_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l0_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l1_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l1_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l2_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l2_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l3_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_tx_l3_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l0_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l0_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l1_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l1_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l2_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l2_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l3_p
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/xaui_rx_l3_n
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/txlock
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/signal_detect
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/align_status
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/sync_status
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_addr
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_en
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_o
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_rdy
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/drp_we
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_tx_ready
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/configuration_vector
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/status_vector
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/clk156_reset_txsync_r1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/clk156_reset_txsync_r2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/clk156_reset_txsync_r3
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/GT_TXOUTCLK
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txdata
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txcharisk
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdata
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_enable_align
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_enchansync
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_syncok
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_reset_terms
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codevalid
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxchariscomma
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdata_reg
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg0
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg3
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg4
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg5
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg6
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg7
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcharisk_reg
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxlock_reg
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxlock_r1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg0
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg3
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg4
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg5
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg6
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxnotintable_reg7
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg0
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg3
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg4
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg5
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg6
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxdisperr_reg7
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg0
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg1
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg3
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg4
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg5
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg6
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg7
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_codecomma_reg
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxcdr_reset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rx_reset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxlock
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_tx_fault
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_loopback
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_powerdown
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_powerdown_2
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_powerdown_r
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_powerdown_falling
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_plllocked
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxresetdone
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxbuferr
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxbufstatus
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxbufstatus_reg
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxlossofsync
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txresetdone
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/loopback_int
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/lock
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/cbm_rx_reset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/reset_txsync
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/gtx0_rxchbondo_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/gtx1_rxchbondo_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/gtx2_rxchbondo_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/gtx3_rxchbondo_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_rxchanisaligned
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/comma_align_done
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/chanbond_done
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/sync_status_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/align_status_i
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txenpmaphasealign
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txpmasetphase
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txdlyaligndisable
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txdlyalignreset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/mgt_txreset
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/resetdone
+add wave -noupdate -expand -group xaui_inst /top/xudp/XAUI_MANAGMENT_BLOCK/xaui_inst/tx_sync_done
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clk_156m25
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clk_xgmii_rx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clk_xgmii_tx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_ren
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_data
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_eop
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_mod
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_sop
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_val
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/reset_156m25_n
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/reset_xgmii_rx_n
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/reset_xgmii_tx_n
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_adr_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_clk_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_cyc_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_dat_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_rst_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_stb_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_we_i
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/xgmii_rxc
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/xgmii_rxd
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_avail
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_data
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_eop
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_err
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_mod
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_sop
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_rx_val
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/pkt_tx_full
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_ack_o
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_dat_o
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/wb_int_o
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/xgmii_txc
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/xgmii_txd
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clear_stats_rx_octets
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clear_stats_rx_pkts
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clear_stats_tx_octets
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/clear_stats_tx_pkts
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/ctrl_tx_enable
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/ctrl_tx_enable_ctx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/local_fault_msg_det
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/remote_fault_msg_det
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_ralmost_empty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_rdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_rempty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_ren
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_rstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_wen
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_wfull
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxdfifo_wstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_ralmost_empty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_rdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_rempty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_ren
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_rstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_wen
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxhfifo_wstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxsfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/rxsfifo_wen
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/stats_rx_octets
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/stats_rx_pkts
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/stats_tx_octets
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/stats_tx_pkts
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_crc_error
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_crc_error_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_fragment_error
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_fragment_error_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_lenght_error
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_lenght_error_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_local_fault
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_local_fault_crx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_local_fault_ctx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_pause_frame_rx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_pause_frame_rx_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_remote_fault
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_remote_fault_crx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_remote_fault_ctx
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_rxdfifo_ovflow
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_rxdfifo_ovflow_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_rxdfifo_udflow
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_rxdfifo_udflow_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_txdfifo_ovflow
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_txdfifo_ovflow_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_txdfifo_udflow
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/status_txdfifo_udflow_tog
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_ralmost_empty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_rdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_rempty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_ren
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_rstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_walmost_full
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_wen
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_wfull
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txdfifo_wstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_ralmost_empty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_rdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_rempty
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_ren
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_rstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_walmost_full
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_wen
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_wfull
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txhfifo_wstatus
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txsfifo_wdata
+add wave -noupdate -expand -group xge_mac_inst /top/xudp/XGE_MANAGMENT_BLOCK/xge_mac_inst/txsfifo_wen
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {12915 ps} 0}
+WaveRestoreCursors {{Cursor 1} {977 ps} 0}
 quietly wave cursor active 1
-configure wave -namecolwidth 238
+configure wave -namecolwidth 271
 configure wave -valuecolwidth 100
 configure wave -justifyvalue left
 configure wave -signalnamewidth 1
@@ -256,4 +493,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {310368 ps}
+WaveRestoreZoom {4268688 ps} {5038491 ps}
