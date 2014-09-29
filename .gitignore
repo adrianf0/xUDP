@@ -20,7 +20,6 @@
 *.ddb
 *.dfp
 *.didat
-*.do
 *.done
 *.dpi
 *.drc
@@ -82,7 +81,6 @@
 *.sof
 *.stx
 *.summary
-*.sv
 *.sym
 *.syr
 *.tcl
@@ -112,7 +110,8 @@
 *.zip
 _xmsgs/*
 
-
-
-
-
+#Questa
+*~
+work
+transcript
+vsim.wlf

@@ -11,3 +11,4 @@ As per opencores recommendation:
 - doc
 - rtl
 - bench
+- syn

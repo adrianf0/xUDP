@@ -330,14 +330,16 @@ begin
 end process p_xgmii_rx_reg;
 
 -- to be checked in simulation
-reset : process (clk156, status_vector)
-begin 
-  if ( status_vector /= "11111100" ) then
-    configuration_vector <= "0001100";    
-  elsif rising_edge(clk156) then
-    configuration_vector <= (others => '0');    
-  end if;     
-end process;
+--reset : process (clk156, status_vector)
+--begin 
+--  if ( status_vector /= "11111100" ) then
+--    configuration_vector <= "0001100";    
+--  elsif rising_edge(clk156) then
+configuration_vector <= (others => '0');    
+--  end if;     
+--end process;
+
+signal_detect <= (others => '0');
 
 dclk <= '0'; 	-- GTP transceiver DRP bus not used for the time being
 
