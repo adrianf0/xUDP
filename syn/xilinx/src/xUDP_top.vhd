@@ -133,6 +133,8 @@ signal reset                    : std_logic;          -- board reset
 signal clk100	 		: std_logic;
 signal clk156			: std_logic;
 
+signal txlock                   : std_logic;
+
 --mdio
 signal mdio_i			: std_logic;
 signal mdio_o			: std_logic;
@@ -186,7 +188,6 @@ XAUI_MANAGMENT_BLOCK : block
 signal txoutclk                 : std_logic;
 signal clkfbout_txoutclk        : std_logic;
 signal clkfbin_txoutclk         : std_logic;
-signal clk156                   : std_logic;
 signal clkout0                  : std_logic;
 signal refclk                   : std_logic;
 signal xgmii_txd_int            : std_logic_vector(63 downto 0) := (others => '0');
@@ -196,7 +197,6 @@ signal xgmii_rxc_int            : std_logic_vector(7 downto 0)  := (others => '0
 signal reset_156_r1             : std_logic;
 signal reset_156_r2             : std_logic;
 signal reset_156                : std_logic;
-signal txlock                   : std_logic;
 
 signal signal_detect            : std_logic_vector(3 downto 0);      
 signal align_status             : std_logic;
@@ -329,19 +329,25 @@ begin
   end if;
 end process p_xgmii_rx_reg;
 
--- to be checked in simulation
---reset : process (clk156, status_vector)
---begin 
---  if ( status_vector /= "11111100" ) then
---    configuration_vector <= "0001100";    
---  elsif rising_edge(clk156) then
-configuration_vector <= (others => '0');    
---  end if;     
---end process;
+--to be checked in simulation
+reset_tx_rx : process (clk156, reset)
+begin 
+  if ( reset = '1' ) then
+    configuration_vector(3 downto 2) <= "00";    
+  elsif rising_edge(clk156) then
+    if ( status_vector /= "11111100" ) then
+      configuration_vector(2) <= configuration_vector(2) xor '1';
+      configuration_vector(3) <= configuration_vector(3) xor '1';    
+    end if;
+  end if;     
+end process;
 
-signal_detect <= (others => '0');
+configuration_vector(1 downto 0) <= "00";
+configuration_vector(6 downto 4) <= "000";
 
-dclk <= '0'; 	-- GTP transceiver DRP bus not used for the time being
+signal_detect <= (others => '1');
+
+dclk <= clk156; 	-- GTP transceiver DRP bus not used for the time being
 
 FPGA_LED(1) <= mgt_tx_ready and (not status_vector(0));									--! XAUI TX status
 FPGA_LED(2) <= sync_status(0) and sync_status(1) and sync_status(2) and sync_status(3) and (not status_vector(1));      --! XAUI RX status
@@ -403,7 +409,7 @@ begin
       xge_reset_n_r1 <= '0';
       xge_reset_n    <= '0';
     elsif rising_edge(clk156) then
-      xge_reset_n_r2 <= '1';
+      xge_reset_n_r2 <= mgt_tx_ready;
       xge_reset_n_r1 <= xge_reset_n_r2;
       xge_reset_n    <= xge_reset_n_r1;
     end if;
@@ -465,6 +471,6 @@ end process;
 --some temporary assignment
 mdio_i <= '0';
 mdio_o <= '1';
-mdio_t <= '0';
+mdio_t <= '1';
 
 END Structural;
