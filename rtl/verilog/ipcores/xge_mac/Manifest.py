@@ -8,7 +8,10 @@ include_dirs = ["./include"]
 #os.path.abspath(__import__('inspect').getfile(inspect.currentframe())))
 
 
-files = [ "./verilog/tx_dequeue.v",
+files = [ "./include/utils.v",
+          "./include/CRC32_D64.v",
+          "./include/CRC32_D8.v",   
+          "./verilog/tx_dequeue.v",
           "./verilog/sync_clk_core.v",
           "./verilog/generic_fifo.v",
           "./verilog/stats.v",

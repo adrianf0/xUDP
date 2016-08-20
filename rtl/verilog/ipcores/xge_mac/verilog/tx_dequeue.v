@@ -38,6 +38,7 @@
 
 `include "defines.v"
 
+
 module tx_dequeue(/*AUTOARG*/
   // Outputs
   txdfifo_ren, txhfifo_ren, txhfifo_wdata, txhfifo_wstatus,
@@ -50,10 +51,17 @@ module tx_dequeue(/*AUTOARG*/
   txhfifo_rdata, txhfifo_rstatus, txhfifo_rempty,
   txhfifo_ralmost_empty, txhfifo_wfull, txhfifo_walmost_full
   );
+
+
 `include "CRC32_D64.v"
 `include "CRC32_D8.v"
 `include "utils.v"
 
+   CRC32_D64 crc64();
+   CRC32_D8 crc8();
+   utils util();
+      
+   
 input         clk_xgmii_tx;
 input         reset_xgmii_tx_n;
 
@@ -918,7 +926,7 @@ always @(posedge clk_xgmii_tx or negedge reset_xgmii_tx_n) begin
 
         if (txhfifo_wen) begin
 
-            crc32_d64 <= nextCRC32_D64(reverse_64b(txhfifo_wdata), crc_data);
+            crc32_d64 <= crc64.nextCRC32_D64(util.reverse_64b(txhfifo_wdata), crc_data);
 
         end
 
@@ -945,7 +953,7 @@ always @(posedge clk_xgmii_tx or negedge reset_xgmii_tx_n) begin
             // Complete crc calculation 8-bit at a time until finished. This can
             // be 1 to 8 bytes long.
 
-            crc32_d8 <= nextCRC32_D8(reverse_8b(shift_crc_data[7:0]), crc32_d8);
+            crc32_d8 <= crc8.nextCRC32_D8(util.reverse_8b(shift_crc_data[7:0]), crc32_d8);
 
             shift_crc_data <= {8'b0, shift_crc_data[63:8]};
             shift_crc_eop <= shift_crc_eop - 4'd1;
@@ -960,7 +968,7 @@ always @(posedge clk_xgmii_tx or negedge reset_xgmii_tx_n) begin
 
         if (shift_crc_cnt == 4'b1) begin
 
-            crc32_tx <= ~reverse_32b(crc32_d8);
+            crc32_tx <= ~util.reverse_32b(crc32_d8);
 
         end
         else begin
